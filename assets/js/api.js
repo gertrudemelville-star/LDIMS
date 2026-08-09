@@ -8,7 +8,9 @@
 
 "use strict";
 
+
 const API = {
+
 
     /* ======================================================
        POST REQUEST
@@ -18,24 +20,31 @@ const API = {
 
         try {
 
-            const formData = new FormData();
+            const formData =
+                new FormData();
 
-            Object.keys(data).forEach(key => {
 
-                formData.append(
-                    key,
-                    data[key] ?? ""
-                );
+            Object.keys(data).forEach(
+                key => {
 
-            });
+                    formData.append(
+                        key,
+                        data[key] ?? ""
+                    );
 
-            const response = await fetch(
-                CONFIG.API.BASE_URL,
-                {
-                    method: "POST",
-                    body: formData
                 }
             );
+
+
+            const response =
+                await fetch(
+                    CONFIG.API.BASE_URL,
+                    {
+                        method: "POST",
+                        body: formData
+                    }
+                );
+
 
             if (!response.ok) {
 
@@ -46,14 +55,19 @@ const API = {
 
             }
 
-            const result = await response.json();
+
+            const result =
+                await response.json();
+
 
             console.log(
                 "LDIMS API RESPONSE:",
                 result
             );
 
+
             return result;
+
 
         } catch (error) {
 
@@ -61,6 +75,7 @@ const API = {
                 "LDIMS API POST ERROR:",
                 error
             );
+
 
             throw error;
 
@@ -73,15 +88,21 @@ const API = {
        LOGIN
     ====================================================== */
 
-    async login(employeeID, password) {
+    async login(
+        employeeID,
+        password
+    ) {
 
         return await this.post({
 
-            action: "login",
+            action:
+                "login",
 
-            employeeID: employeeID,
+            employeeID:
+                employeeID,
 
-            password: password
+            password:
+                password
 
         });
 
@@ -92,13 +113,17 @@ const API = {
        LOGOUT
     ====================================================== */
 
-    async logout(sessionId) {
+    async logout(
+        sessionId
+    ) {
 
         return await this.post({
 
-            action: "logout",
+            action:
+                "logout",
 
-            sessionId: sessionId
+            sessionId:
+                sessionId
 
         });
 
@@ -109,13 +134,17 @@ const API = {
        GET USER
     ====================================================== */
 
-    async getUser(sessionId) {
+    async getUser(
+        sessionId
+    ) {
 
         return await this.post({
 
-            action: "getUser",
+            action:
+                "getUser",
 
-            sessionId: sessionId
+            sessionId:
+                sessionId
 
         });
 
@@ -126,11 +155,14 @@ const API = {
        SAVE EMPLOYEE
     ====================================================== */
 
-    async saveEmployee(employee) {
+    async saveEmployee(
+        employee
+    ) {
 
         return await this.post({
 
-            action: "saveEmployee",
+            action:
+                "saveEmployee",
 
             ...employee
 
@@ -147,7 +179,8 @@ const API = {
 
         return await this.post({
 
-            action: "getEmployees"
+            action:
+                "getEmployees"
 
         });
 
@@ -158,13 +191,17 @@ const API = {
        GET EMPLOYEE BY ID
     ====================================================== */
 
-    async getEmployeeById(employeeID) {
+    async getEmployeeById(
+        employeeID
+    ) {
 
         return await this.post({
 
-            action: "getEmployeeById",
+            action:
+                "getEmployeeById",
 
-            employeeID: employeeID
+            employeeID:
+                employeeID
 
         });
 
@@ -175,21 +212,63 @@ const API = {
        UPDATE EMPLOYEE PROFILE
     ====================================================== */
 
-    async updateEmployeeProfile(employee) {
+    async updateEmployeeProfile(
+        employee
+    ) {
 
         console.log(
             "Updating employee profile:",
             employee
         );
 
+
         return await this.post({
 
-            action: "updateEmployeeProfile",
+            action:
+                "updateEmployeeProfile",
 
             ...employee
 
         });
 
+    },
+
+
+    /* ======================================================
+       GET PENDING EMPLOYEE ACCOUNTS
+    ====================================================== */
+
+    async getPendingEmployees() {
+
+        return await this.post({
+
+            action:
+                "getPendingEmployees"
+
+        });
+
+    },
+
+
+    /* ======================================================
+       ACTIVATE EMPLOYEE ACCOUNT
+    ====================================================== */
+
+    async activateEmployee(
+        employeeID
+    ) {
+
+        return await this.post({
+
+            action:
+                "activateEmployee",
+
+            employeeID:
+                employeeID
+
+        });
+
     }
+
 
 };
