@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>LDIMS | Sign In</title>
+
+
+    <!-- ======================================================
+         Bootstrap
+    ======================================================= -->
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+
+    <!-- ======================================================
+         Bootstrap Icons
+    ======================================================= -->
+
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+
+
+    <!-- ======================================================
+         Global Styles
+    ======================================================= -->
+
+    <link
+        rel="stylesheet"
+        href="assets/css/style.css">
+
+</head>
+
+
+<body>
+
+
+<!-- ==========================================================
+     LEFT PANEL
+========================================================== -->
+
+<aside class="login-brand">
+
+
+    <img
+        src="assets/images/Logo.png"
+        alt="NBI Logo"
+        class="brand-logo">
+
+
+    <h1>
+        LDIMS
+    </h1>
+
+
+    <h2>
+        Learning &amp; Development<br>
+        Information Management System
+    </h2>
+
+
+    <p>
+
+        A centralized platform for managing
+        employee learning and development,
+        training records, learning needs,
+        and professional development.
+
+    </p>
+
+
+    <div class="brand-footer">
+
+        National Bureau of Investigation
+        <br>
+        Learning and Development Division
+
+    </div>
+
+
+</aside>
+
+
+
+<!-- ==========================================================
+     RIGHT PANEL
+========================================================== -->
+
+<main class="login-panel">
+
+
+    <div class="login-container">
+
+
+        <!-- ==================================================
+             LOGIN HEADER
+        =================================================== -->
+
+        <div class="login-header">
+
+            <h3>
+                Welcome Back
+            </h3>
+
+
+            <p>
+
+                Sign in using your employee credentials.
+
+            </p>
+
+        </div>
+
+
+
+        <!-- ==================================================
+             ALERT
+        =================================================== -->
+
+        <div id="alertMessage"></div>
+
+
+
+        <!-- ==================================================
+             LOGIN FORM
+        =================================================== -->
+
+        <form id="loginForm">
+
+
+            <!-- Employee ID -->
+
+            <div class="mb-4">
+
+                <label
+                    for="employeeID"
+                    class="form-label">
+
+                    Employee ID
+
+                </label>
+
+
+                <input
+                    id="employeeID"
+                    type="text"
+                    class="form-control"
+                    autocomplete="username"
+                    placeholder="Enter Employee ID"
+                    required>
+
+            </div>
+
+
+
+            <!-- Password -->
+
+            <div class="mb-4">
+
+                <label
+                    for="password"
+                    class="form-label">
+
+                    Password
+
+                </label>
+
+
+                <div class="input-group">
+
+                    <input
+                        id="password"
+                        type="password"
+                        class="form-control"
+                        autocomplete="current-password"
+                        placeholder="Enter Password"
+                        required>
+
+
+                    <button
+                        class="btn btn-outline-secondary"
+                        type="button"
+                        id="togglePassword">
+
+                        <i class="bi bi-eye"></i>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- Remember / Forgot Password -->
+
+            <div
+                class="d-flex justify-content-between align-items-center mb-4">
+
+
+                <div class="form-check">
+
+                    <input
+                        class="form-check-input"
+                        type="checkbox"
+                        id="rememberMe">
+
+
+                    <label
+                        class="form-check-label"
+                        for="rememberMe">
+
+                        Remember Me
+
+                    </label>
+
+                </div>
+
+
+                <a
+                    href="#"
+                    class="forgot-link">
+
+                    Forgot Password?
+
+                </a>
+
+
+            </div>
+
+
+
+            <!-- ==================================================
+                 SIGN IN
+            =================================================== -->
+
+            <button
+                id="loginButton"
+                type="submit"
+                class="btn btn-primary w-100">
+
+
+                <span id="buttonText">
+
+                    <i
+                        class="bi bi-box-arrow-in-right me-2">
+                    </i>
+
+                    Sign In
+
+                </span>
+
+
+                <span
+                    id="loadingSpinner"
+                    class="spinner-border spinner-border-sm d-none"
+                    role="status"
+                    aria-hidden="true">
+
+                </span>
+
+
+            </button>
+
+
+        </form>
+
+
+
+        <!-- ==================================================
+             REGISTRATION
+        =================================================== -->
+
+        <div class="text-center mt-4">
+
+
+            <p class="text-muted mb-2">
+
+                Don't have an LDIMS account?
+
+            </p>
+
+
+            <a
+                href="https://forms.gle/cVuLqYdvVpzAVzGJ8"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn btn-outline-primary w-100">
+
+                <i class="bi bi-person-plus me-2"></i>
+
+                Create Employee Account
+
+            </a>
+
+
+            <small class="text-muted d-block mt-2">
+
+                New employees may register using
+                the official Employee Information Form.
+
+            </small>
+
+
+        </div>
+
+
+
+        <!-- ==================================================
+             FOOTER
+        =================================================== -->
+
+        <div class="login-footer">
+
+            Version 1.0
+
+            <br>
+
+            © 2026 National Bureau of Investigation
+
+            <br>
+
+            Learning &amp; Development Division
+
+        </div>
+
+
+    </div>
+
+
+</main>
+
+
+
+<!-- ==========================================================
+     CORE SCRIPTS
+========================================================== -->
+
+<script src="assets/js/config.js"></script>
+
+<script src="assets/js/api.js"></script>
+
+<script src="assets/js/session.js"></script>
+
+<script src="assets/js/utils.js"></script>
+
+
+
+<!-- ==========================================================
+     PAGE SCRIPT
+========================================================== -->
+
+<script src="assets/js/pages/login.js"></script>
+
+
+
+<!-- ==========================================================
+     BOOTSTRAP
+========================================================== -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
+</body>
+
+</html>

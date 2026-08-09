@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Employees | LDIMS</title>
+
+    <!-- Bootstrap -->
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+
+    <!-- Global CSS -->
+
+    <link rel="stylesheet"
+          href="assets/css/style.css">
+
+</head>
+
+<body>
+
+<div class="dashboard-layout">
+
+    <!-- Sidebar -->
+
+    <aside class="sidebar">
+
+        <div class="sidebar-brand">
+
+            <img
+                src="assets/images/Logo.png"
+                class="sidebar-logo"
+                alt="NBI Logo">
+
+            <h4>LDIMS</h4>
+
+        </div>
+
+        <ul class="sidebar-menu">
+
+            <li>
+                <a href="dashboard.html">
+                    <i class="bi bi-speedometer2"></i>
+                    Dashboard
+                </a>
+            </li>
+
+            <li>
+                <a href="profile.html">
+                    <i class="bi bi-person-circle"></i>
+                    My Profile
+                </a>
+            </li>
+
+            <li>
+                <a href="employee.html" class="active">
+                    <i class="bi bi-people-fill"></i>
+                    Employees
+                </a>
+            </li>
+
+            <li>
+                <a href="#">
+                    <i class="bi bi-mortarboard-fill"></i>
+                    Training
+                </a>
+            </li>
+
+            <li>
+                <a href="#">
+                    <i class="bi bi-file-earmark-bar-graph"></i>
+                    Reports
+                </a>
+            </li>
+
+        </ul>
+
+    </aside>
+
+    <!-- Main -->
+
+    <main class="main-content">
+
+        <!-- Topbar -->
+
+        <div class="topbar">
+
+            <div>
+
+                <h3>Employee Management</h3>
+
+                <small>
+                    Manage employee records and information.
+                </small>
+
+            </div>
+
+            <button
+                class="btn btn-primary"
+                id="btnAddEmployee">
+
+                <i class="bi bi-plus-circle"></i>
+
+                Add Employee
+
+            </button>
+
+        </div>
+
+        <!-- Toolbar -->
+
+        <div class="dashboard-card mb-4">
+
+            <div class="row g-3">
+
+                <div class="col-lg-5">
+
+                    <input
+                        type="text"
+                        id="searchEmployee"
+                        class="form-control"
+                        placeholder="Search Employee ID or Name">
+
+                </div>
+
+                <div class="col-lg-3">
+
+                    <select
+                        id="statusFilter"
+                        class="form-select">
+
+                        <option value="">All Status</option>
+                        <option>Active</option>
+                        <option>Inactive</option>
+
+                    </select>
+
+                </div>
+
+                <div class="col-lg-4 text-lg-end">
+
+                    <button
+                        class="btn btn-outline-primary"
+                        id="btnRefresh">
+
+                        <i class="bi bi-arrow-clockwise"></i>
+
+                        Refresh
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Employee Table -->
+
+        <div class="dashboard-card">
+
+            <div class="table-responsive">
+
+                <table class="table align-middle mb-0">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Employee ID</th>
+
+                            <th>Full Name</th>
+
+                            <th>Position</th>
+
+                            <th>Division</th>
+
+                            <th>Status</th>
+
+                            <th width="160">Actions</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="employeeTable">
+
+                        <tr>
+
+                            <td colspan="6" class="text-center py-5">
+
+                                No employee records found.
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="assets/js/config.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/session.js"></script>
+
+<script src="assets/js/pages/employee.js"></script>
+
+</body>
+</html>

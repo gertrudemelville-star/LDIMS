@@ -1,0 +1,35 @@
+# ==========================================================
+# LDIMS - Git Ignore
+# ==========================================================
+
+# Google Apps Script / Backend
+backend/
+
+# Local development
+.vscode/
+*.log
+
+# Operating system files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary files
+*.tmp
+*.temp
+
+# Environment / secret files
+.env
+.env.*
+*.key
+*.pem
+
+# Local test files
+test/
+tests/
+
+# Node / package files if added later
+node_modules/
+
+# Prototype / development page
+prototype.html

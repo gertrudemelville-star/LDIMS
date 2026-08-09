@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Edit Profile | LDIMS</title>
+
+    <!-- Bootstrap -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+        rel="stylesheet">
+
+    <!-- LDIMS Global CSS -->
+    <link
+        rel="stylesheet"
+        href="../assets/css/style.css">
+
+</head>
+
+
+<body>
+
+
+<!-- ==========================================================
+     NAVBAR
+========================================================== -->
+
+<div id="navbar"></div>
+
+
+
+<!-- ==========================================================
+     PAGE LAYOUT
+========================================================== -->
+
+<div class="ldims-layout">
+
+
+    <!-- ======================================================
+         SIDEBAR
+    ======================================================= -->
+
+    <aside id="sidebar"></aside>
+
+
+
+    <!-- ======================================================
+         MAIN CONTENT
+    ======================================================= -->
+
+    <main class="ldims-content">
+
+
+        <!-- ==================================================
+             PAGE HEADER
+        =================================================== -->
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+
+            <div>
+
+                <h2 class="page-title mb-1">
+                    Edit Profile
+                </h2>
+
+                <p class="text-muted mb-0">
+                    Update your personal information.
+                </p>
+
+            </div>
+
+
+            <a
+                href="profile.html"
+                class="btn btn-outline-primary">
+
+                <i class="bi bi-arrow-left"></i>
+                Back to Profile
+
+            </a>
+
+        </div>
+
+
+
+        <!-- ==================================================
+             ALERT AREA
+        =================================================== -->
+
+        <div
+            id="alertMessage"
+            class="mb-3">
+        </div>
+
+
+
+        <!-- ==================================================
+             PROFILE FORM
+        =================================================== -->
+
+        <form id="editProfileForm">
+
+
+            <!-- ==================================================
+                 ACCOUNT / IDENTIFICATION
+            =================================================== -->
+
+            <div class="profile-card mb-4">
+
+                <h5 class="profile-section-title">
+
+                    Employee Identification
+
+                </h5>
+
+
+                <div class="profile-grid">
+
+
+                    <!-- Employee ID -->
+
+                    <div class="profile-field">
+
+                        <label for="employeeID">
+                            Employee ID
+                        </label>
+
+                        <input
+                            type="text"
+                            id="employeeID"
+                            class="form-control"
+                            readonly>
+
+                        <small class="text-muted">
+                            Employee ID cannot be changed.
+                        </small>
+
+                    </div>
+
+
+                    <!-- Email -->
+
+                    <div class="profile-field">
+
+                        <label for="email">
+                            Email Address
+                        </label>
+
+                        <input
+                            type="email"
+                            id="email"
+                            class="form-control"
+                            autocomplete="email"
+                            required>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ==================================================
+                 PERSONAL INFORMATION
+            =================================================== -->
+
+            <div class="profile-card mb-4">
+
+                <h5 class="profile-section-title">
+
+                    Personal Information
+
+                </h5>
+
+
+                <div class="profile-grid">
+
+
+                    <!-- Last Name -->
+
+                    <div class="profile-field">
+
+                        <label for="lastName">
+                            Last Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="lastName"
+                            class="form-control"
+                            required>
+
+                    </div>
+
+
+                    <!-- First Name -->
+
+                    <div class="profile-field">
+
+                        <label for="firstName">
+                            First Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="firstName"
+                            class="form-control"
+                            required>
+
+                    </div>
+
+
+                    <!-- Middle Name -->
+
+                    <div class="profile-field">
+
+                        <label for="middleName">
+                            Middle Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="middleName"
+                            class="form-control">
+
+                    </div>
+
+
+                    <!-- Name Extension -->
+
+                    <div class="profile-field">
+
+                        <label for="nameExtension">
+                            Name Extension
+                        </label>
+
+                        <input
+                            type="text"
+                            id="nameExtension"
+                            class="form-control"
+                            placeholder="Jr., Sr., III, etc.">
+
+                    </div>
+
+
+                    <!-- Sex -->
+
+                    <div class="profile-field">
+
+                        <label for="sex">
+                            Sex
+                        </label>
+
+                        <select
+                            id="sex"
+                            class="form-select"
+                            required>
+
+                            <option value="">
+                                Select Sex
+                            </option>
+
+                            <option value="MALE">
+                                Male
+                            </option>
+
+                            <option value="FEMALE">
+                                Female
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Date of Birth -->
+
+                    <div class="profile-field">
+
+                        <label for="dateOfBirth">
+                            Date of Birth
+                        </label>
+
+                        <input
+                            type="date"
+                            id="dateOfBirth"
+                            class="form-control">
+
+                    </div>
+
+
+                    <!-- Civil Status -->
+
+                    <div class="profile-field">
+
+                        <label for="civilStatus">
+                            Civil Status
+                        </label>
+
+                        <select
+                            id="civilStatus"
+                            class="form-select"
+                            required>
+
+                            <option value="">
+                                Select Civil Status
+                            </option>
+
+                            <option value="Single">
+                                Single
+                            </option>
+
+                            <option value="Married">
+                                Married
+                            </option>
+
+                            <option value="Widowed">
+                                Widowed
+                            </option>
+
+                            <option value="Separated">
+                                Separated
+                            </option>
+
+                            <option value="Divorced">
+                                Divorced
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Contact Number -->
+
+                    <div class="profile-field">
+
+                        <label for="contactNumber">
+                            Contact Number
+                        </label>
+
+                        <input
+                            type="tel"
+                            id="contactNumber"
+                            class="form-control"
+                            autocomplete="tel">
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ==================================================
+                 CURRENT DUTIES
+            =================================================== -->
+
+            <div class="profile-card mb-4">
+
+                <h5 class="profile-section-title">
+
+                    Current Duties and Responsibilities
+
+                </h5>
+
+
+                <div class="profile-field">
+
+                    <label for="currentDuties">
+                        Current Duties and Responsibilities
+                    </label>
+
+                    <textarea
+                        id="currentDuties"
+                        class="form-control"
+                        rows="5"
+                        placeholder="Describe your current duties and responsibilities."></textarea>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ==================================================
+                 ORGANIZATIONAL INFORMATION
+                 READ ONLY
+            =================================================== -->
+
+            <div class="profile-card mb-4">
+
+                <h5 class="profile-section-title">
+
+                    Organizational Information
+
+                </h5>
+
+
+                <div class="profile-grid">
+
+
+                    <!-- Position -->
+
+                    <div class="profile-field">
+
+                        <label for="position">
+                            Position
+                        </label>
+
+                        <input
+                            type="text"
+                            id="position"
+                            class="form-control"
+                            readonly>
+
+                    </div>
+
+
+                    <!-- Designation -->
+
+                    <div class="profile-field">
+
+                        <label for="designation">
+                            Designation
+                        </label>
+
+                        <input
+                            type="text"
+                            id="designation"
+                            class="form-control"
+                            readonly>
+
+                    </div>
+
+
+                    <!-- Place of Assignment -->
+
+                    <div class="profile-field">
+
+                        <label for="placeOfAssignment">
+                            Place of Assignment
+                        </label>
+
+                        <input
+                            type="text"
+                            id="placeOfAssignment"
+                            class="form-control"
+                            readonly>
+
+                    </div>
+
+
+                    <!-- Immediate Supervisor -->
+
+                    <div class="profile-field">
+
+                        <label for="immediateSupervisor">
+                            Immediate Supervisor
+                        </label>
+
+                        <input
+                            type="text"
+                            id="immediateSupervisor"
+                            class="form-control"
+                            readonly>
+
+                    </div>
+
+
+                    <!-- Length in Service -->
+
+                    <div class="profile-field">
+
+                        <label for="lengthInService">
+                            Length in Service (Years)
+                        </label>
+
+                        <input
+                            type="text"
+                            id="lengthInService"
+                            class="form-control"
+                            readonly>
+
+                    </div>
+
+
+                    <!-- Years in Current Position -->
+
+                    <div class="profile-field">
+
+                        <label for="yearsInCurrentPosition">
+                            Years in Current Position
+                        </label>
+
+                        <input
+                            type="text"
+                            id="yearsInCurrentPosition"
+                            class="form-control"
+                            readonly>
+
+                    </div>
+
+                </div>
+
+
+                <div class="alert alert-info mt-4 mb-0">
+
+                    <i class="bi bi-info-circle"></i>
+
+                    Organizational information is maintained by
+                    authorized personnel. Use
+                    <strong>Request Organizational Update</strong>
+                    if any of these details need correction.
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ==================================================
+                 ACTIONS
+            =================================================== -->
+
+            <div class="profile-actions">
+
+
+                <a
+                    href="profile.html"
+                    class="btn btn-outline-secondary">
+
+                    Cancel
+
+                </a>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                    id="btnSaveProfile">
+
+                    <span id="saveButtonText">
+
+                        <i class="bi bi-save"></i>
+                        Save Changes
+
+                    </span>
+
+
+                    <span
+                        id="saveSpinner"
+                        class="d-none">
+
+                        <span
+                            class="spinner-border spinner-border-sm"
+                            role="status"
+                            aria-hidden="true">
+                        </span>
+
+                        Saving...
+
+                    </span>
+
+                </button>
+
+            </div>
+
+
+        </form>
+
+    </main>
+
+</div>
+
+
+
+<!-- ==========================================================
+     FOOTER
+========================================================== -->
+
+<div id="footer"></div>
+
+
+
+<!-- ==========================================================
+     BOOTSTRAP
+========================================================== -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
+
+<!-- ==========================================================
+     CORE SCRIPTS
+========================================================== -->
+
+<script src="../assets/js/config.js"></script>
+
+<script src="../assets/js/api.js"></script>
+
+<script src="../assets/js/session.js"></script>
+
+<script src="../assets/js/utils.js"></script>
+
+
+
+<!-- ==========================================================
+     SHARED COMPONENTS
+========================================================== -->
+
+<script src="../assets/js/components/loader.js"></script>
+
+<script src="../assets/js/components/header.js"></script>
+
+<script src="../assets/js/components/sidebar.js"></script>
+
+<script src="../assets/js/components/footer.js"></script>
+
+
+
+<!-- ==========================================================
+     PAGE SCRIPT
+========================================================== -->
+
+<script src="../assets/js/pages/edit-profile.js"></script>
+
+
+</body>
+
+</html>

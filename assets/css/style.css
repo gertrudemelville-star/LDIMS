@@ -1,0 +1,1641 @@
+/* ==========================================================
+   LDIMS - Learning & Development Information Management System
+   National Bureau of Investigation
+   Enterprise Theme
+========================================================== */
+
+:root{
+    --primary:#6A1B9A;
+    --primary-dark:#4A148C;
+    --secondary:#8E24AA;
+
+    --success:#2E7D32;
+    --warning:#F9A825;
+    --danger:#C62828;
+    --info:#1565C0;
+
+    --background:#F5F6FA;
+    --white:#FFFFFF;
+
+    --text:#2C2C2C;
+    --border:#E5E7EB;
+
+    --sidebar-width:260px;
+    --header-height:70px;
+
+    --shadow:0 4px 20px rgba(0,0,0,.08);
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+
+    font-family:"Bookman Old Style", serif;
+
+    background:var(--background);
+
+    color:var(--text);
+
+}
+
+
+/* ==========================================================
+   HEADER
+========================================================== */
+
+.header{
+
+    height:var(--header-height);
+
+    background:#fff;
+
+    box-shadow:var(--shadow);
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:0 25px;
+
+    position:fixed;
+
+    top:0;
+
+    left:0;
+
+    right:0;
+
+    z-index:1000;
+
+}
+
+.header-title{
+
+    font-size:22px;
+
+    font-weight:bold;
+
+    color:var(--primary);
+
+}
+
+
+/* ==========================================================
+   SIDEBAR
+========================================================== */
+
+.sidebar{
+
+    position:fixed;
+
+    top:var(--header-height);
+
+    left:0;
+
+    width:var(--sidebar-width);
+
+    height:calc(100vh - var(--header-height));
+
+    background:linear-gradient(
+        180deg,
+        var(--primary),
+        var(--primary-dark)
+    );
+
+    color:white;
+
+    overflow:auto;
+
+}
+
+.sidebar ul{
+
+    list-style:none;
+
+    padding:20px;
+
+}
+
+.sidebar li{
+
+    margin-bottom:10px;
+
+}
+
+.sidebar a{
+
+    color:white;
+
+    text-decoration:none;
+
+    display:block;
+
+    padding:12px 15px;
+
+    border-radius:8px;
+
+    transition:.3s;
+
+}
+
+.sidebar a:hover{
+
+    background:rgba(255,255,255,.15);
+
+}
+
+
+/* ==========================================================
+   CONTENT
+========================================================== */
+
+.content{
+
+    margin-left:var(--sidebar-width);
+
+    margin-top:var(--header-height);
+
+    padding:30px;
+
+}
+
+
+/* ==========================================================
+   CARDS
+========================================================== */
+
+.card{
+
+    background:white;
+
+    border:none;
+
+    border-radius:12px;
+
+    box-shadow:var(--shadow);
+
+    transition:.3s;
+
+}
+
+.card:hover{
+
+    transform:translateY(-3px);
+
+}
+
+.card-title{
+
+    color:var(--primary);
+
+    font-weight:bold;
+
+}
+
+
+/* ==========================================================
+   BUTTONS
+========================================================== */
+
+.btn-primary{
+
+    background:var(--primary);
+
+    border:none;
+
+}
+
+.btn-primary:hover{
+
+    background:var(--primary-dark);
+
+}
+
+
+/* ==========================================================
+   TABLES
+========================================================== */
+
+.table{
+
+    background:white;
+
+    border-radius:10px;
+
+    overflow:hidden;
+
+}
+
+.table thead{
+
+    background:var(--primary);
+
+    color:white;
+
+}
+
+
+/* ==========================================================
+   FORM
+========================================================== */
+
+.form-control{
+
+    border-radius:8px;
+
+}
+
+.form-select{
+
+    border-radius:8px;
+
+}
+
+
+/* ==========================================================
+   FOOTER
+========================================================== */
+
+.footer{
+
+    margin-left:var(--sidebar-width);
+
+    padding:20px;
+
+    text-align:center;
+
+    color:#666;
+
+}
+
+
+/* ==========================================================
+   DASHBOARD STAT CARD
+========================================================== */
+
+.stat-card{
+
+    padding:25px;
+
+    text-align:center;
+
+}
+
+.stat-card h2{
+
+    color:var(--primary);
+
+    font-size:34px;
+
+}
+
+.stat-card p{
+
+    margin-top:10px;
+
+}
+
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media(max-width:992px){
+
+    .sidebar{
+
+        width:220px;
+
+    }
+
+    .content{
+
+        margin-left:220px;
+
+    }
+
+}
+
+@media(max-width:768px){
+
+    .sidebar{
+
+        display:none;
+
+    }
+
+    .content{
+
+        margin-left:0;
+
+    }
+
+    .footer{
+
+        margin-left:0;
+
+    }
+
+}
+
+
+/* ==========================================================
+   PROFILE PAGE - Enterprise UI
+========================================================== */
+
+.page-title{
+
+    font-family:"Bookman Old Style", serif;
+
+    color:var(--primary);
+
+    font-weight:700;
+
+}
+
+.profile-header{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:30px;
+
+    padding:25px;
+
+    margin-bottom:25px;
+
+    background:#fff;
+
+    border:1px solid #ddd;
+
+    border-radius:12px;
+
+    box-shadow:0 2px 8px rgba(0,0,0,.05);
+
+}
+
+.profile-photo img{
+
+    width:140px;
+
+    height:140px;
+
+    object-fit:cover;
+
+    border-radius:50%;
+
+    border:5px solid #6A1B9A;
+
+}
+
+.profile-summary h3{
+
+    margin:0;
+
+    font-size:1.9rem;
+
+    font-family:"Bookman Old Style", serif;
+
+    color:#333;
+
+}
+
+.profile-summary p{
+
+    margin-top:8px;
+
+    font-size:1rem;
+
+}
+
+.profile-card{
+
+    background:#fff;
+
+    border-radius:12px;
+
+    border:1px solid #ddd;
+
+    margin-bottom:25px;
+
+    padding:25px;
+
+    box-shadow:0 2px 8px rgba(0,0,0,.05);
+
+}
+
+.profile-section-title{
+
+    color:#6A1B9A;
+
+    margin-bottom:20px;
+
+    font-family:"Bookman Old Style", serif;
+
+    font-weight:bold;
+
+    border-left:6px solid #6A1B9A;
+
+    padding-left:12px;
+
+}
+
+.profile-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+
+    gap:20px;
+
+}
+
+.profile-field{
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+.profile-field label{
+
+    font-weight:600;
+
+    color:#555;
+
+    margin-bottom:8px;
+
+}
+
+.profile-value{
+
+    min-height:48px;
+
+    padding:12px 15px;
+
+    border-radius:8px;
+
+    border:1px solid #D9D9D9;
+
+    display:flex;
+
+    align-items:center;
+
+    font-size:15px;
+
+    color:#333;
+
+}
+
+.readonly-field{
+
+    background:#F5F5F5;
+
+}
+
+.profile-actions{
+
+    display:flex;
+
+    gap:15px;
+
+    margin-top:35px;
+
+    flex-wrap:wrap;
+
+}
+
+.profile-actions .btn{
+
+    min-width:240px;
+
+    padding:11px 24px;
+
+    font-weight:600;
+
+}
+
+
+/* ==========================================================
+   PROFILE RESPONSIVE
+========================================================== */
+
+@media(max-width:768px){
+
+    .profile-header{
+
+        flex-direction:column;
+
+        text-align:center;
+
+    }
+
+    .profile-photo img{
+
+        width:120px;
+
+        height:120px;
+
+    }
+
+    .profile-summary h3{
+
+        font-size:1.5rem;
+
+    }
+
+    .profile-actions{
+
+        flex-direction:column;
+
+    }
+
+    .profile-actions .btn{
+
+        width:100%;
+
+    }
+
+}
+
+
+/* ==========================================================
+   SHARED LAYOUT COMPONENTS
+========================================================== */
+
+.sidebar{
+
+    width:260px;
+
+    min-height:100vh;
+
+    background:#ffffff;
+
+    border-right:1px solid #dee2e6;
+
+    padding:20px 0;
+
+}
+
+.sidebar-title{
+
+    padding:0 20px;
+
+    margin-bottom:15px;
+
+    font-weight:bold;
+
+    color:var(--primary);
+
+    font-family:"Bookman Old Style", serif;
+
+}
+
+.sidebar-menu{
+
+    list-style:none;
+
+    padding:0;
+
+    margin:0;
+
+}
+
+.sidebar-menu li{
+
+    margin:2px 0;
+
+}
+
+.sidebar-menu a{
+
+    display:block;
+
+    padding:12px 20px;
+
+    color:#444;
+
+    text-decoration:none;
+
+    transition:.2s;
+
+}
+
+.sidebar-menu a:hover{
+
+    background:#F3E5F5;
+
+    color:var(--primary);
+
+}
+
+.sidebar-header{
+
+    padding:15px 20px 8px;
+
+    font-size:12px;
+
+    text-transform:uppercase;
+
+    color:#999;
+
+    font-weight:bold;
+
+}
+
+.ldims-footer{
+
+    margin-top:40px;
+
+    padding:20px;
+
+    background:#fff;
+
+    border-top:1px solid #ddd;
+
+    color:#666;
+
+    font-size:14px;
+
+}
+
+
+/* ==========================================================
+   LOGIN PAGE - ENTERPRISE UI
+========================================================== */
+
+/*
+   IMPORTANT FIX
+   ----------------------------------------------------------
+   index.html does not currently contain a .login-layout
+   wrapper. Therefore we apply the 2-column layout directly
+   to the page body whenever .login-brand exists.
+*/
+
+body:has(.login-brand){
+
+    min-height:100vh;
+
+    display:grid;
+
+    grid-template-columns:420px 1fr;
+
+    background:#f5f6fa;
+
+}
+
+
+/* LEFT BRAND PANEL */
+
+.login-brand{
+
+    min-height:100vh;
+
+    background:linear-gradient(
+        180deg,
+        #4B2E83,
+        #3B2467
+    );
+
+    color:#fff;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:flex-start;
+
+    padding:60px;
+
+}
+
+
+/* LOGO */
+
+.brand-logo{
+
+    width:350px;
+
+    max-width:100%;
+
+    margin-bottom:30px;
+
+}
+
+
+/* TITLE */
+
+.login-brand h1{
+
+    font-size:42px;
+
+    font-weight:700;
+
+    margin-bottom:12px;
+
+}
+
+
+/* SUBTITLE */
+
+.login-brand h2{
+
+    font-size:24px;
+
+    line-height:1.4;
+
+    margin-bottom:24px;
+
+}
+
+
+/* DESCRIPTION */
+
+.login-brand p{
+
+    font-size:15px;
+
+    line-height:1.8;
+
+    opacity:.95;
+
+    max-width:320px;
+
+}
+
+
+/* BRAND FOOTER */
+
+.brand-footer{
+
+    margin-top:auto;
+
+    opacity:.8;
+
+    font-size:14px;
+
+}
+
+
+/* RIGHT LOGIN PANEL */
+
+.login-panel{
+
+    min-height:100vh;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    padding:40px;
+
+}
+
+
+/* LOGIN CARD */
+
+.login-container{
+
+    width:100%;
+
+    max-width:460px;
+
+    background:#fff;
+
+    border-radius:16px;
+
+    padding:40px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+
+}
+
+
+/* LOGIN HEADER */
+
+.login-header h3{
+
+    font-size:32px;
+
+    color:#4B2E83;
+
+    margin-bottom:8px;
+
+}
+
+.login-header p{
+
+    color:#666;
+
+    margin-bottom:30px;
+
+}
+
+
+/* LOGIN FOOTER */
+
+.login-footer{
+
+    margin-top:40px;
+
+    text-align:center;
+
+    font-size:13px;
+
+    color:#777;
+
+}
+
+
+/* FORGOT PASSWORD */
+
+.forgot-link{
+
+    color:#4B2E83;
+
+    text-decoration:none;
+
+}
+
+.forgot-link:hover{
+
+    text-decoration:underline;
+
+}
+
+
+/* LOGIN BUTTON */
+
+#loginButton{
+
+    height:48px;
+
+    font-weight:600;
+
+}
+
+
+/* CREATE ACCOUNT BUTTON */
+
+.login-container .btn-outline-primary{
+
+    color:#4B2E83;
+
+    border-color:#4B2E83;
+
+    font-weight:600;
+
+}
+
+.login-container .btn-outline-primary:hover{
+
+    background:#4B2E83;
+
+    border-color:#4B2E83;
+
+    color:#fff;
+
+}
+
+
+/* ==========================================================
+   LOGIN RESPONSIVE
+========================================================== */
+
+@media(max-width:992px){
+
+    body:has(.login-brand){
+
+        display:grid;
+
+        grid-template-columns:1fr;
+
+    }
+
+    .login-brand{
+
+        min-height:auto;
+
+        text-align:center;
+
+        align-items:center;
+
+        padding:50px 30px;
+
+    }
+
+    .login-brand p{
+
+        max-width:500px;
+
+    }
+
+    .brand-logo{
+
+        width:300px;
+
+    }
+
+    .brand-footer{
+
+        margin-top:30px;
+
+    }
+
+    .login-panel{
+
+        min-height:auto;
+
+        padding:40px 20px 60px;
+
+    }
+
+}
+
+
+@media(max-width:768px){
+
+    body:has(.login-brand){
+
+        display:block;
+
+    }
+
+    .login-brand{
+
+        min-height:auto;
+
+        padding:40px 25px;
+
+    }
+
+    .brand-logo{
+
+        width:240px;
+
+        margin-bottom:20px;
+
+    }
+
+    .login-brand h1{
+
+        font-size:34px;
+
+    }
+
+    .login-brand h2{
+
+        font-size:20px;
+
+    }
+
+    .login-brand p{
+
+        font-size:14px;
+
+        line-height:1.6;
+
+    }
+
+    .login-panel{
+
+        padding:20px;
+
+    }
+
+    .login-container{
+
+        padding:30px 24px;
+
+        border-radius:12px;
+
+    }
+
+}
+
+
+/* ==========================================================
+   DASHBOARD PAGE - ENTERPRISE UI
+========================================================== */
+
+.dashboard-layout{
+
+    display:flex;
+
+    min-height:100vh;
+
+    background:#F5F6FA;
+
+}
+
+
+/* SIDEBAR */
+
+.sidebar{
+
+    width:260px;
+
+    background:linear-gradient(
+        180deg,
+        #4B2E83,
+        #38205F
+    );
+
+    color:#fff;
+
+    display:flex;
+
+    flex-direction:column;
+
+    position:fixed;
+
+    top:0;
+
+    left:0;
+
+    bottom:0;
+
+    overflow-y:auto;
+
+    box-shadow:4px 0 20px rgba(0,0,0,.08);
+
+}
+
+.sidebar-brand{
+
+    text-align:center;
+
+    padding:30px 20px;
+
+    border-bottom:1px solid rgba(255,255,255,.15);
+
+}
+
+.sidebar-logo{
+
+    width:120px;
+
+    margin-bottom:15px;
+
+}
+
+.sidebar-brand h4{
+
+    color:#fff;
+
+    font-weight:700;
+
+    margin:0;
+
+}
+
+.sidebar-menu{
+
+    list-style:none;
+
+    padding:20px 0;
+
+    margin:0;
+
+}
+
+.sidebar-menu li{
+
+    margin:4px 0;
+
+}
+
+.sidebar-menu a{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    color:#fff;
+
+    text-decoration:none;
+
+    padding:14px 24px;
+
+    transition:.2s;
+
+}
+
+.sidebar-menu a:hover{
+
+    background:rgba(255,255,255,.12);
+
+}
+
+.sidebar-menu a.active{
+
+    background:#fff;
+
+    color:#4B2E83;
+
+    font-weight:600;
+
+}
+
+.sidebar-menu i{
+
+    font-size:18px;
+
+}
+
+
+/* MAIN */
+
+.main-content{
+
+    margin-left:260px;
+
+    flex:1;
+
+    padding:30px;
+
+}
+
+
+/* TOPBAR */
+
+.topbar{
+
+    height:72px;
+
+    background:#fff;
+
+    border-radius:14px;
+
+    padding:0 25px;
+
+    margin-bottom:30px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    box-shadow:0 4px 18px rgba(0,0,0,.06);
+
+}
+
+.topbar h3{
+
+    margin:0;
+
+    color:#4B2E83;
+
+}
+
+.topbar small{
+
+    color:#777;
+
+}
+
+
+/* DASHBOARD CARDS */
+
+.dashboard-card{
+
+    background:#fff;
+
+    border-radius:14px;
+
+    padding:24px;
+
+    box-shadow:0 6px 18px rgba(0,0,0,.05);
+
+    transition:.2s;
+
+}
+
+.dashboard-card:hover{
+
+    transform:translateY(-4px);
+
+}
+
+.dashboard-card h6{
+
+    color:#777;
+
+    margin-bottom:10px;
+
+}
+
+.dashboard-card h2{
+
+    color:#4B2E83;
+
+    font-weight:700;
+
+    margin:0;
+
+}
+
+
+/* PROFILE INFORMATION */
+
+.card label{
+
+    color:#666;
+
+    display:block;
+
+    margin-bottom:6px;
+
+}
+
+#fullname,
+#position,
+#assignment,
+#role,
+#email{
+
+    background:#F8F9FC;
+
+    border:1px solid #E5E7EB;
+
+    border-radius:10px;
+
+    padding:12px 14px;
+
+    min-height:46px;
+
+    display:flex;
+
+    align-items:center;
+
+}
+
+
+/* DASHBOARD RESPONSIVE */
+
+@media(max-width:992px){
+
+    .sidebar{
+
+        width:220px;
+
+    }
+
+    .main-content{
+
+        margin-left:220px;
+
+    }
+
+}
+
+@media(max-width:768px){
+
+    .dashboard-layout{
+
+        display:block;
+
+    }
+
+    .sidebar{
+
+        position:relative;
+
+        width:100%;
+
+        height:auto;
+
+    }
+
+    .main-content{
+
+        margin-left:0;
+
+        padding:20px;
+
+    }
+
+    .topbar{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+        height:auto;
+
+        gap:10px;
+
+        padding:20px;
+
+    }
+
+}
+
+
+/* ==========================================================
+   PROFILE PAGE V2 - ENTERPRISE ENHANCEMENT
+========================================================== */
+
+.ldims-layout{
+
+    display:flex;
+
+    min-height:100vh;
+
+    background:#F5F6FA;
+
+}
+
+.ldims-content{
+
+    flex:1;
+
+    padding:30px;
+
+    margin-left:260px;
+
+}
+
+
+/* PAGE HEADER */
+
+.page-title{
+
+    color:#4B2E83;
+
+    font-size:2rem;
+
+    font-weight:700;
+
+    margin-bottom:6px;
+
+}
+
+
+/* PROFILE HEADER */
+
+.profile-header{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:30px;
+
+    padding:30px;
+
+    background:#FFFFFF;
+
+    border-radius:16px;
+
+    border:1px solid #ECECEC;
+
+    box-shadow:0 8px 24px rgba(0,0,0,.05);
+
+    margin-bottom:30px;
+
+}
+
+.profile-photo img{
+
+    width:160px;
+
+    height:160px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+    border:5px solid #4B2E83;
+
+    background:#fff;
+
+}
+
+.profile-summary h3{
+
+    font-size:2rem;
+
+    margin-bottom:10px;
+
+    color:#222;
+
+}
+
+.profile-summary p{
+
+    font-size:1rem;
+
+    color:#666;
+
+}
+
+#employmentStatus{
+
+    font-size:.9rem;
+
+    padding:8px 16px;
+
+    border-radius:50px;
+
+}
+
+
+/* PROFILE CARDS */
+
+.profile-card{
+
+    background:#fff;
+
+    border-radius:16px;
+
+    border:1px solid #ECECEC;
+
+    box-shadow:0 8px 24px rgba(0,0,0,.05);
+
+    margin-bottom:24px;
+
+    padding:28px;
+
+}
+
+.profile-section-title{
+
+    font-size:1.2rem;
+
+    font-weight:700;
+
+    color:#4B2E83;
+
+    border-left:5px solid #4B2E83;
+
+    padding-left:14px;
+
+    margin-bottom:24px;
+
+}
+
+
+/* PROFILE GRID */
+
+.profile-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(
+        auto-fit,
+        minmax(280px,1fr)
+    );
+
+    gap:22px;
+
+}
+
+.profile-field{
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+.profile-field label{
+
+    font-size:.9rem;
+
+    color:#666;
+
+    font-weight:600;
+
+    margin-bottom:8px;
+
+}
+
+.profile-value{
+
+    background:#F8F9FC;
+
+    border:1px solid #E5E7EB;
+
+    border-radius:10px;
+
+    padding:13px 16px;
+
+    min-height:50px;
+
+    display:flex;
+
+    align-items:center;
+
+    color:#222;
+
+    transition:.2s;
+
+}
+
+.profile-value:hover{
+
+    border-color:#4B2E83;
+
+}
+
+
+/* PROFILE BUTTONS */
+
+.profile-actions{
+
+    display:flex;
+
+    gap:16px;
+
+    margin-top:30px;
+
+    flex-wrap:wrap;
+
+}
+
+.profile-actions .btn{
+
+    min-width:240px;
+
+    height:48px;
+
+    font-weight:600;
+
+    border-radius:10px;
+
+}
+
+
+/* PROFILE RESPONSIVE */
+
+@media(max-width:992px){
+
+    .ldims-content{
+
+        margin-left:220px;
+
+    }
+
+}
+
+@media(max-width:768px){
+
+    .ldims-layout{
+
+        display:block;
+
+    }
+
+    .ldims-content{
+
+        margin-left:0;
+
+        padding:20px;
+
+    }
+
+    .profile-header{
+
+        flex-direction:column;
+
+        text-align:center;
+
+    }
+
+    .profile-photo img{
+
+        width:140px;
+
+        height:140px;
+
+    }
+
+    .profile-actions{
+
+        flex-direction:column;
+
+    }
+
+    .profile-actions .btn{
+
+        width:100%;
+
+    }
+
+}
