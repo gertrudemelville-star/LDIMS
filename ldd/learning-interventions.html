@@ -1,0 +1,3276 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Learning Interventions | LDIMS</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+    <link
+        rel="stylesheet"
+        href="../assets/css/style.css">
+
+    <style>
+
+        .competency-matrix th,
+        .competency-matrix td {
+            vertical-align: top;
+        }
+
+        .competency-cell {
+            min-height: 90px;
+        }
+
+        .competency-item {
+            display: block;
+            padding: 8px 10px;
+            margin-bottom: 6px;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            background: #fff;
+            cursor: pointer;
+            transition: 0.15s ease;
+        }
+
+        .competency-item:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .competency-code {
+            font-weight: 700;
+            margin-right: 5px;
+        }
+
+        .priority-header {
+            width: 110px;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .action-card {
+            cursor: pointer;
+            transition: 0.15s ease;
+            height: 100%;
+        }
+
+        .action-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 14px rgba(0,0,0,0.10) !important;
+        }
+
+        .action-icon {
+            font-size: 1.6rem;
+        }
+
+        .matrix-empty {
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        .detail-table th {
+            white-space: nowrap;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- ==========================================================
+     HEADER
+========================================================== -->
+
+<header class="header">
+
+    <div class="header-title">
+        LDIMS
+    </div>
+
+    <div>
+
+        <span class="me-4">
+            🔔
+        </span>
+
+        <strong id="headerRole">
+            L&D Officer
+        </strong>
+
+    </div>
+
+</header>
+
+
+
+<!-- ==========================================================
+     SIDEBAR
+========================================================== -->
+
+<aside class="sidebar">
+
+    <ul>
+
+        <li>
+            <a href="dashboard.html">
+                🏠 Dashboard
+            </a>
+        </li>
+
+        <li>
+            <a href="employees.html">
+                👥 Employees
+            </a>
+        </li>
+
+        <li>
+            <a href="lna-monitoring.html">
+                📋 LNA Monitoring
+            </a>
+        </li>
+
+        <li>
+            <a href="training-monitoring.html">
+                🎓 Training Monitoring
+            </a>
+        </li>
+
+        <li>
+            <a href="learning-interventions.html"
+               class="active">
+                📚 Learning Interventions
+            </a>
+        </li>
+
+        <li>
+            <a href="reports.html">
+                📊 Reports
+            </a>
+        </li>
+
+        <li>
+            <a href="notifications.html">
+                🔔 Notifications
+            </a>
+        </li>
+
+        <li>
+            <a href="../index.html"
+               id="logoutLink">
+                🚪 Logout
+            </a>
+        </li>
+
+    </ul>
+
+</aside>
+
+
+
+<!-- ==========================================================
+     MAIN CONTENT
+========================================================== -->
+
+<main class="content">
+
+
+    <!-- ======================================================
+         PAGE HEADER
+    ======================================================= -->
+
+    <div class="d-flex
+                justify-content-between
+                align-items-start
+                flex-wrap
+                gap-3
+                mb-4">
+
+        <div>
+
+            <h2 class="mb-1">
+                Learning Interventions
+            </h2>
+
+            <p class="text-muted mb-0">
+                Competency needs identified through the Learning
+                Needs Analysis and areas requiring LDD action.
+            </p>
+
+        </div>
+
+
+        <button
+            type="button"
+            id="refreshButton"
+            class="btn btn-outline-secondary">
+
+            ↻ Refresh
+
+        </button>
+
+    </div>
+
+
+
+    <!-- ======================================================
+         ALERT
+    ======================================================= -->
+
+    <div id="alertMessage"></div>
+
+
+
+    <!-- ======================================================
+         COMPETENCY NEEDS MATRIX
+    ======================================================= -->
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-body">
+
+            <div class="mb-3">
+
+                <h5 class="mb-1">
+                    Competency Needs Matrix
+                </h5>
+
+                <p class="text-muted small mb-0">
+                    Competencies identified by priority and
+                    competency category. Click a competency to
+                    view the personnel requiring the competency.
+                </p>
+
+            </div>
+
+
+            <div class="table-responsive">
+
+                <table
+                    class="table table-bordered competency-matrix mb-0">
+
+                    <thead>
+
+                        <tr>
+
+                            <th class="priority-header">
+                                Priority
+                            </th>
+
+                            <th>
+                                Core
+                            </th>
+
+                            <th>
+                                Organizational
+                            </th>
+
+                            <th>
+                                Technical
+                            </th>
+
+                            <th>
+                                Leadership
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="matrixTableBody">
+
+                        <tr>
+
+                            <td
+                                colspan="5"
+                                class="text-center text-muted py-5">
+
+                                Loading competency needs...
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ======================================================
+         LDD PLANNING SNAPSHOT
+    ======================================================= -->
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-body">
+
+            <div class="mb-3">
+
+                <h5 class="mb-1">
+                    LDD Planning Snapshot
+                </h5>
+
+                <p class="text-muted small mb-0">
+                    High-level view of the current learning needs
+                    requiring LDD review and planning.
+                </p>
+
+            </div>
+
+
+            <div class="row g-3">
+
+
+                <div class="col-md-3">
+
+                    <div class="card border h-100">
+
+                        <div class="card-body">
+
+                            <div class="text-muted small">
+                                Personnel with Identified Needs
+                            </div>
+
+                            <div
+                                class="stat-number mt-2"
+                                id="totalNeeds">
+
+                                0
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-3">
+
+                    <div class="card border h-100">
+
+                        <div class="card-body">
+
+                            <div class="text-muted small">
+                                High Priority Needs
+                            </div>
+
+                            <div
+                                class="stat-number mt-2 text-danger"
+                                id="highNeeds">
+
+                                0
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-3">
+
+                    <div class="card border h-100">
+
+                        <div class="card-body">
+
+                            <div class="text-muted small">
+                                Common Competencies
+                            </div>
+
+                            <div
+                                class="stat-number mt-2"
+                                id="commonCompetencies">
+
+                                0
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-3">
+
+                    <div class="card border h-100">
+
+                        <div class="card-body">
+
+                            <div class="text-muted small">
+                                Divisions / Services Affected
+                            </div>
+
+                            <div
+                                class="stat-number mt-2"
+                                id="affectedAssignments">
+
+                                0
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ======================================================
+         LDD ACTION CENTER
+    ======================================================= -->
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-body">
+
+            <div class="mb-3">
+
+                <h5 class="mb-1">
+                    LDD Action Center
+                </h5>
+
+                <p class="text-muted small mb-0">
+                    Review learning needs and determine the
+                    appropriate development response.
+                </p>
+
+            </div>
+
+
+            <div class="row g-3">
+
+
+                <!-- HIGH PRIORITY -->
+
+                <div class="col-md-4">
+
+                    <div
+                        class="card action-card border shadow-sm"
+                        data-action="high">
+
+                        <div class="card-body">
+
+                            <div class="d-flex
+                                        justify-content-between">
+
+                                <div>
+
+                                    <div class="text-muted small">
+                                        Immediate Attention
+                                    </div>
+
+                                    <h6 class="mt-1 mb-1">
+                                        Review High-Priority Needs
+                                    </h6>
+
+                                </div>
+
+                                <div class="action-icon">
+                                    🔴
+                                </div>
+
+                            </div>
+
+                            <div
+                                class="stat-number mt-3"
+                                id="actionHigh">
+
+                                0
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- PROGRAM MATCHING -->
+
+                <div class="col-md-4">
+
+                    <div
+                        class="card action-card border shadow-sm"
+                        data-action="program">
+
+                        <div class="card-body">
+
+                            <div class="d-flex
+                                        justify-content-between">
+
+                                <div>
+
+                                    <div class="text-muted small">
+                                        LDD Planning
+                                    </div>
+
+                                    <h6 class="mt-1 mb-1">
+                                        For Program Matching
+                                    </h6>
+
+                                </div>
+
+                                <div class="action-icon">
+                                    📚
+                                </div>
+
+                            </div>
+
+                            <div
+                                class="stat-number mt-3"
+                                id="actionProgram">
+
+                                0
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- TRAINING -->
+
+                <div class="col-md-4">
+
+                    <div
+                        class="card action-card border shadow-sm"
+                        data-action="training">
+
+                        <div class="card-body">
+
+                            <div class="d-flex
+                                        justify-content-between">
+
+                                <div>
+
+                                    <div class="text-muted small">
+                                        LDD Decision
+                                    </div>
+
+                                    <h6 class="mt-1 mb-1">
+                                        For Training
+                                    </h6>
+
+                                </div>
+
+                                <div class="action-icon">
+                                    🎓
+                                </div>
+
+                            </div>
+
+                            <div
+                                class="stat-number mt-3"
+                                id="actionTraining">
+
+                                0
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- COACHING -->
+
+                <div class="col-md-4">
+
+                    <div
+                        class="card action-card border shadow-sm"
+                        data-action="coaching">
+
+                        <div class="card-body">
+
+                            <div class="d-flex
+                                        justify-content-between">
+
+                                <div>
+
+                                    <div class="text-muted small">
+                                        LDD Decision
+                                    </div>
+
+                                    <h6 class="mt-1 mb-1">
+                                        Coaching / Mentoring
+                                    </h6>
+
+                                </div>
+
+                                <div class="action-icon">
+                                    🧑‍🏫
+                                </div>
+
+                            </div>
+
+                            <div
+                                class="stat-number mt-3"
+                                id="actionCoaching">
+
+                                0
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- OTHER -->
+
+                <div class="col-md-4">
+
+                    <div
+                        class="card action-card border shadow-sm"
+                        data-action="other">
+
+                        <div class="card-body">
+
+                            <div class="d-flex
+                                        justify-content-between">
+
+                                <div>
+
+                                    <div class="text-muted small">
+                                        LDD Decision
+                                    </div>
+
+                                    <h6 class="mt-1 mb-1">
+                                        Other Intervention
+                                    </h6>
+
+                                </div>
+
+                                <div class="action-icon">
+                                    🛠️
+                                </div>
+
+                            </div>
+
+                            <div
+                                class="stat-number mt-3"
+                                id="actionOther">
+
+                                0
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- REVIEW -->
+
+                <div class="col-md-4">
+
+                    <div
+                        class="card action-card border shadow-sm"
+                        data-action="review">
+
+                        <div class="card-body">
+
+                            <div class="d-flex
+                                        justify-content-between">
+
+                                <div>
+
+                                    <div class="text-muted small">
+                                        Current Queue
+                                    </div>
+
+                                    <h6 class="mt-1 mb-1">
+                                        For LDD Review
+                                    </h6>
+
+                                </div>
+
+                                <div class="action-icon">
+                                    📋
+                                </div>
+
+                            </div>
+
+                            <div
+                                class="stat-number mt-3"
+                                id="actionReview">
+
+                                0
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ======================================================
+         COMMON NEEDS BY ASSIGNMENT
+    ======================================================= -->
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-body">
+
+            <div class="mb-3">
+
+                <h5 class="mb-1">
+                    Common Needs by Division / Service
+                </h5>
+
+                <p class="text-muted small mb-0">
+                    Initial planning view showing areas where
+                    similar competency needs are concentrated.
+                </p>
+
+            </div>
+
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle mb-0">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Division / Service
+                            </th>
+
+                            <th>
+                                Common Needs
+                            </th>
+
+                            <th class="text-center">
+                                Personnel
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="assignmentSummaryBody">
+
+                        <tr>
+
+                            <td
+                                colspan="3"
+                                class="text-center text-muted py-4">
+
+                                Loading...
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+</main>
+
+
+
+<!-- ==========================================================
+     DETAIL MODAL
+========================================================== -->
+
+<div
+    class="modal fade"
+    id="detailsModal"
+    tabindex="-1"
+    aria-hidden="true">
+
+    <div
+        class="modal-dialog modal-xl modal-dialog-scrollable">
+
+        <div class="modal-content">
+
+
+            <div class="modal-header">
+
+                <div>
+
+                    <h5
+                        class="modal-title"
+                        id="detailsModalTitle">
+
+                        Details
+
+                    </h5>
+
+                    <div
+                        class="small text-muted"
+                        id="detailsModalSubtitle">
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+
+            <div class="modal-body">
+
+
+                <!-- TOOLBAR -->
+
+                <div class="row g-3 mb-4">
+
+
+                    <div class="col-lg-6">
+
+                        <label
+                            class="form-label fw-semibold">
+
+                            Search
+
+                        </label>
+
+                        <input
+                            type="text"
+                            id="detailSearch"
+                            class="form-control"
+                            placeholder="Search ID, name, competency, assignment...">
+
+                    </div>
+
+
+                    <div class="col-lg-3">
+
+                        <label
+                            class="form-label fw-semibold">
+
+                            Sort By
+
+                        </label>
+
+                        <select
+                            id="detailSort"
+                            class="form-select">
+
+                            <option value="name">
+                                Employee
+                            </option>
+
+                            <option value="competency">
+                                Competency
+                            </option>
+
+                            <option value="category">
+                                Category
+                            </option>
+
+                            <option value="priority">
+                                Priority
+                            </option>
+
+                            <option value="assignment">
+                                Assignment
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="col-lg-3 d-flex
+                                align-items-end">
+
+                        <button
+                            type="button"
+                            id="detailExport"
+                            class="btn btn-outline-primary w-100">
+
+                            📁 Export to File
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="d-flex
+                            justify-content-between
+                            align-items-center
+                            mb-3">
+
+                    <span class="text-muted">
+
+                        Showing
+                        <strong id="detailCount">
+                            0
+                        </strong>
+                        record(s)
+
+                    </span>
+
+                </div>
+
+
+
+                <div class="table-responsive">
+
+                    <table
+                        class="table table-hover align-middle detail-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    ID
+                                </th>
+
+                                <th>
+                                    Name
+                                </th>
+
+                                <th>
+                                    Position
+                                </th>
+
+                                <th>
+                                    Assignment
+                                </th>
+
+                                <th>
+                                    Competency
+                                </th>
+
+                                <th>
+                                    Category
+                                </th>
+
+                                <th>
+                                    Priority
+                                </th>
+
+                                <th>
+                                    Proposed Intervention
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="detailTableBody">
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal">
+
+                    Close
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ==========================================================
+     BOOTSTRAP
+========================================================== -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
+
+<!-- ==========================================================
+     LDIMS CORE
+========================================================== -->
+
+<script src="../assets/js/config.js"></script>
+
+<script src="../assets/js/api.js"></script>
+
+<script src="../assets/js/session.js"></script>
+
+
+
+<script>
+
+"use strict";
+
+
+/* ==========================================================
+   STATE
+========================================================== */
+
+let interventionRecords = [];
+
+let detailRecords = [];
+
+let currentDetailTitle = "";
+
+
+
+/* ==========================================================
+   CATEGORY DEFINITIONS
+========================================================== */
+
+const categoryOrder = [
+    "Core",
+    "Organizational",
+    "Technical",
+    "Leadership"
+];
+
+
+const priorityOrder = {
+    "High": 1,
+    "Medium": 2,
+    "Low": 3
+};
+
+
+
+/* ==========================================================
+   ELEMENTS
+========================================================== */
+
+const matrixTableBody =
+    document.getElementById(
+        "matrixTableBody"
+    );
+
+const assignmentSummaryBody =
+    document.getElementById(
+        "assignmentSummaryBody"
+    );
+
+const refreshButton =
+    document.getElementById(
+        "refreshButton"
+    );
+
+const detailSearch =
+    document.getElementById(
+        "detailSearch"
+    );
+
+const detailSort =
+    document.getElementById(
+        "detailSort"
+    );
+
+const detailExport =
+    document.getElementById(
+        "detailExport"
+    );
+
+const detailTableBody =
+    document.getElementById(
+        "detailTableBody"
+    );
+
+
+
+/* ==========================================================
+   ESCAPE HTML
+========================================================== */
+
+function escapeHtml(value) {
+
+    return String(
+        value ?? ""
+    )
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+
+}
+
+
+
+/* ==========================================================
+   ALERT
+========================================================== */
+
+function showAlert(
+    message,
+    type = "danger"
+) {
+
+    const container =
+        document.getElementById(
+            "alertMessage"
+        );
+
+
+    container.innerHTML = `
+
+        <div
+            class="alert alert-${type}
+                   alert-dismissible fade show"
+            role="alert">
+
+            ${escapeHtml(message)}
+
+            <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="alert">
+            </button>
+
+        </div>
+
+    `;
+
+}
+
+
+
+/* ==========================================================
+   PRIORITY NORMALIZATION
+========================================================== */
+
+function normalizePriority(
+    priority
+) {
+
+    const value =
+        String(
+            priority || ""
+        )
+        .trim()
+        .toUpperCase();
+
+
+    if (value === "HIGH") {
+        return "High";
+    }
+
+    if (value === "MEDIUM") {
+        return "Medium";
+    }
+
+    if (value === "LOW") {
+        return "Low";
+    }
+
+    return priority || "—";
+
+}
+
+
+
+/* ==========================================================
+   CATEGORY DETECTION
+========================================================== */
+
+function determineCategory(
+    competency,
+    functionalArea
+) {
+
+    const text =
+        String(
+            competency || ""
+        )
+        .toLowerCase();
+
+
+    const functional =
+        String(
+            functionalArea || ""
+        )
+        .toLowerCase();
+
+
+    const technicalKeywords = [
+
+        "information management",
+        "digital information",
+        "information security",
+        "data analysis",
+        "research and analysis",
+        "risk assessment",
+        "legal and regulatory",
+        "project / activity",
+        "presentation and briefing",
+        "stakeholder coordination",
+        "ict",
+        "technical",
+        "records management"
+
+    ];
+
+
+    if (
+        technicalKeywords.some(
+            keyword =>
+                text.includes(keyword)
+        )
+        ||
+        functional
+    ) {
+
+        return "Technical";
+
+    }
+
+
+    const leadershipKeywords = [
+
+        "leadership",
+        "people development",
+        "change and innovation",
+        "management"
+
+    ];
+
+
+    if (
+        leadershipKeywords.some(
+            keyword =>
+                text.includes(keyword)
+        )
+    ) {
+
+        return "Leadership";
+
+    }
+
+
+    const organizationalKeywords = [
+
+        "organizational awareness",
+        "coordination",
+        "stakeholder management",
+        "adaptability",
+        "continuous learning",
+        "accountability",
+        "results orientation",
+        "compliance",
+        "policy adherence"
+
+    ];
+
+
+    if (
+        organizationalKeywords.some(
+            keyword =>
+                text.includes(keyword)
+        )
+    ) {
+
+        return "Organizational";
+
+    }
+
+
+    const coreKeywords = [
+
+        "integrity",
+        "ethical conduct",
+        "service orientation",
+        "communication",
+        "collaboration"
+
+    ];
+
+
+    if (
+        coreKeywords.some(
+            keyword =>
+                text.includes(keyword)
+        )
+    ) {
+
+        return "Core";
+
+    }
+
+
+    return "Core";
+
+}
+
+
+
+/* ==========================================================
+   COMPETENCY CLEANUP
+========================================================== */
+
+function cleanCompetency(
+    value
+) {
+
+    if (!value) {
+        return "—";
+    }
+
+
+    let text =
+        String(value)
+            .trim();
+
+
+    text =
+        text.replace(
+            /^competency\s*:\s*/i,
+            ""
+        );
+
+
+    return text || "—";
+
+}
+
+
+
+/* ==========================================================
+   COMPETENCY CODE
+========================================================== */
+
+function getCompetencyCode(
+    category,
+    competency
+) {
+
+    /*
+     * Existing master competency codes can later replace
+     * these generated display codes.
+     *
+     * For now, each competency receives a stable code
+     * based on its position within its category.
+     */
+
+    const categoryPrefix = {
+
+        "Core": "C",
+
+        "Organizational": "O",
+
+        "Technical": "T",
+
+        "Leadership": "L"
+
+    };
+
+
+    const prefix =
+        categoryPrefix[
+            category
+        ] || "X";
+
+
+    const categoryRecords =
+        interventionRecords
+            .filter(
+                record =>
+                    record.category ===
+                    category
+            );
+
+
+    const names = [
+        ...new Set(
+            categoryRecords.map(
+                record =>
+                    String(
+                        record.competency || ""
+                    )
+                    .trim()
+                    .toLowerCase()
+            )
+        )
+    ]
+    .filter(Boolean)
+    .sort();
+
+
+    const index =
+        names.indexOf(
+            String(
+                competency || ""
+            )
+            .trim()
+            .toLowerCase()
+        );
+
+
+    if (index < 0) {
+        return prefix + "01";
+    }
+
+
+    return prefix +
+        String(
+            index + 1
+        ).padStart(
+            2,
+            "0"
+        );
+
+}
+
+
+
+/* ==========================================================
+   NORMALIZE RECORDS
+========================================================== */
+
+function normalizeRecords(
+    records
+) {
+
+    return records.map(
+        record => {
+
+            const competency =
+                cleanCompetency(
+                    record.competencyNeed
+                );
+
+
+            const category =
+                determineCategory(
+                    competency,
+                    record.functionalArea
+                );
+
+
+            return {
+
+                ...record,
+
+                employeeID:
+                    record.employeeID ?? "",
+
+                name:
+                    record.name ?? "",
+
+                position:
+                    record.position ?? "",
+
+                placeOfAssignment:
+                    record.placeOfAssignment ?? "",
+
+                competency:
+                    competency,
+
+                category:
+                    category,
+
+                priority:
+                    normalizePriority(
+                        record.developmentPriority
+                    ),
+
+                status:
+                    record.status ||
+                    "For Review",
+
+                recommendedPrograms:
+                    record.recommendedPrograms ||
+                    "",
+
+                proposedLearning:
+                    record.proposedLearning ||
+                    "",
+
+                learningMethod:
+                    record.learningMethod ||
+                    ""
+
+            };
+
+        }
+    );
+
+}
+
+
+
+/* ==========================================================
+   LOAD DATA
+========================================================== */
+
+async function loadLearningInterventions() {
+
+    try {
+
+        matrixTableBody.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="5"
+                    class="text-center text-muted py-5">
+
+                    <div
+                        class="spinner-border spinner-border-sm"
+                        role="status">
+                    </div>
+
+                    <span class="ms-2">
+                        Loading competency needs...
+                    </span>
+
+                </td>
+
+            </tr>
+
+        `;
+
+
+        const result =
+            await API.post({
+
+                action:
+                    "getAllLearningInterventions"
+
+            });
+
+
+        console.log(
+            "Learning Interventions Response:",
+            result
+        );
+
+
+        if (
+            !result ||
+            !result.success
+        ) {
+
+            throw new Error(
+                result?.message ||
+                "Unable to load learning interventions."
+            );
+
+        }
+
+
+        interventionRecords =
+            Array.isArray(
+                result.interventions
+            )
+                ? result.interventions
+                : [];
+
+
+        interventionRecords =
+            normalizeRecords(
+                interventionRecords
+            );
+
+
+        renderMatrix();
+
+        renderSnapshot();
+
+        renderActions();
+
+        renderAssignmentSummary();
+
+
+    } catch (error) {
+
+        console.error(
+            "Learning Interventions Error:",
+            error
+        );
+
+
+        matrixTableBody.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="5"
+                    class="text-center text-danger py-5">
+
+                    Unable to load competency needs.
+
+                    <div class="small text-muted mt-2">
+
+                        ${escapeHtml(
+                            error.message
+                        )}
+
+                    </div>
+
+                </td>
+
+            </tr>
+
+        `;
+
+
+        assignmentSummaryBody.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="3"
+                    class="text-center text-danger py-4">
+
+                    Unable to load summary.
+
+                </td>
+
+            </tr>
+
+        `;
+
+
+        showAlert(
+            error.message ||
+            "Unable to load learning interventions."
+        );
+
+    }
+
+}
+
+
+
+/* ==========================================================
+   RENDER MATRIX
+========================================================== */
+
+function renderMatrix() {
+
+    const matrix = {};
+
+
+    ["High", "Medium", "Low"]
+        .forEach(
+            priority => {
+
+                matrix[
+                    priority
+                ] = {
+
+                    Core: new Set(),
+
+                    Organizational:
+                        new Set(),
+
+                    Technical:
+                        new Set(),
+
+                    Leadership:
+                        new Set()
+
+                };
+
+            }
+        );
+
+
+    interventionRecords.forEach(
+        record => {
+
+            const priority =
+                record.priority;
+
+
+            const category =
+                record.category;
+
+
+            const competency =
+                record.competency;
+
+
+            if (
+                matrix[priority] &&
+                matrix[priority][category] &&
+                competency &&
+                competency !== "—"
+            ) {
+
+                matrix[
+                    priority
+                ][
+                    category
+                ].add(
+                    competency
+                );
+
+            }
+
+        }
+    );
+
+
+    matrixTableBody.innerHTML =
+        ["High", "Medium", "Low"]
+            .map(
+                priority => {
+
+                    return `
+
+                        <tr>
+
+                            <th>
+
+                                ${getPriorityBadge(
+                                    priority
+                                )}
+
+                            </th>
+
+                            ${categoryOrder
+                                .map(
+                                    category => {
+
+                                        const items =
+                                            Array.from(
+                                                matrix[
+                                                    priority
+                                                ][
+                                                    category
+                                                ]
+                                            )
+                                            .sort();
+
+
+                                        if (
+                                            items.length ===
+                                            0
+                                        ) {
+
+                                            return `
+
+                                                <td>
+
+                                                    <div
+                                                        class="matrix-empty">
+
+                                                        —
+
+                                                    </div>
+
+                                                </td>
+
+                                            `;
+
+                                        }
+
+
+                                        return `
+
+                                            <td>
+
+                                                <div
+                                                    class="competency-cell">
+
+                                                    ${items
+                                                        .map(
+                                                            competency => {
+
+                                                                const code =
+                                                                    getCompetencyCode(
+                                                                        category,
+                                                                        competency
+                                                                    );
+
+
+                                                                const count =
+                                                                    getCompetencyRecords(
+                                                                        competency,
+                                                                        priority,
+                                                                        category
+                                                                    ).length;
+
+
+                                                                return `
+
+                                                                    <div
+                                                                        class="competency-item"
+                                                                        onclick='openCompetencyDetails(
+                                                                            ${JSON.stringify(
+                                                                                competency
+                                                                            )},
+                                                                            ${JSON.stringify(
+                                                                                priority
+                                                                            )},
+                                                                            ${JSON.stringify(
+                                                                                category
+                                                                            )}
+                                                                        )'>
+
+                                                                        <span
+                                                                            class="competency-code">
+
+                                                                            ${escapeHtml(
+                                                                                code
+                                                                            )}
+
+                                                                        </span>
+
+                                                                        <span>
+
+                                                                            ${escapeHtml(
+                                                                                competency
+                                                                            )}
+
+                                                                        </span>
+
+                                                                        <span
+                                                                            class="badge bg-light text-dark border float-end">
+
+                                                                            ${count}
+
+                                                                        </span>
+
+                                                                    </div>
+
+                                                                `;
+
+                                                            }
+                                                        )
+                                                        .join("")}
+
+                                                </div>
+
+                                            </td>
+
+                                        `;
+
+                                    }
+                                )
+                                .join("")}
+
+                        </tr>
+
+                    `;
+
+                }
+            )
+            .join("");
+
+}
+
+
+
+/* ==========================================================
+   COMPETENCY RECORDS
+========================================================== */
+
+function getCompetencyRecords(
+    competency,
+    priority = null,
+    category = null
+) {
+
+    return interventionRecords.filter(
+        record => {
+
+            if (
+                record.competency !==
+                competency
+            ) {
+
+                return false;
+
+            }
+
+
+            if (
+                priority &&
+                record.priority !==
+                priority
+            ) {
+
+                return false;
+
+            }
+
+
+            if (
+                category &&
+                record.category !==
+                category
+            ) {
+
+                return false;
+
+            }
+
+
+            return true;
+
+        }
+    );
+
+}
+
+
+
+/* ==========================================================
+   SNAPSHOT
+========================================================== */
+
+function renderSnapshot() {
+
+    const total =
+        interventionRecords.length;
+
+
+    const high =
+        interventionRecords.filter(
+            record =>
+                record.priority ===
+                "High"
+        ).length;
+
+
+    const uniqueCompetencies =
+        new Set(
+            interventionRecords
+                .map(
+                    record =>
+                        record.competency
+                )
+                .filter(
+                    competency =>
+                        competency &&
+                        competency !== "—"
+                )
+        ).size;
+
+
+    const assignments =
+        new Set(
+            interventionRecords
+                .map(
+                    record =>
+                        String(
+                            record.placeOfAssignment ||
+                            ""
+                        )
+                        .trim()
+                        .toLowerCase()
+                )
+                .filter(Boolean)
+        ).size;
+
+
+    document.getElementById(
+        "totalNeeds"
+    ).textContent =
+        total;
+
+
+    document.getElementById(
+        "highNeeds"
+    ).textContent =
+        high;
+
+
+    document.getElementById(
+        "commonCompetencies"
+    ).textContent =
+        uniqueCompetencies;
+
+
+    document.getElementById(
+        "affectedAssignments"
+    ).textContent =
+        assignments;
+
+}
+
+
+
+/* ==========================================================
+   ACTION COUNTS
+========================================================== */
+
+function renderActions() {
+
+    const high =
+        interventionRecords.filter(
+            record =>
+                record.priority ===
+                "High"
+        ).length;
+
+
+    const review =
+        interventionRecords.filter(
+            record => {
+
+                const status =
+                    String(
+                        record.status ||
+                        ""
+                    )
+                    .trim()
+                    .toUpperCase();
+
+
+                return (
+                    status === "FOR REVIEW" ||
+                    status === "PENDING" ||
+                    !status
+                );
+
+            }
+        ).length;
+
+
+    /*
+     * Since LDD has not yet made intervention decisions,
+     * these remain zero until the workflow is implemented.
+     */
+
+    const program =
+        review;
+
+
+    const training =
+        0;
+
+
+    const coaching =
+        0;
+
+
+    const other =
+        0;
+
+
+    document.getElementById(
+        "actionHigh"
+    ).textContent =
+        high;
+
+
+    document.getElementById(
+        "actionProgram"
+    ).textContent =
+        program;
+
+
+    document.getElementById(
+        "actionTraining"
+    ).textContent =
+        training;
+
+
+    document.getElementById(
+        "actionCoaching"
+    ).textContent =
+        coaching;
+
+
+    document.getElementById(
+        "actionOther"
+    ).textContent =
+        other;
+
+
+    document.getElementById(
+        "actionReview"
+    ).textContent =
+        review;
+
+}
+
+
+
+/* ==========================================================
+   ASSIGNMENT SUMMARY
+========================================================== */
+
+function renderAssignmentSummary() {
+
+    const assignmentMap =
+        new Map();
+
+
+    interventionRecords.forEach(
+        record => {
+
+            const assignment =
+                String(
+                    record.placeOfAssignment ||
+                    "Unspecified"
+                ).trim() ||
+                "Unspecified";
+
+
+            if (
+                !assignmentMap.has(
+                    assignment
+                )
+            ) {
+
+                assignmentMap.set(
+                    assignment,
+                    {
+
+                        personnel:
+                            new Set(),
+
+                        competencies:
+                            new Set()
+
+                    }
+                );
+
+            }
+
+
+            const item =
+                assignmentMap.get(
+                    assignment
+                );
+
+
+            if (
+                record.employeeID
+            ) {
+
+                item.personnel.add(
+                    String(
+                        record.employeeID
+                    )
+                );
+
+            }
+
+
+            if (
+                record.competency &&
+                record.competency !== "—"
+            ) {
+
+                item.competencies.add(
+                    record.competency
+                );
+
+            }
+
+        }
+    );
+
+
+    const rows =
+        Array.from(
+            assignmentMap.entries()
+        )
+        .sort(
+            (a, b) =>
+                b[1].personnel.size -
+                a[1].personnel.size
+        );
+
+
+    if (
+        rows.length === 0
+    ) {
+
+        assignmentSummaryBody.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="3"
+                    class="text-center text-muted py-4">
+
+                    No assignment data available.
+
+                </td>
+
+            </tr>
+
+        `;
+
+        return;
+
+    }
+
+
+    assignmentSummaryBody.innerHTML =
+        rows
+            .map(
+                ([assignment, data]) => `
+
+                    <tr>
+
+                        <td>
+
+                            <strong>
+                                ${escapeHtml(
+                                    assignment
+                                )}
+                            </strong>
+
+                        </td>
+
+
+                        <td>
+
+                            ${Array.from(
+                                data.competencies
+                            )
+                            .slice(
+                                0,
+                                5
+                            )
+                            .map(
+                                competency =>
+                                    `<span
+                                        class="badge bg-light text-dark border me-1 mb-1">
+                                        ${escapeHtml(
+                                            competency
+                                        )}
+                                    </span>`
+                            )
+                            .join("")}
+
+                            ${
+                                data.competencies.size > 5
+                                    ? `<span
+                                        class="text-muted small">
+                                        +${data.competencies.size - 5} more
+                                       </span>`
+                                    : ""
+                            }
+
+                        </td>
+
+
+                        <td class="text-center">
+
+                            <span
+                                class="badge bg-secondary">
+
+                                ${data.personnel.size}
+
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+                `
+            )
+            .join("");
+
+}
+
+
+
+/* ==========================================================
+   PRIORITY BADGE
+========================================================== */
+
+function getPriorityBadge(
+    priority
+) {
+
+    const normalized =
+        String(
+            priority || ""
+        )
+        .toUpperCase();
+
+
+    if (
+        normalized === "HIGH"
+    ) {
+
+        return `
+
+            <span
+                class="badge bg-danger">
+
+                High
+
+            </span>
+
+        `;
+
+    }
+
+
+    if (
+        normalized === "MEDIUM"
+    ) {
+
+        return `
+
+            <span
+                class="badge bg-warning text-dark">
+
+                Medium
+
+            </span>
+
+        `;
+
+    }
+
+
+    if (
+        normalized === "LOW"
+    ) {
+
+        return `
+
+            <span
+                class="badge bg-success">
+
+                Low
+
+            </span>
+
+        `;
+
+    }
+
+
+    return `
+
+        <span
+            class="badge bg-secondary">
+
+            ${escapeHtml(
+                priority || "—"
+            )}
+
+        </span>
+
+    `;
+
+}
+
+
+
+/* ==========================================================
+   STATUS BADGE
+========================================================== */
+
+function getStatusBadge(
+    status
+) {
+
+    const normalized =
+        String(
+            status || ""
+        )
+        .trim()
+        .toUpperCase();
+
+
+    let badgeClass =
+        "bg-secondary";
+
+
+    if (
+        normalized === "FOR REVIEW" ||
+        normalized === "PENDING"
+    ) {
+
+        badgeClass =
+            "bg-warning text-dark";
+
+    }
+
+
+    if (
+        normalized === "RECOMMENDED"
+    ) {
+
+        badgeClass =
+            "bg-info text-dark";
+
+    }
+
+
+    if (
+        normalized === "APPROVED"
+    ) {
+
+        badgeClass =
+            "bg-success";
+
+    }
+
+
+    if (
+        normalized === "COMPLETED"
+    ) {
+
+        badgeClass =
+            "bg-primary";
+
+    }
+
+
+    return `
+
+        <span
+            class="badge ${badgeClass}">
+
+            ${escapeHtml(
+                status || "—"
+            )}
+
+        </span>
+
+    `;
+
+}
+
+
+
+/* ==========================================================
+   OPEN COMPETENCY DETAILS
+========================================================== */
+
+function openCompetencyDetails(
+    competency,
+    priority,
+    category
+) {
+
+    detailRecords =
+        getCompetencyRecords(
+            competency,
+            priority,
+            category
+        );
+
+
+    currentDetailTitle =
+        competency;
+
+
+    document.getElementById(
+        "detailsModalTitle"
+    ).textContent =
+        competency;
+
+
+    document.getElementById(
+        "detailsModalSubtitle"
+    ).textContent =
+        `${category} • ${priority} Priority`;
+
+
+    detailSearch.value = "";
+
+
+    renderDetailTable();
+
+
+    const modal =
+        bootstrap.Modal.getOrCreateInstance(
+            document.getElementById(
+                "detailsModal"
+            )
+        );
+
+
+    modal.show();
+
+}
+
+
+
+/* ==========================================================
+   OPEN ACTION DETAILS
+========================================================== */
+
+function openActionDetails(
+    action
+) {
+
+    let records = [];
+
+
+    let title = "";
+
+
+    let subtitle = "";
+
+
+    switch (action) {
+
+        case "high":
+
+            records =
+                interventionRecords.filter(
+                    record =>
+                        record.priority ===
+                        "High"
+                );
+
+            title =
+                "High-Priority Learning Needs";
+
+            subtitle =
+                "Personnel requiring immediate LDD attention";
+
+            break;
+
+
+        case "program":
+
+            records =
+                interventionRecords.filter(
+                    record => {
+
+                        const status =
+                            String(
+                                record.status ||
+                                ""
+                            )
+                            .trim()
+                            .toUpperCase();
+
+
+                        return (
+                            status === "FOR REVIEW" ||
+                            status === "PENDING" ||
+                            !status
+                        );
+
+                    }
+                );
+
+            title =
+                "For Program Matching";
+
+            subtitle =
+                "Needs currently available for LDD program assessment";
+
+            break;
+
+
+        case "review":
+
+            records =
+                interventionRecords.filter(
+                    record => {
+
+                        const status =
+                            String(
+                                record.status ||
+                                ""
+                            )
+                            .trim()
+                            .toUpperCase();
+
+
+                        return (
+                            status === "FOR REVIEW" ||
+                            status === "PENDING" ||
+                            !status
+                        );
+
+                    }
+                );
+
+            title =
+                "For LDD Review";
+
+            subtitle =
+                "Current learning needs awaiting LDD action";
+
+            break;
+
+
+        case "training":
+
+            records = [];
+
+            title =
+                "For Training";
+
+            subtitle =
+                "No LDD training decisions have been recorded yet.";
+
+            break;
+
+
+        case "coaching":
+
+            records = [];
+
+            title =
+                "Coaching / Mentoring";
+
+            subtitle =
+                "No LDD coaching or mentoring decisions have been recorded yet.";
+
+            break;
+
+
+        case "other":
+
+            records = [];
+
+            title =
+                "Other Intervention";
+
+            subtitle =
+                "No other intervention decisions have been recorded yet.";
+
+            break;
+
+
+        default:
+
+            return;
+
+    }
+
+
+    detailRecords =
+        records;
+
+
+    currentDetailTitle =
+        title;
+
+
+    document.getElementById(
+        "detailsModalTitle"
+    ).textContent =
+        title;
+
+
+    document.getElementById(
+        "detailsModalSubtitle"
+    ).textContent =
+        subtitle;
+
+
+    detailSearch.value = "";
+
+
+    renderDetailTable();
+
+
+    const modal =
+        bootstrap.Modal.getOrCreateInstance(
+            document.getElementById(
+                "detailsModal"
+            )
+        );
+
+
+    modal.show();
+
+}
+
+
+
+/* ==========================================================
+   DETAIL FILTER + SORT
+========================================================== */
+
+function getFilteredDetailRecords() {
+
+    const search =
+        String(
+            detailSearch.value || ""
+        )
+        .trim()
+        .toLowerCase();
+
+
+    let records =
+        detailRecords.filter(
+            record => {
+
+                if (!search) {
+                    return true;
+                }
+
+
+                const searchable = [
+
+                    record.employeeID,
+
+                    record.name,
+
+                    record.position,
+
+                    record.placeOfAssignment,
+
+                    record.competency,
+
+                    record.category,
+
+                    record.priority,
+
+                    record.recommendedPrograms,
+
+                    record.proposedLearning,
+
+                    record.status
+
+                ]
+                .join(" ")
+                .toLowerCase();
+
+
+                return searchable.includes(
+                    search
+                );
+
+            }
+        );
+
+
+    const field =
+        detailSort.value;
+
+
+    records.sort(
+        (a, b) => {
+
+            let valueA = "";
+            let valueB = "";
+
+
+            switch (field) {
+
+                case "name":
+
+                    valueA =
+                        a.name || "";
+
+                    valueB =
+                        b.name || "";
+
+                    break;
+
+
+                case "competency":
+
+                    valueA =
+                        a.competency || "";
+
+                    valueB =
+                        b.competency || "";
+
+                    break;
+
+
+                case "category":
+
+                    valueA =
+                        a.category || "";
+
+                    valueB =
+                        b.category || "";
+
+                    break;
+
+
+                case "priority":
+
+                    valueA =
+                        priorityOrder[
+                            a.priority
+                        ] || 99;
+
+                    valueB =
+                        priorityOrder[
+                            b.priority
+                        ] || 99;
+
+                    return valueA - valueB;
+
+
+                case "assignment":
+
+                    valueA =
+                        a.placeOfAssignment || "";
+
+                    valueB =
+                        b.placeOfAssignment || "";
+
+                    break;
+
+            }
+
+
+            return String(
+                valueA
+            )
+            .toLowerCase()
+            .localeCompare(
+                String(
+                    valueB
+                )
+                .toLowerCase()
+            );
+
+        }
+    );
+
+
+    return records;
+
+}
+
+
+
+/* ==========================================================
+   RENDER DETAIL TABLE
+========================================================== */
+
+function renderDetailTable() {
+
+    const records =
+        getFilteredDetailRecords();
+
+
+    document.getElementById(
+        "detailCount"
+    ).textContent =
+        records.length;
+
+
+    if (
+        records.length === 0
+    ) {
+
+        detailTableBody.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="9"
+                    class="text-center text-muted py-5">
+
+                    No records found.
+
+                </td>
+
+            </tr>
+
+        `;
+
+        return;
+
+    }
+
+
+    detailTableBody.innerHTML =
+        records
+            .map(
+                record => `
+
+                    <tr>
+
+                        <td>
+                            <strong>
+                                ${escapeHtml(
+                                    record.employeeID
+                                )}
+                            </strong>
+                        </td>
+
+
+                        <td>
+                            ${escapeHtml(
+                                record.name
+                            )}
+                        </td>
+
+
+                        <td>
+                            ${escapeHtml(
+                                record.position
+                            )}
+                        </td>
+
+
+                        <td>
+                            ${escapeHtml(
+                                record.placeOfAssignment
+                            )}
+                        </td>
+
+
+                        <td>
+                            ${escapeHtml(
+                                record.competency
+                            )}
+                        </td>
+
+
+                        <td>
+
+                            <span
+                                class="badge bg-light text-dark border">
+
+                                ${escapeHtml(
+                                    record.category
+                                )}
+
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            ${getPriorityBadge(
+                                record.priority
+                            )}
+
+                        </td>
+
+
+                        <td>
+
+                            ${escapeHtml(
+                                record.recommendedPrograms ||
+                                record.proposedLearning ||
+                                "—"
+                            )}
+
+                        </td>
+
+
+                        <td>
+
+                            ${getStatusBadge(
+                                record.status
+                            )}
+
+                        </td>
+
+                    </tr>
+
+                `
+            )
+            .join("");
+
+}
+
+
+
+/* ==========================================================
+   EXPORT DETAILS
+========================================================== */
+
+function exportDetailRecords() {
+
+    const records =
+        getFilteredDetailRecords();
+
+
+    if (
+        records.length === 0
+    ) {
+
+        showAlert(
+            "There are no records to export.",
+            "warning"
+        );
+
+        return;
+
+    }
+
+
+    const headers = [
+
+        "ID",
+        "Name",
+        "Position",
+        "Assignment",
+        "Competency",
+        "Category",
+        "Priority",
+        "Proposed Learning Intervention",
+        "Status"
+
+    ];
+
+
+    const rows =
+        records.map(
+            record => [
+
+                record.employeeID,
+
+                record.name,
+
+                record.position,
+
+                record.placeOfAssignment,
+
+                record.competency,
+
+                record.category,
+
+                record.priority,
+
+                record.recommendedPrograms ||
+                record.proposedLearning,
+
+                record.status
+
+            ]
+        );
+
+
+    const csv =
+        [
+            headers,
+            ...rows
+        ]
+        .map(
+            row =>
+                row
+                    .map(
+                        value =>
+                            `"${String(
+                                value ?? ""
+                            )
+                            .replace(
+                                /"/g,
+                                '""'
+                            )}"`
+                    )
+                    .join(",")
+        )
+        .join("\n");
+
+
+    const blob =
+        new Blob(
+            [
+                "\uFEFF" +
+                csv
+            ],
+            {
+                type:
+                    "text/csv;charset=utf-8;"
+            }
+        );
+
+
+    const url =
+        URL.createObjectURL(
+            blob
+        );
+
+
+    const link =
+        document.createElement(
+            "a"
+        );
+
+
+    link.href =
+        url;
+
+
+    link.download =
+        "LDIMS_Learning_Interventions_Details.csv";
+
+
+    document.body.appendChild(
+        link
+    );
+
+
+    link.click();
+
+
+    document.body.removeChild(
+        link
+    );
+
+
+    URL.revokeObjectURL(
+        url
+    );
+
+}
+
+
+
+/* ==========================================================
+   EVENTS
+========================================================== */
+
+refreshButton.addEventListener(
+    "click",
+    loadLearningInterventions
+);
+
+
+detailSearch.addEventListener(
+    "input",
+    renderDetailTable
+);
+
+
+detailSort.addEventListener(
+    "change",
+    renderDetailTable
+);
+
+
+detailExport.addEventListener(
+    "click",
+    exportDetailRecords
+);
+
+
+document
+    .querySelectorAll(
+        ".action-card"
+    )
+    .forEach(
+        card => {
+
+            card.addEventListener(
+                "click",
+                function () {
+
+                    openActionDetails(
+                        this.dataset.action
+                    );
+
+                }
+            );
+
+        }
+    );
+
+
+
+/* ==========================================================
+   INITIALIZE
+========================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        loadLearningInterventions();
+
+    }
+);
+
+</script>
+
+
+</body>
+
+</html>

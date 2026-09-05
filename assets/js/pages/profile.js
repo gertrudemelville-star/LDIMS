@@ -10,80 +10,64 @@
    Initialize
 ========================================================== */
 
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener(
+    "DOMContentLoaded",
+    async function () {
 
-    try {
+        try {
 
-        /* --------------------------------------------------
-           Require authenticated session
-        -------------------------------------------------- */
+            Session.requireLogin();
 
-        Session.requireLogin();
-
-
-        /* --------------------------------------------------
-           Get current session
-        -------------------------------------------------- */
-
-        const session = Session.get();
+            const session =
+                Session.get();
 
 
-        if (!session) {
-            return;
-        }
+            if (!session) {
+                return;
+            }
 
 
-        /* --------------------------------------------------
-           Get Employee ID
-        -------------------------------------------------- */
-
-        const employeeID =
-            session.employeeID ||
-            session.EmployeeID ||
-            session.employeeId;
+            const employeeID =
+                session.employeeID ||
+                session.EmployeeID ||
+                session.employeeId;
 
 
-        if (!employeeID) {
+            if (!employeeID) {
 
-            showProfileError(
-                "Employee ID is not available in your session."
+                showProfileError(
+                    "Employee ID is not available in your session."
+                );
+
+                return;
+
+            }
+
+
+            await loadProfile(
+                String(employeeID).trim()
             );
 
-            return;
+
+            bindProfileActions();
+
+
+        } catch (error) {
+
+            console.error(
+                "Profile initialization failed:",
+                error
+            );
+
+
+            showProfileError(
+                "Unable to load your profile."
+            );
 
         }
 
-
-        /* --------------------------------------------------
-           Load employee profile
-        -------------------------------------------------- */
-
-        await loadProfile(
-            String(employeeID).trim()
-        );
-
-
-        /* --------------------------------------------------
-           Bind buttons
-        -------------------------------------------------- */
-
-        bindProfileActions();
-
-
-    } catch (error) {
-
-        console.error(
-            "Profile initialization failed:",
-            error
-        );
-
-        showProfileError(
-            "Unable to load your profile."
-        );
-
     }
-
-});
+);
 
 
 /* ==========================================================
@@ -97,19 +81,17 @@ async function loadProfile(employeeID) {
         setLoadingState();
 
 
-        /* --------------------------------------------------
-           Request employee information from backend
-        -------------------------------------------------- */
-
         const result =
-            await API.getEmployeeById(
+            await API.getEmployeeProfile(
                 employeeID
             );
 
 
-        /* --------------------------------------------------
-           Validate response
-        -------------------------------------------------- */
+        console.log(
+            "PROFILE RESPONSE:",
+            result
+        );
+
 
         if (!result) {
 
@@ -122,7 +104,9 @@ async function loadProfile(employeeID) {
         }
 
 
-        if (result.success === false) {
+        if (
+            result.success !== true
+        ) {
 
             showProfileError(
                 result.message ||
@@ -133,20 +117,6 @@ async function loadProfile(employeeID) {
 
         }
 
-
-        /*
-         * Employee.gs currently returns the employee
-         * object directly:
-         *
-         * {
-         *     EmployeeID: "...",
-         *     LastName: "...",
-         *     FirstName: "...",
-         *     ...
-         * }
-         *
-         * This also supports a future wrapped response.
-         */
 
         const employee =
             result.data ||
@@ -168,10 +138,6 @@ async function loadProfile(employeeID) {
         }
 
 
-        /* --------------------------------------------------
-           Populate profile
-        -------------------------------------------------- */
-
         populateProfile(
             employee
         );
@@ -183,6 +149,7 @@ async function loadProfile(employeeID) {
             "Profile loading failed:",
             error
         );
+
 
         showProfileError(
             "Unable to load employee information."
@@ -200,93 +167,104 @@ async function loadProfile(employeeID) {
 function populateProfile(employee) {
 
     /* ------------------------------------------------------
-       Employee name
+       Basic Information
     ------------------------------------------------------ */
-
-    const fullName =
-        buildFullName(employee);
-
 
     setValue(
         "fullName",
-        fullName
+        employee.fullName
     );
 
 
-    /* ------------------------------------------------------
-       Basic employee information
-    ------------------------------------------------------ */
-
     setValue(
         "employeeID",
-        employee.EmployeeID
+        employee.employeeID
     );
 
 
     setValue(
         "email",
-        employee.Email
+        employee.email
     );
 
 
     setValue(
         "contactNumber",
-        employee.ContactNumber
+        employee.contactNumber
     );
 
 
     setValue(
         "civilStatus",
-        employee.CivilStatus
+        employee.civilStatus
     );
 
 
     /* ------------------------------------------------------
-       Organizational information
+       Organizational Information
     ------------------------------------------------------ */
 
     setValue(
         "position",
-        employee.Position
+        employee.position
     );
 
 
     setValue(
         "employeePosition",
-        employee.Position
+        employee.position
     );
 
 
-    /*
-     * The current Employees sheet contains
-     * PlaceOfAssignment.
-     *
-     * The existing profile HTML calls this field
-     * "Division", so we display PlaceOfAssignment there
-     * without inventing a separate Division value.
-     */
+    setValue(
+        "designation",
+        employee.designation
+    );
+
 
     setValue(
         "division",
-        employee.PlaceOfAssignment
+        employee.division
     );
 
 
-    /*
-     * Section is not currently part of the confirmed
-     * Employees database structure.
-     */
+    setValue(
+        "supervisor",
+        employee.supervisor
+    );
+
+
+    /* ------------------------------------------------------
+       Employment Information
+    ------------------------------------------------------ */
+
+    setValue(
+        "yearsInService",
+        employee.yearsInService
+    );
+
+
+    setValue(
+        "yearsInCurrentPosition",
+        employee.yearsInCurrentPosition
+    );
+
+
+    setValue(
+        "employmentStatus",
+        employee.employmentStatus
+    );
+
+
+    /* ------------------------------------------------------
+       Fields not currently available in database
+       -------------------------------------------------- */
 
     setValue(
         "section",
         "Not available"
     );
 
-
-    /*
-     * Salary Grade is not currently part of the
-     * confirmed Employees database structure.
-     */
 
     setValue(
         "salaryGrade",
@@ -295,146 +273,40 @@ function populateProfile(employee) {
 
 
     setValue(
-        "supervisor",
-        employee.ImmediateSupervisor
-    );
-
-
-    /* ------------------------------------------------------
-       Employment information
-    ------------------------------------------------------ */
-
-    /*
-     * Appointment Date is not currently part of the
-     * confirmed Employees database structure.
-     */
-
-    setValue(
         "appointmentDate",
         "Not available"
     );
 
 
-    setValue(
-        "yearsInService",
-        employee.LengthInService
-    );
-
-
-    setValue(
-        "employmentStatus",
-        employee.EmploymentStatus
-    );
-
-
     /* ------------------------------------------------------
-       Profile photo
+       Profile Photo
     ------------------------------------------------------ */
 
     setProfilePhoto(
-        employee.ProfilePhoto
+        employee.profilePhoto
     );
 
 
     /* ------------------------------------------------------
-       Learning information
+       Learning Information
     ------------------------------------------------------ */
-
-    /*
-     * Training information will be connected through
-     * the Training module after the current Training
-     * Records structure is reconciled.
-     */
 
     setValue(
         "latestTraining",
-        "Not available"
+        employee.latestTraining
     );
 
 
     setValue(
         "learningHours",
-        "Not available"
+        employee.learningHours
     );
 
 
     setValue(
         "certificateCount",
-        "Not available"
+        employee.certificates
     );
-
-}
-
-
-/* ==========================================================
-   Build Full Name
-========================================================== */
-
-function buildFullName(employee) {
-
-    const parts = [];
-
-
-    if (employee.FirstName) {
-
-        parts.push(
-            String(
-                employee.FirstName
-            ).trim()
-        );
-
-    }
-
-
-    if (employee.MiddleName) {
-
-        const middleName =
-            String(
-                employee.MiddleName
-            ).trim();
-
-
-        if (middleName) {
-
-            parts.push(
-                middleName.charAt(0) + "."
-            );
-
-        }
-
-    }
-
-
-    if (employee.LastName) {
-
-        parts.push(
-            String(
-                employee.LastName
-            ).trim()
-        );
-
-    }
-
-
-    if (employee.NameExtension) {
-
-        parts.push(
-            String(
-                employee.NameExtension
-            ).trim()
-        );
-
-    }
-
-
-    if (parts.length === 0) {
-
-        return "Not available";
-
-    }
-
-
-    return parts.join(" ");
 
 }
 
@@ -443,7 +315,10 @@ function buildFullName(employee) {
    Set Profile Value
 ========================================================== */
 
-function setValue(id, value) {
+function setValue(
+    id,
+    value
+) {
 
     const element =
         document.getElementById(id);
@@ -523,12 +398,16 @@ function setLoadingState() {
         "contactNumber",
         "civilStatus",
         "position",
+        "employeePosition",
+        "designation",
         "division",
         "section",
         "salaryGrade",
         "supervisor",
         "appointmentDate",
         "yearsInService",
+        "yearsInCurrentPosition",
+        "employmentStatus",
         "latestTraining",
         "learningHours",
         "certificateCount"
@@ -537,7 +416,7 @@ function setLoadingState() {
 
 
     fields.forEach(
-        function(id) {
+        function (id) {
 
             setValue(
                 id,
@@ -550,12 +429,6 @@ function setLoadingState() {
 
     setValue(
         "fullName",
-        "Loading..."
-    );
-
-
-    setValue(
-        "employeePosition",
         "Loading..."
     );
 
@@ -588,12 +461,15 @@ function showProfileError(message) {
         "contactNumber",
         "civilStatus",
         "position",
+        "designation",
         "division",
         "section",
         "salaryGrade",
         "supervisor",
         "appointmentDate",
         "yearsInService",
+        "yearsInCurrentPosition",
+        "employmentStatus",
         "latestTraining",
         "learningHours",
         "certificateCount"
@@ -602,7 +478,7 @@ function showProfileError(message) {
 
 
     fields.forEach(
-        function(id) {
+        function (id) {
 
             setValue(
                 id,
@@ -621,10 +497,6 @@ function showProfileError(message) {
 
 function bindProfileActions() {
 
-    /* ------------------------------------------------------
-       Edit Profile
-    ------------------------------------------------------ */
-
     const editButton =
         document.getElementById(
             "btnEditProfile"
@@ -635,7 +507,7 @@ function bindProfileActions() {
 
         editButton.addEventListener(
             "click",
-            function() {
+            function () {
 
                 window.location.href =
                     "edit-profile.html";
@@ -645,10 +517,6 @@ function bindProfileActions() {
 
     }
 
-
-    /* ------------------------------------------------------
-       Organizational Update Request
-    ------------------------------------------------------ */
 
     const requestButton =
         document.getElementById(
@@ -660,7 +528,7 @@ function bindProfileActions() {
 
         requestButton.addEventListener(
             "click",
-            function() {
+            function () {
 
                 window.location.href =
                     "requests/organizational-update.html";

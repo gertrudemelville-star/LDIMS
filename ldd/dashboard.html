@@ -5,11 +5,10 @@
 
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-    <title>Employee Dashboard | LDIMS</title>
+    <title>LDD Dashboard | LDIMS</title>
 
     <!-- Bootstrap -->
     <link
@@ -18,8 +17,8 @@
 
     <!-- Global CSS -->
     <link
-        href="../assets/css/style.css"
-        rel="stylesheet">
+        rel="stylesheet"
+        href="../assets/css/style.css">
 
 </head>
 
@@ -42,7 +41,7 @@
         <span class="me-4">🔔</span>
 
         <strong id="headerRole">
-            Employee
+            LDD Personnel
         </strong>
 
     </div>
@@ -65,34 +64,35 @@
             </a>
         </li>
 
-
         <li>
-            <a href="profile.html">
-                👤 My Profile
+            <a href="employees.html">
+                👥 Employees
             </a>
         </li>
 
-
         <li>
-            <a href="training-records.html">
-                🎓 Training Records
+            <a href="lna-monitoring.html">
+                📋 LNA Monitoring
             </a>
         </li>
 
-
         <li>
-            <a href="certificates.html">
-                📂 Certificates
+            <a href="training-monitoring.html">
+                🎓 Training Monitoring
             </a>
         </li>
 
-
         <li>
-            <a href="learning-history.html">
-                📖 Learning Passport
+            <a href="learning-interventions.html">
+                📚 Learning Interventions
             </a>
         </li>
 
+        <li>
+            <a href="reports.html">
+                📊 Reports
+            </a>
+        </li>
 
         <li>
             <a href="notifications.html">
@@ -100,16 +100,9 @@
             </a>
         </li>
 
-
         <li>
-            <a href="#">
-                ⚙ Settings
-            </a>
-        </li>
-
-
-        <li>
-            <a href="../index.html" id="logoutLink">
+            <a href="#"
+               id="logoutLink">
                 🚪 Logout
             </a>
         </li>
@@ -121,19 +114,26 @@
 
 
 <!-- ==========================================================
-     CONTENT
+     MAIN CONTENT
 ========================================================== -->
 
 <main class="content">
 
-    <h2 class="mb-4">
 
-        Welcome Back,
-        <span id="employeeName">
-            Employee
-        </span>!
+    <!-- PAGE HEADER -->
 
-    </h2>
+    <div class="mb-4">
+
+        <h2 class="mb-1">
+            L&D Dashboard
+        </h2>
+
+        <p class="text-muted mb-0">
+            Learning & Development Division
+        </p>
+
+    </div>
+
 
 
     <!-- ======================================================
@@ -143,9 +143,49 @@
     <div class="row g-4">
 
 
-        <!-- Total Trainings -->
+        <!-- Total Employees -->
 
-        <div class="col-lg-3">
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card stat-card">
+
+                <h2 id="totalEmployees">
+                    0
+                </h2>
+
+                <p>
+                    Total Employees
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- LNA Completed -->
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card stat-card">
+
+                <h2 id="lnaCompleted">
+                    0
+                </h2>
+
+                <p>
+                    LNA Completed
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- Training Records -->
+
+        <div class="col-lg-3 col-md-6">
 
             <div class="card stat-card">
 
@@ -154,40 +194,22 @@
                 </h2>
 
                 <p>
-                    Total Trainings
+                    Training Records
                 </p>
 
             </div>
 
         </div>
 
-
-        <!-- Certificates -->
-
-        <div class="col-lg-3">
-
-            <div class="card stat-card">
-
-                <h2 id="totalCertificates">
-                    0
-                </h2>
-
-                <p>
-                    Certificates
-                </p>
-
-            </div>
-
-        </div>
 
 
         <!-- Learning Hours -->
 
-        <div class="col-lg-3">
+        <div class="col-lg-3 col-md-6">
 
             <div class="card stat-card">
 
-                <h2 id="learningHours">
+                <h2 id="totalLearningHours">
                     0
                 </h2>
 
@@ -199,20 +221,59 @@
 
         </div>
 
+    </div>
 
-        <!-- Pending Assessment -->
 
-        <div class="col-lg-3">
 
-            <div class="card stat-card">
+    <!-- ======================================================
+         QUICK ACTIONS
+    ======================================================= -->
 
-                <h2 id="pendingAssessment">
-                    0
-                </h2>
+    <div class="card mt-4 p-4">
 
-                <p>
-                    Pending Assessment
-                </p>
+        <h4 class="card-title mb-3">
+            L&D Monitoring
+        </h4>
+
+
+        <div class="row g-3">
+
+
+            <div class="col-md-4">
+
+                <a
+                    href="lna-monitoring.html"
+                    class="btn btn-primary w-100">
+
+                    📋 LNA Monitoring
+
+                </a>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <a
+                    href="training-monitoring.html"
+                    class="btn btn-primary w-100">
+
+                    🎓 Training Monitoring
+
+                </a>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <a
+                    href="reports.html"
+                    class="btn btn-primary w-100">
+
+                    📊 Reports
+
+                </a>
 
             </div>
 
@@ -223,24 +284,27 @@
 
 
     <!-- ======================================================
-         RECENT ACTIVITIES
+         RECENT L&D ACTIVITY
     ======================================================= -->
 
     <div class="card mt-4 p-4">
 
-        <h4 class="card-title">
-            Recent Activities
+        <h4 class="card-title mb-3">
+            Recent L&D Activity
         </h4>
 
         <hr>
 
-        <p id="recentActivities">
+        <div id="recentActivities">
 
-            No activities found.
+            <p class="text-muted mb-0">
+                Loading recent activities...
+            </p>
 
-        </p>
+        </div>
 
     </div>
+
 
 </main>
 
@@ -263,7 +327,7 @@
 
 
 <!-- ==========================================================
-     CORE SCRIPTS
+     JAVASCRIPT
 ========================================================== -->
 
 <script src="../assets/js/config.js"></script>
@@ -274,12 +338,7 @@
 
 <script src="../assets/js/utils.js"></script>
 
-
-<!-- ==========================================================
-     EMPLOYEE DASHBOARD SCRIPT
-========================================================== -->
-
-<script src="../assets/js/pages/dashboard.js"></script>
+<script src="../assets/js/pages/ldd-dashboard.js"></script>
 
 
 </body>

@@ -1,0 +1,600 @@
+/* ==========================================================
+   LDIMS - SUPERVISOR PORTAL
+   Enterprise Supervisor UI
+========================================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #f5f6fa;
+    color: #2d2633;
+    font-size: 14px;
+}
+
+.app-shell {
+    min-height: 100vh;
+    display: flex;
+}
+
+
+/* ==========================================================
+   SIDEBAR
+========================================================== */
+
+.sidebar {
+    width: 250px;
+    min-height: 100vh;
+    background: linear-gradient(
+        180deg,
+        #4a148c 0%,
+        #5e2596 45%,
+        #452078 100%
+    );
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    box-shadow: 4px 0 18px rgba(0,0,0,.12);
+    z-index: 100;
+}
+
+.sidebar-brand {
+    height: 92px;
+    padding: 20px 22px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid rgba(255,255,255,.12);
+}
+
+.brand-mark {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: #fff;
+    color: #4a148c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 12px;
+}
+
+.brand-title {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: .3px;
+}
+
+.brand-subtitle {
+    font-size: 10px;
+    opacity: .72;
+    margin-top: 2px;
+}
+
+.sidebar-nav {
+    padding: 18px 12px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    margin-bottom: 5px;
+    border-radius: 8px;
+    color: rgba(255,255,255,.82);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    transition: .2s ease;
+}
+
+.nav-item span {
+    width: 20px;
+    text-align: center;
+}
+
+.nav-item:hover {
+    background: rgba(255,255,255,.10);
+    color: #fff;
+}
+
+.nav-item.active {
+    background: rgba(255,255,255,.17);
+    color: #fff;
+    box-shadow: inset 3px 0 0 #fff;
+}
+
+.sidebar-footer {
+    margin-top: auto;
+    padding: 18px 20px;
+    border-top: 1px solid rgba(255,255,255,.12);
+}
+
+.sidebar-footer-label {
+    font-size: 11px;
+    font-weight: 600;
+    opacity: .85;
+}
+
+.sidebar-footer-agency {
+    font-size: 10px;
+    opacity: .58;
+    margin-top: 5px;
+}
+
+
+/* ==========================================================
+   MAIN
+========================================================== */
+
+.main-content {
+    margin-left: 250px;
+    width: calc(100% - 250px);
+    min-height: 100vh;
+    padding: 22px 28px 30px;
+}
+
+
+/* ==========================================================
+   TOPBAR
+========================================================== */
+
+.topbar {
+    min-height: 70px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 14px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 3px 15px rgba(30,20,40,.07);
+    margin-bottom: 22px;
+}
+
+.page-eyebrow {
+    color: #7b1fa2;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .7px;
+}
+
+.page-title {
+    margin: 3px 0 0;
+    color: #35205b;
+    font-size: 25px;
+    font-weight: 700;
+}
+
+.topbar-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #6a1b9a;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-info strong {
+    font-size: 12px;
+    color: #31253b;
+}
+
+.user-info span {
+    font-size: 10px;
+    color: #8b8292;
+    margin-top: 2px;
+}
+
+
+/* ==========================================================
+   WELCOME
+========================================================== */
+
+.dashboard-welcome {
+    background: linear-gradient(
+        120deg,
+        #6a1b9a,
+        #8e24aa
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 22px 24px;
+    margin-bottom: 22px;
+    box-shadow: 0 7px 18px rgba(106,27,154,.20);
+}
+
+.dashboard-welcome .section-label {
+    color: rgba(255,255,255,.78);
+}
+
+.dashboard-welcome h2 {
+    margin: 5px 0 5px;
+    font-size: 21px;
+}
+
+.dashboard-welcome p {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.5;
+    max-width: 720px;
+    color: rgba(255,255,255,.86);
+}
+
+
+/* ==========================================================
+   SECTION LABEL
+========================================================== */
+
+.section-label {
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .6px;
+    color: #7b1fa2;
+}
+
+
+/* ==========================================================
+   SUMMARY CARDS
+========================================================== */
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.summary-card {
+    background: #fff;
+    border-radius: 11px;
+    padding: 18px 20px;
+    min-height: 112px;
+    box-shadow: 0 3px 14px rgba(30,20,40,.07);
+    border-left: 3px solid #7b1fa2;
+}
+
+.summary-card-label {
+    color: #766d7d;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .4px;
+}
+
+.summary-card-value {
+    color: #6a1b9a;
+    font-size: 28px;
+    line-height: 1;
+    font-weight: 750;
+    margin: 11px 0 7px;
+}
+
+.summary-card-description {
+    color: #99909e;
+    font-size: 10px;
+}
+
+
+/* ==========================================================
+   CONTENT CARD
+========================================================== */
+
+.content-card {
+    background: #fff;
+    border-radius: 12px;
+    margin-bottom: 22px;
+    box-shadow: 0 3px 15px rgba(30,20,40,.07);
+    overflow: hidden;
+}
+
+.content-card-header {
+    padding: 20px 22px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eeeaf1;
+}
+
+.content-card-header h2 {
+    color: #402264;
+    font-size: 18px;
+    margin: 4px 0;
+}
+
+.content-card-header p {
+    color: #918997;
+    font-size: 11px;
+    margin: 0;
+}
+
+
+/* ==========================================================
+   ASSIGNMENT BADGE
+========================================================== */
+
+.assignment-badge {
+    background: #f6eff9;
+    border: 1px solid #eadcf0;
+    border-radius: 8px;
+    padding: 9px 14px;
+    text-align: right;
+}
+
+.assignment-badge span {
+    display: block;
+    font-size: 9px;
+    color: #918997;
+}
+
+.assignment-badge strong {
+    display: block;
+    color: #6a1b9a;
+    font-size: 12px;
+    margin-top: 2px;
+}
+
+
+/* ==========================================================
+   TABLE
+========================================================== */
+
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table th {
+    background: #faf8fc;
+    color: #756b7e;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .4px;
+    text-transform: uppercase;
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid #ebe6ef;
+    white-space: nowrap;
+}
+
+.data-table td {
+    padding: 13px 16px;
+    font-size: 11px;
+    color: #403746;
+    border-bottom: 1px solid #f0edf2;
+    vertical-align: middle;
+}
+
+.data-table tbody tr:hover {
+    background: #fbf8fd;
+}
+
+.data-table td:first-child {
+    color: #6a1b9a;
+    font-weight: 700;
+}
+
+.data-table td:nth-child(2) {
+    font-weight: 600;
+}
+
+
+/* ==========================================================
+   STATUS
+========================================================== */
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 9px;
+    border-radius: 20px;
+    background: #fff4df;
+    color: #9a6400;
+    font-size: 9px;
+    font-weight: 700;
+}
+
+
+/* ==========================================================
+   ACTION BUTTON
+========================================================== */
+
+.data-table a,
+.data-table button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 6px;
+    padding: 6px 10px;
+    background: #6a1b9a;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: .2s ease;
+}
+
+.data-table a:hover,
+.data-table button:hover {
+    background: #4a148c;
+    transform: translateY(-1px);
+}
+
+
+/* ==========================================================
+   EMPTY / LOADING
+========================================================== */
+
+.loading-state {
+    text-align: center;
+    padding: 40px !important;
+    color: #99909e !important;
+}
+
+.empty-state-panel {
+    padding: 42px 20px;
+    text-align: center;
+}
+
+.empty-state-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    margin: 0 auto 12px;
+    background: #f4eafa;
+    color: #7b1fa2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.empty-state-panel h3 {
+    color: #4b4053;
+    font-size: 14px;
+    margin: 0 0 5px;
+}
+
+.empty-state-panel p {
+    color: #98909e;
+    font-size: 11px;
+    margin: 0;
+}
+
+
+/* ==========================================================
+   FOOTER
+========================================================== */
+
+.page-footer {
+    padding: 8px 2px;
+    color: #aaa2ad;
+    font-size: 10px;
+    display: flex;
+    gap: 7px;
+}
+
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media (max-width: 900px) {
+
+    .sidebar {
+        width: 210px;
+    }
+
+    .main-content {
+        margin-left: 210px;
+        width: calc(100% - 210px);
+        padding: 18px;
+    }
+
+    .summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+@media (max-width: 650px) {
+
+    .sidebar {
+        width: 64px;
+    }
+
+    .sidebar-brand {
+        justify-content: center;
+        padding: 12px;
+    }
+
+    .brand-title,
+    .brand-subtitle,
+    .sidebar-footer,
+    .nav-item:not(.active)::after {
+        display: none;
+    }
+
+    .nav-item {
+        justify-content: center;
+        padding: 12px 5px;
+    }
+
+    .main-content {
+        margin-left: 64px;
+        width: calc(100% - 64px);
+        padding: 12px;
+    }
+
+    .topbar {
+        padding: 12px;
+    }
+
+    .content-card-header {
+        align-items: flex-start;
+        gap: 10px;
+        flex-direction: column;
+    }
+
+    .assignment-badge {
+        text-align: left;
+    }
+
+}
+
+/* Typography refinement only */
+body,
+button,
+input,
+select,
+textarea,
+table,
+th,
+td {
+    font-family: "Bookman Old Style", Bookman, Georgia, serif;
+}
+
+body {
+    font-size: 14px;
+}
+
+h1 {
+    font-size: 28px;
+}
+
+h2 {
+    font-size: 21px;
+}
+
+h3 {
+    font-size: 17px;
+}

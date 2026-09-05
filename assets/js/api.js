@@ -209,6 +209,66 @@ const API = {
 
 
     /* ======================================================
+       GET COMPLETE EMPLOYEE PROFILE
+    ====================================================== */
+
+    async getEmployeeProfile(
+        employeeID
+    ) {
+
+        return await this.post({
+
+            action:
+                "getEmployeeProfile",
+
+            employeeID:
+                employeeID
+
+        });
+
+    },
+
+
+    /* ======================================================
+       GET TRAINING RECORDS
+       Employee-specific
+    ====================================================== */
+
+    async getTrainingRecords(
+        employeeID
+    ) {
+
+        return await this.post({
+
+            action:
+                "getTrainingRecords",
+
+            employeeID:
+                employeeID
+
+        });
+
+    },
+
+
+    /* ======================================================
+       GET ALL TRAINING RECORDS FOR LDD
+       LDD TRAINING MONITORING
+    ====================================================== */
+
+    async getAllTrainingRecordsForLDD() {
+
+        return await this.post({
+
+            action:
+                "getAllTrainingRecordsForLDD"
+
+        });
+
+    },
+
+
+    /* ======================================================
        UPDATE EMPLOYEE PROFILE
     ====================================================== */
 

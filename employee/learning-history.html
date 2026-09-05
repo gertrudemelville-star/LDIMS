@@ -9,7 +9,7 @@
         name="viewport"
         content="width=device-width, initial-scale=1.0">
 
-    <title>Employee Dashboard | LDIMS</title>
+    <title>Learning Passport | LDIMS</title>
 
     <!-- Bootstrap -->
     <link
@@ -65,13 +65,11 @@
             </a>
         </li>
 
-
         <li>
             <a href="profile.html">
                 👤 My Profile
             </a>
         </li>
-
 
         <li>
             <a href="training-records.html">
@@ -79,20 +77,19 @@
             </a>
         </li>
 
-
         <li>
             <a href="certificates.html">
                 📂 Certificates
             </a>
         </li>
 
-
         <li>
-            <a href="learning-history.html">
+            <a
+                href="learning-history.html"
+                class="active">
                 📖 Learning Passport
             </a>
         </li>
-
 
         <li>
             <a href="notifications.html">
@@ -100,16 +97,16 @@
             </a>
         </li>
 
-
         <li>
             <a href="#">
                 ⚙ Settings
             </a>
         </li>
 
-
         <li>
-            <a href="../index.html" id="logoutLink">
+            <a
+                href="../index.html"
+                id="logoutLink">
                 🚪 Logout
             </a>
         </li>
@@ -126,26 +123,75 @@
 
 <main class="content">
 
-    <h2 class="mb-4">
-
-        Welcome Back,
-        <span id="employeeName">
-            Employee
-        </span>!
-
+    <h2 class="mb-1">
+        Learning Passport
     </h2>
+
+    <p class="text-muted mb-4">
+        Your consolidated Learning and Development journey.
+    </p>
 
 
     <!-- ======================================================
-         STAT CARDS
+         EMPLOYEE SUMMARY
     ======================================================= -->
 
-    <div class="row g-4">
+    <div class="card p-4 mb-4">
+
+        <div class="row">
+
+            <div class="col-md-4">
+
+                <small class="text-muted">
+                    Employee
+                </small>
+
+                <h5 id="employeeName">
+                    -
+                </h5>
+
+            </div>
 
 
-        <!-- Total Trainings -->
+            <div class="col-md-4">
 
-        <div class="col-lg-3">
+                <small class="text-muted">
+                    Employee ID
+                </small>
+
+                <h5 id="employeeID">
+                    -
+                </h5>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <small class="text-muted">
+                    Position
+                </small>
+
+                <h5 id="employeePosition">
+                    -
+                </h5>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ======================================================
+         LEARNING SUMMARY
+    ======================================================= -->
+
+    <div class="row g-4 mb-4">
+
+
+        <div class="col-lg-4">
 
             <div class="card stat-card">
 
@@ -154,7 +200,7 @@
                 </h2>
 
                 <p>
-                    Total Trainings
+                    Trainings Completed
                 </p>
 
             </div>
@@ -162,9 +208,24 @@
         </div>
 
 
-        <!-- Certificates -->
+        <div class="col-lg-4">
 
-        <div class="col-lg-3">
+            <div class="card stat-card">
+
+                <h2 id="learningHours">
+                    0
+                </h2>
+
+                <p>
+                    Total Learning Hours
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-lg-4">
 
             <div class="card stat-card">
 
@@ -180,41 +241,34 @@
 
         </div>
 
-
-        <!-- Learning Hours -->
-
-        <div class="col-lg-3">
-
-            <div class="card stat-card">
-
-                <h2 id="learningHours">
-                    0
-                </h2>
-
-                <p>
-                    Learning Hours
-                </p>
-
-            </div>
-
-        </div>
+    </div>
 
 
-        <!-- Pending Assessment -->
 
-        <div class="col-lg-3">
+    <!-- ======================================================
+         LNA STATUS
+    ======================================================= -->
 
-            <div class="card stat-card">
+    <div class="card p-4 mb-4">
 
-                <h2 id="pendingAssessment">
-                    0
-                </h2>
+        <h4 class="card-title">
+            Learning Needs Assessment
+        </h4>
 
-                <p>
-                    Pending Assessment
-                </p>
+        <hr>
 
-            </div>
+        <div class="d-flex align-items-center gap-3">
+
+            <span
+                id="lnaStatus"
+                class="badge bg-secondary">
+                Loading...
+            </span>
+
+            <span
+                id="lnaDate"
+                class="text-muted">
+            </span>
 
         </div>
 
@@ -223,22 +277,24 @@
 
 
     <!-- ======================================================
-         RECENT ACTIVITIES
+         LEARNING HISTORY
     ======================================================= -->
 
-    <div class="card mt-4 p-4">
+    <div class="card p-4">
 
         <h4 class="card-title">
-            Recent Activities
+            Learning History
         </h4>
 
         <hr>
 
-        <p id="recentActivities">
+        <div id="learningHistory">
 
-            No activities found.
+            <p class="text-muted">
+                Loading learning history...
+            </p>
 
-        </p>
+        </div>
 
     </div>
 
@@ -276,10 +332,10 @@
 
 
 <!-- ==========================================================
-     EMPLOYEE DASHBOARD SCRIPT
+     LEARNING PASSPORT SCRIPT
 ========================================================== -->
 
-<script src="../assets/js/pages/dashboard.js"></script>
+<script src="../assets/js/pages/learning-history.js"></script>
 
 
 </body>

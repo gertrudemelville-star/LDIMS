@@ -1,0 +1,1433 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Training Monitoring | LDD | LDIMS</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+    <link
+        rel="stylesheet"
+        href="../assets/css/style.css">
+
+</head>
+
+
+<body>
+
+
+<!-- ==========================================================
+     HEADER
+========================================================== -->
+
+<header class="header">
+
+    <div class="header-title">
+        LDIMS
+    </div>
+
+    <div>
+
+        <span class="me-4">🔔</span>
+
+        <strong id="headerRole">
+            LDD Personnel
+        </strong>
+
+    </div>
+
+</header>
+
+
+
+<!-- ==========================================================
+     SIDEBAR
+========================================================== -->
+
+<aside class="sidebar">
+
+    <ul>
+
+        <li>
+            <a href="dashboard.html">
+                🏠 Dashboard
+            </a>
+        </li>
+
+        <li>
+            <a href="employees.html">
+                👥 Employees
+            </a>
+        </li>
+
+        <li>
+            <a href="lna-monitoring.html">
+                📋 LNA Monitoring
+            </a>
+        </li>
+
+        <li>
+            <a href="training-monitoring.html">
+                🎓 Training Monitoring
+            </a>
+        </li>
+
+        <li>
+            <a href="learning-interventions.html">
+                📚 Learning Interventions
+            </a>
+        </li>
+
+        <li>
+            <a href="reports.html">
+                📊 Reports
+            </a>
+        </li>
+
+        <li>
+            <a href="notifications.html">
+                🔔 Notifications
+            </a>
+        </li>
+
+        <li>
+            <a href="../index.html"
+               id="logoutLink">
+                🚪 Logout
+            </a>
+        </li>
+
+    </ul>
+
+</aside>
+
+
+
+<!-- ==========================================================
+     MAIN CONTENT
+========================================================== -->
+
+<main class="content">
+
+
+    <div class="mb-4">
+
+        <h2 class="mb-1">
+            Training Monitoring
+        </h2>
+
+        <p class="text-muted mb-0">
+            Monitor employee learning and training records.
+        </p>
+
+    </div>
+
+
+
+    <!-- ======================================================
+         SUMMARY
+    ======================================================= -->
+
+    <div class="row g-4 mb-4">
+
+
+        <div class="col-md-3">
+
+            <div class="card stat-card">
+
+                <h2 id="totalEmployees">
+                    0
+                </h2>
+
+                <p>
+                    Total Employees
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <div class="card stat-card">
+
+                <h2 id="totalRecords">
+                    0
+                </h2>
+
+                <p>
+                    Training Records
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <div class="card stat-card">
+
+                <h2 id="totalHours">
+                    0
+                </h2>
+
+                <p>
+                    Learning Hours
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <div class="card stat-card">
+
+                <h2 id="employeesTrained">
+                    0
+                </h2>
+
+                <p>
+                    Employees Trained
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ======================================================
+         TRAINING RECORDS
+    ======================================================= -->
+
+    <div class="card p-4">
+
+
+        <div class="d-flex justify-content-between
+                    align-items-center mb-3">
+
+            <h4 class="card-title mb-0">
+                Employee Training Records
+            </h4>
+
+            <span
+                id="loadingStatus"
+                class="badge bg-secondary">
+
+                Loading...
+
+            </span>
+
+        </div>
+
+
+        <hr>
+
+
+
+        <!-- ==================================================
+             SEARCH / SORT / EXPORT
+        =================================================== -->
+
+        <div class="row g-2 mb-3">
+
+
+            <div class="col-md-5">
+
+                <div class="input-group">
+
+                    <span class="input-group-text">
+                        🔎
+                    </span>
+
+                    <input
+                        type="text"
+                        id="searchInput"
+                        class="form-control"
+                        placeholder="Search employee, training title, ID...">
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <select
+                    id="sortSelect"
+                    class="form-select">
+
+                    <option value="employeeID">
+                        Sort: Employee ID
+                    </option>
+
+                    <option value="name">
+                        Sort: Employee Name
+                    </option>
+
+                    <option value="training">
+                        Sort: Training Title
+                    </option>
+
+                    <option value="startDate">
+                        Sort: Start Date
+                    </option>
+
+                    <option value="hours">
+                        Sort: Learning Hours
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="col-md-3">
+
+                <button
+                    type="button"
+                    id="exportButton"
+                    class="btn btn-primary w-100">
+
+                    📥 Export to File
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ==================================================
+             TABLE
+        =================================================== -->
+
+        <div class="table-responsive">
+
+            <table
+                class="table table-hover align-middle">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Employee ID
+                        </th>
+
+                        <th>
+                            Employee
+                        </th>
+
+                        <th>
+                            Training Title
+                        </th>
+
+                        <th>
+                            Start Date
+                        </th>
+
+                        <th>
+                            End Date
+                        </th>
+
+                        <th>
+                            Learning Hours
+                        </th>
+
+                        <th>
+                            Certificate
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="trainingTableBody">
+
+                    <tr>
+
+                        <td
+                            colspan="7"
+                            class="text-center text-muted">
+
+                            Loading training records...
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+</main>
+
+
+
+<!-- ==========================================================
+     FOOTER
+========================================================== -->
+
+<footer class="footer">
+
+    © 2026 National Bureau of Investigation
+
+    <br>
+
+    Learning & Development Division
+
+</footer>
+
+
+
+<!-- ==========================================================
+     JAVASCRIPT
+========================================================== -->
+
+<script src="../assets/js/config.js"></script>
+
+<script src="../assets/js/api.js"></script>
+
+<script src="../assets/js/session.js"></script>
+
+<script src="../assets/js/utils.js"></script>
+
+
+<script>
+
+"use strict";
+
+
+let trainingResults = [];
+
+let employeeMap = {};
+
+
+
+/* ==========================================================
+   INITIALIZE
+========================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    loadTrainingMonitoring
+);
+
+
+
+/* ==========================================================
+   LOAD TRAINING MONITORING
+========================================================== */
+
+async function loadTrainingMonitoring() {
+
+    const tableBody =
+        document.getElementById(
+            "trainingTableBody"
+        );
+
+
+    const loadingStatus =
+        document.getElementById(
+            "loadingStatus"
+        );
+
+
+    try {
+
+        Session.requireLogin();
+
+
+        const user =
+            Session.get();
+
+
+        if (user) {
+
+            const headerRole =
+                document.getElementById(
+                    "headerRole"
+                );
+
+
+            if (headerRole) {
+
+                headerRole.textContent =
+                    user.role ||
+                    "LDD Personnel";
+
+            }
+
+        }
+
+
+        /* --------------------------------------------------
+           LOAD EMPLOYEES
+        -------------------------------------------------- */
+
+        const employeeResponse =
+            await API.getEmployees();
+
+
+        console.log(
+            "Training Monitoring Employees:",
+            employeeResponse
+        );
+
+
+        const employees =
+            employeeResponse?.data ||
+            employeeResponse?.employees ||
+            [];
+
+
+        document.getElementById(
+            "totalEmployees"
+        ).textContent =
+            employees.length;
+
+
+        employees.forEach(
+            employee => {
+
+                const id =
+                    String(
+                        employee.employeeID ||
+                        employee.EmployeeID ||
+                        ""
+                    ).trim();
+
+
+                if (id) {
+
+                    employeeMap[id] =
+                        employee;
+
+                }
+
+            }
+        );
+
+
+
+        /* --------------------------------------------------
+           LOAD ALL TRAINING RECORDS FOR LDD
+        -------------------------------------------------- */
+
+        const response =
+            await API.getAllTrainingRecordsForLDD();
+
+
+        console.log(
+            "LDD Training Monitoring Records:",
+            response
+        );
+
+
+        if (
+            !response ||
+            response.success !== true
+        ) {
+
+            throw new Error(
+                response?.message ||
+                "Unable to load training records."
+            );
+
+        }
+
+
+        const records =
+            response.data ||
+            response.records ||
+            [];
+
+
+        trainingResults =
+            records.map(
+                record => {
+
+                    const employeeID =
+                        String(
+                            record.employeeID ||
+                            record.EmployeeID ||
+                            record["EMPLOYEE ID"] ||
+                            ""
+                        ).trim();
+
+
+                    return {
+                        record,
+                        employee:
+                            employeeMap[
+                                employeeID
+                            ] || null
+                    };
+
+                }
+            );
+
+
+
+        /* --------------------------------------------------
+           SUMMARY
+        -------------------------------------------------- */
+
+        const totalHours =
+            trainingResults.reduce(
+                (total, item) => {
+
+                    const record =
+                        item.record;
+
+
+                    const hours =
+                        parseFloat(
+                            record.totalHours ||
+                            record.TotalHours ||
+                            record["TOTAL HOURS"] ||
+                            0
+                        );
+
+
+                    return total +
+                        (
+                            isNaN(hours)
+                                ? 0
+                                : hours
+                        );
+
+                },
+                0
+            );
+
+
+        const uniqueEmployees =
+            new Set(
+                trainingResults
+                    .map(
+                        item =>
+                            String(
+                                item.record.employeeID ||
+                                item.record.EmployeeID ||
+                                item.record["EMPLOYEE ID"] ||
+                                ""
+                            ).trim()
+                    )
+                    .filter(Boolean)
+            );
+
+
+        document.getElementById(
+            "totalRecords"
+        ).textContent =
+            trainingResults.length;
+
+
+        document.getElementById(
+            "totalHours"
+        ).textContent =
+            totalHours;
+
+
+        document.getElementById(
+            "employeesTrained"
+        ).textContent =
+            uniqueEmployees.size;
+
+
+
+        /* --------------------------------------------------
+           DISPLAY
+        -------------------------------------------------- */
+
+        renderTrainingTable(
+            trainingResults
+        );
+
+
+        loadingStatus.textContent =
+            "Updated";
+
+
+        loadingStatus.className =
+            "badge bg-success";
+
+
+    } catch (error) {
+
+        console.error(
+            "Training Monitoring Error:",
+            error
+        );
+
+
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="7"
+                    class="text-center text-danger">
+                    Unable to load training records.
+                </td>
+            </tr>
+        `;
+
+
+        loadingStatus.textContent =
+            "Error";
+
+
+        loadingStatus.className =
+            "badge bg-danger";
+
+    }
+
+}
+
+
+
+/* ==========================================================
+   RENDER TABLE
+========================================================== */
+
+function renderTrainingTable(results) {
+
+    const tableBody =
+        document.getElementById(
+            "trainingTableBody"
+        );
+
+
+    tableBody.innerHTML = "";
+
+
+    if (!results.length) {
+
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="7"
+                    class="text-center text-muted">
+                    No training records found.
+                </td>
+            </tr>
+        `;
+
+        return;
+
+    }
+
+
+    results.forEach(
+        item => {
+
+            const record =
+                item.record;
+
+
+            const employee =
+                item.employee;
+
+
+            const employeeID =
+                record.employeeID ||
+                record.EmployeeID ||
+                record["EMPLOYEE ID"] ||
+                "-";
+
+
+            const name =
+                employee
+                    ? getEmployeeName(employee)
+                    : "-";
+
+
+            const trainingTitle =
+                record.trainingTitle ||
+                record.TrainingTitle ||
+                record["TRAINING TITLE"] ||
+                "-";
+
+
+            const startDate =
+                record.startDate ||
+                record.StartDate ||
+                record["START DATE"] ||
+                "";
+
+
+            const endDate =
+                record.endDate ||
+                record.EndDate ||
+                record["END DATE"] ||
+                "";
+
+
+            const hours =
+                record.totalHours ||
+                record.TotalHours ||
+                record["TOTAL HOURS"] ||
+                "0";
+
+
+            const certificate =
+                record.certificate ||
+                record.Certificate ||
+                record[
+                    "CERTIFICATE / PROOF OF TRAINING"
+                ] ||
+                "";
+
+
+            let certificateHTML =
+                "-";
+
+
+            if (certificate) {
+
+                certificateHTML = `
+                    <a
+                        href="${escapeHTML(certificate)}"
+                        target="_blank"
+                        rel="noopener noreferrer">
+
+                        View Certificate
+
+                    </a>
+                `;
+
+            }
+
+
+            const row =
+                document.createElement("tr");
+
+
+            row.innerHTML = `
+
+                <td>
+                    <strong>
+                        ${escapeHTML(employeeID)}
+                    </strong>
+                </td>
+
+                <td>
+                    ${escapeHTML(name)}
+                </td>
+
+                <td>
+                    ${escapeHTML(trainingTitle)}
+                </td>
+
+                <td>
+                    ${escapeHTML(
+                        formatDateOnly(startDate)
+                    )}
+                </td>
+
+                <td>
+                    ${escapeHTML(
+                        formatDateOnly(endDate)
+                    )}
+                </td>
+
+                <td>
+                    ${escapeHTML(hours)}
+                </td>
+
+                <td>
+                    ${certificateHTML}
+                </td>
+
+            `;
+
+
+            tableBody.appendChild(row);
+
+        }
+    );
+
+}
+
+
+
+/* ==========================================================
+   SEARCH
+========================================================== */
+
+document
+    .getElementById("searchInput")
+    ?.addEventListener(
+        "input",
+        function () {
+
+            const keyword =
+                this.value
+                    .toLowerCase()
+                    .trim();
+
+
+            if (!keyword) {
+
+                renderTrainingTable(
+                    trainingResults
+                );
+
+                return;
+
+            }
+
+
+            const filtered =
+                trainingResults.filter(
+                    item => {
+
+                        const record =
+                            item.record;
+
+
+                        const employee =
+                            item.employee;
+
+
+                        const employeeID =
+                            record.employeeID ||
+                            record.EmployeeID ||
+                            record["EMPLOYEE ID"] ||
+                            "";
+
+
+                        const training =
+                            record.trainingTitle ||
+                            record.TrainingTitle ||
+                            record["TRAINING TITLE"] ||
+                            "";
+
+
+                        const employeeName =
+                            employee
+                                ? getEmployeeName(
+                                    employee
+                                )
+                                : "";
+
+
+                        const searchable =
+                            [
+                                employeeID,
+                                training,
+                                employeeName
+                            ]
+                            .join(" ")
+                            .toLowerCase();
+
+
+                        return searchable.includes(
+                            keyword
+                        );
+
+                    }
+                );
+
+
+            renderTrainingTable(
+                filtered
+            );
+
+        }
+    );
+
+
+
+/* ==========================================================
+   SORT
+========================================================== */
+
+document
+    .getElementById("sortSelect")
+    ?.addEventListener(
+        "change",
+        function () {
+
+            const sortBy =
+                this.value;
+
+
+            const sorted =
+                [...trainingResults];
+
+
+            sorted.sort(
+                (a, b) => {
+
+                    const recordA =
+                        a.record;
+
+
+                    const recordB =
+                        b.record;
+
+
+                    const employeeA =
+                        a.employee;
+
+
+                    const employeeB =
+                        b.employee;
+
+
+                    let valueA = "";
+
+                    let valueB = "";
+
+
+                    if (
+                        sortBy ===
+                        "employeeID"
+                    ) {
+
+                        valueA =
+                            recordA.employeeID ||
+                            recordA.EmployeeID ||
+                            recordA["EMPLOYEE ID"] ||
+                            "";
+
+                        valueB =
+                            recordB.employeeID ||
+                            recordB.EmployeeID ||
+                            recordB["EMPLOYEE ID"] ||
+                            "";
+
+                    }
+
+
+                    else if (
+                        sortBy === "name"
+                    ) {
+
+                        valueA =
+                            employeeA
+                                ? getEmployeeName(
+                                    employeeA
+                                )
+                                : "";
+
+                        valueB =
+                            employeeB
+                                ? getEmployeeName(
+                                    employeeB
+                                )
+                                : "";
+
+                    }
+
+
+                    else if (
+                        sortBy === "training"
+                    ) {
+
+                        valueA =
+                            recordA.trainingTitle ||
+                            recordA.TrainingTitle ||
+                            recordA["TRAINING TITLE"] ||
+                            "";
+
+                        valueB =
+                            recordB.trainingTitle ||
+                            recordB.TrainingTitle ||
+                            recordB["TRAINING TITLE"] ||
+                            "";
+
+                    }
+
+
+                    else if (
+                        sortBy === "startDate"
+                    ) {
+
+                        valueA =
+                            recordA.startDate ||
+                            recordA.StartDate ||
+                            recordA["START DATE"] ||
+                            "";
+
+                        valueB =
+                            recordB.startDate ||
+                            recordB.StartDate ||
+                            recordB["START DATE"] ||
+                            "";
+
+                    }
+
+
+                    else if (
+                        sortBy === "hours"
+                    ) {
+
+                        valueA =
+                            parseFloat(
+                                recordA.totalHours ||
+                                recordA.TotalHours ||
+                                recordA["TOTAL HOURS"] ||
+                                0
+                            );
+
+                        valueB =
+                            parseFloat(
+                                recordB.totalHours ||
+                                recordB.TotalHours ||
+                                recordB["TOTAL HOURS"] ||
+                                0
+                            );
+
+                        return valueB - valueA;
+
+                    }
+
+
+                    return String(valueA)
+                        .localeCompare(
+                            String(valueB),
+                            undefined,
+                            {
+                                numeric: true,
+                                sensitivity: "base"
+                            }
+                        );
+
+                }
+            );
+
+
+            renderTrainingTable(
+                sorted
+            );
+
+        }
+    );
+
+
+
+/* ==========================================================
+   EXPORT
+========================================================== */
+
+document
+    .getElementById("exportButton")
+    ?.addEventListener(
+        "click",
+        exportTraining
+    );
+
+
+function exportTraining() {
+
+    if (!trainingResults.length) {
+
+        alert(
+            "No training records available to export."
+        );
+
+        return;
+
+    }
+
+
+    const rows = [];
+
+
+    rows.push([
+        "Employee ID",
+        "Employee",
+        "Training Title",
+        "Start Date",
+        "End Date",
+        "Learning Hours",
+        "Certificate / Proof"
+    ]);
+
+
+    trainingResults.forEach(
+        item => {
+
+            const record =
+                item.record;
+
+
+            const employee =
+                item.employee;
+
+
+            const employeeID =
+                record.employeeID ||
+                record.EmployeeID ||
+                record["EMPLOYEE ID"] ||
+                "";
+
+
+            const name =
+                employee
+                    ? getEmployeeName(employee)
+                    : "";
+
+
+            const training =
+                record.trainingTitle ||
+                record.TrainingTitle ||
+                record["TRAINING TITLE"] ||
+                "";
+
+
+            const startDate =
+                record.startDate ||
+                record.StartDate ||
+                record["START DATE"] ||
+                "";
+
+
+            const endDate =
+                record.endDate ||
+                record.EndDate ||
+                record["END DATE"] ||
+                "";
+
+
+            const hours =
+                record.totalHours ||
+                record.TotalHours ||
+                record["TOTAL HOURS"] ||
+                "";
+
+
+            const certificate =
+                record.certificate ||
+                record.Certificate ||
+                record[
+                    "CERTIFICATE / PROOF OF TRAINING"
+                ] ||
+                "";
+
+
+            rows.push([
+                employeeID,
+                name,
+                training,
+                startDate,
+                endDate,
+                hours,
+                certificate
+            ]);
+
+        }
+    );
+
+
+    const csv =
+        rows
+            .map(
+                row =>
+                    row
+                        .map(
+                            value =>
+                                `"${String(value)
+                                    .replace(
+                                        /"/g,
+                                        '""'
+                                    )}"`
+                        )
+                        .join(",")
+            )
+            .join("\r\n");
+
+
+    const blob =
+        new Blob(
+            [csv],
+            {
+                type:
+                    "text/csv;charset=utf-8;"
+            }
+        );
+
+
+    const url =
+        URL.createObjectURL(
+            blob
+        );
+
+
+    const link =
+        document.createElement("a");
+
+
+    link.href =
+        url;
+
+
+    link.download =
+        "LDIMS_Training_Monitoring.csv";
+
+
+    document.body.appendChild(
+        link
+    );
+
+
+    link.click();
+
+
+    document.body.removeChild(
+        link
+    );
+
+
+    URL.revokeObjectURL(
+        url
+    );
+
+}
+
+
+
+/* ==========================================================
+   HELPERS
+========================================================== */
+
+function getEmployeeName(employee) {
+
+    const lastName =
+        employee.lastName ||
+        employee.LastName ||
+        "";
+
+
+    const firstName =
+        employee.firstName ||
+        employee.FirstName ||
+        "";
+
+
+    const middleName =
+        employee.middleName ||
+        employee.MiddleName ||
+        "";
+
+
+    return [
+        lastName,
+        firstName,
+        middleName
+    ]
+    .filter(Boolean)
+    .join(", ");
+
+}
+
+
+function formatDateOnly(value) {
+
+    if (!value) {
+        return "-";
+    }
+
+
+    const date =
+        new Date(value);
+
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+
+        return String(value);
+
+    }
+
+
+    return date.toLocaleDateString(
+        "en-PH",
+        {
+            year: "numeric",
+            month: "long",
+            day: "numeric"
+        }
+    );
+
+}
+
+
+function escapeHTML(value) {
+
+    return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+
+/* ==========================================================
+   LOGOUT
+========================================================== */
+
+document
+    .getElementById("logoutLink")
+    ?.addEventListener(
+        "click",
+        function (event) {
+
+            event.preventDefault();
+
+
+            if (
+                typeof Session !== "undefined" &&
+                typeof Session.logout === "function"
+            ) {
+
+                Session.logout();
+
+                return;
+
+            }
+
+
+            localStorage.clear();
+
+
+            window.location.href =
+                "../index.html";
+
+        }
+    );
+
+</script>
+
+
+</body>
+
+</html>

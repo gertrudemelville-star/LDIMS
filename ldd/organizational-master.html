@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Organizational Master | LDIMS
+    </title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../assets/css/style.css"
+    >
+<style>
+
+    /* =====================================================
+   LDIMS ORGANIZATIONAL MASTER
+   PURPLE PAGE ACCENTS
+===================================================== */
+
+.container-fluid {
+    border-top: 3px solid #6A1B9A;
+}
+
+
+/* Page title */
+
+.container-fluid h2 {
+    color: #4A148C;
+}
+
+
+/* Summary cards */
+
+.container-fluid .card {
+    border-top: 3px solid #6A1B9A !important;
+}
+
+
+/* Validation queue */
+
+.container-fluid > .card {
+    border-left: 3px solid #6A1B9A !important;
+}
+
+
+.container-fluid > .card .card-header {
+    border-bottom: 2px solid #e5d8ec;
+}
+
+
+.container-fluid > .card .card-header strong {
+    color: #4A148C;
+}
+
+
+/* Table header */
+
+#organizationTableBody
+tr:hover {
+    background-color: #faf7fc;
+}
+
+
+.table thead th {
+    color: #4A148C;
+    border-bottom: 2px solid #6A1B9A;
+}
+
+
+/* Refresh button */
+
+#refreshButton {
+    border-color: #6A1B9A;
+    color: #6A1B9A;
+}
+
+
+#refreshButton:hover {
+    background-color: #6A1B9A;
+    color: #ffffff;
+}
+
+    /* =====================================================
+       LDIMS ORGANIZATIONAL MASTER
+       PURPLE VALIDATION MODAL
+    ====================================================== */
+
+    #organizationModal .modal-content {
+        border: 1px solid #6A1B9A;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.22);
+    }
+
+    #organizationModal .modal-header {
+        background: linear-gradient(
+            135deg,
+            #4A148C,
+            #6A1B9A
+        );
+        color: #ffffff;
+        border-bottom: 0;
+        padding: 18px 22px;
+    }
+
+    #organizationModal .modal-title {
+        color: #ffffff;
+        font-weight: 700;
+    }
+
+    #organizationModal .modal-header .small {
+        color: rgba(255, 255, 255, 0.78) !important;
+    }
+
+    #organizationModal .btn-close {
+        filter: brightness(0) invert(1);
+        opacity: 0.9;
+    }
+
+    #organizationModal .modal-body {
+        padding: 22px;
+    }
+
+    #organizationModal .modal-body .row > div {
+        background: #faf7fc;
+        border: 1px solid #eee4f4;
+        border-radius: 8px;
+        padding: 12px 14px;
+    }
+
+    #organizationModal .modal-body .form-label {
+        color: #6A1B9A;
+        font-weight: 600;
+    }
+
+    #organizationModal #modalRemarks {
+        border-color: #d8c5e2;
+    }
+
+    #organizationModal #modalRemarks:focus {
+        border-color: #6A1B9A;
+        box-shadow:
+            0 0 0 0.2rem
+            rgba(106, 27, 154, 0.12);
+    }
+
+    #organizationModal .modal-footer {
+        position: relative;
+        background: #faf7fc;
+        border-top: 1px solid #e5d8ec;
+        padding: 14px 18px;
+    }
+
+    #organizationModal .modal-footer::before {
+        content: "";
+        position: absolute;
+        left: 22px;
+        right: 22px;
+        top: -2px;
+        height: 2px;
+        background: #6A1B9A;
+    }
+
+    #modalValidateButton {
+        min-width: 105px;
+        font-weight: 600;
+    }
+
+    #modalRevisionButton {
+        min-width: 125px;
+        font-weight: 600;
+    }
+
+    #organizationModal .btn-outline-secondary {
+        min-width: 85px;
+    }
+</style>
+
+</head>
+
+
+<body>
+
+<div class="container-fluid py-4">
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2 class="fw-bold mb-1">
+                Organizational Master
+            </h2>
+
+            <p class="text-muted mb-0">
+                Validate the official NBI organizational structure
+                used by LDIMS.
+            </p>
+
+        </div>
+
+
+        <a
+            href="dashboard.html"
+            class="btn btn-outline-secondary"
+        >
+            ← Back to Dashboard
+        </a>
+
+    </div>
+
+
+    <!-- =====================================================
+         SUMMARY
+    ====================================================== -->
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-4">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <div class="text-muted small">
+                        For Validation
+                    </div>
+
+                    <div
+                        id="totalForValidation"
+                        class="fs-2 fw-bold"
+                    >
+                        0
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <div class="text-muted small">
+                        Offices
+                    </div>
+
+                    <div
+                        id="totalOffices"
+                        class="fs-2 fw-bold"
+                    >
+                        0
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <div class="text-muted small">
+                        Other Organizational Units
+                    </div>
+
+                    <div
+                        id="totalSubUnits"
+                        class="fs-2 fw-bold"
+                    >
+                        0
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         VALIDATION QUEUE
+    ====================================================== -->
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-header bg-white py-3">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <strong>
+                    Organizational Validation Queue
+                </strong>
+
+
+                <button
+                    id="refreshButton"
+                    type="button"
+                    class="btn btn-sm btn-outline-secondary"
+                >
+                    Refresh
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body p-0">
+
+            <div
+                id="loadingMessage"
+                class="text-center py-5 text-muted"
+            >
+                Loading organizational records...
+            </div>
+
+
+            <div
+                id="errorMessage"
+                class="alert alert-danger m-3 d-none"
+            ></div>
+
+
+            <div
+                id="emptyMessage"
+                class="text-center py-5 text-muted d-none"
+            >
+                No organizational records are pending
+                validation.
+            </div>
+
+
+            <div
+                id="tableContainer"
+                class="table-responsive d-none"
+            >
+
+                <table class="table table-hover align-middle mb-0">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>
+                                Organization
+                            </th>
+
+                            <th>
+                                Level
+                            </th>
+
+                            <th>
+                                Acronym
+                            </th>
+
+                            <th>
+                                Parent
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody
+                        id="organizationTableBody"
+                    >
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     ORGANIZATIONAL DETAILS MODAL
+========================================================== -->
+
+<div
+    class="modal fade"
+    id="organizationModal"
+    tabindex="-1"
+    aria-labelledby="organizationModalLabel"
+    aria-hidden="true"
+>
+
+    <div
+        class="modal-dialog modal-lg modal-dialog-centered"
+    >
+
+        <div class="modal-content">
+
+
+            <!-- HEADER -->
+
+            <div class="modal-header">
+
+                <div>
+
+                    <h5
+                        class="modal-title fw-bold"
+                        id="organizationModalLabel"
+                    >
+                        Organizational Record
+                    </h5>
+
+                    <div
+                        id="modalOrgID"
+                        class="small text-muted"
+                    ></div>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+
+            </div>
+
+
+            <!-- BODY -->
+
+            <div class="modal-body">
+
+                <div class="row g-3">
+
+
+                    <div class="col-md-8">
+
+                        <label class="form-label small text-muted">
+                            Organization
+                        </label>
+
+                        <div
+                            id="modalName"
+                            class="fw-semibold"
+                        ></div>
+
+                    </div>
+
+
+                    <div class="col-md-4">
+
+                        <label class="form-label small text-muted">
+                            Acronym
+                        </label>
+
+                        <div
+                            id="modalAcronym"
+                        ></div>
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label small text-muted">
+                            Organizational Level
+                        </label>
+
+                        <div
+                            id="modalLevel"
+                        ></div>
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label small text-muted">
+                            Parent Organization
+                        </label>
+
+                        <div
+                            id="modalParent"
+                        ></div>
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label small text-muted">
+                            Service / Office
+                        </label>
+
+                        <div
+                            id="modalService"
+                        ></div>
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label small text-muted">
+                            Division / Unit
+                        </label>
+
+                        <div
+                            id="modalDivision"
+                        ></div>
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label small text-muted">
+                            Regional Office
+                        </label>
+
+                        <div
+                            id="modalRegional"
+                        ></div>
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label small text-muted">
+                            District Office
+                        </label>
+
+                        <div
+                            id="modalDistrict"
+                        ></div>
+
+                    </div>
+
+
+                    <div class="col-12">
+
+                        <label class="form-label small text-muted">
+                            Source
+                        </label>
+
+                        <div
+                            id="modalSource"
+                            class="small text-muted"
+                        ></div>
+
+                    </div>
+
+
+                    <div class="col-12">
+
+                        <label
+                            for="modalRemarks"
+                            class="form-label"
+                        >
+                            Remarks
+                        </label>
+
+                        <textarea
+                            id="modalRemarks"
+                            class="form-control"
+                            rows="3"
+                            placeholder="Optional remarks..."
+                        ></textarea>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- FOOTER -->
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn btn-outline-secondary"
+                    data-bs-dismiss="modal"
+                >
+                    Cancel
+                </button>
+
+
+                <button
+                    id="modalRevisionButton"
+                    type="button"
+                    class="btn btn-outline-danger"
+                >
+                    Needs Revision
+                </button>
+
+
+                <button
+                    id="modalValidateButton"
+                    type="button"
+                    class="btn btn-success"
+                >
+                    ✓ Validate
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     SCRIPTS
+========================================================== -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+></script>
+
+<script
+    src="../assets/js/config.js"
+></script>
+
+<script
+    src="../assets/js/api.js"
+></script>
+
+<script
+    src="../assets/js/session.js"
+></script>
+
+<script
+    src="../assets/js/pages/ldd-organizational-master.js"
+></script>
+
+
+</body>
+
+</html>

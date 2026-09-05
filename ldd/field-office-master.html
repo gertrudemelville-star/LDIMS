@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Field Office Master | LDIMS</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../assets/css/style.css"
+    >
+
+    <style>
+        .page-header {
+            margin-bottom: 24px;
+        }
+
+        .page-title {
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .page-subtitle {
+            color: #6c757d;
+        }
+
+        .summary-card {
+            border: 0;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,.06);
+        }
+
+        .summary-number {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .master-table-card {
+            border: 0;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,.06);
+        }
+
+        .table th {
+            white-space: nowrap;
+            font-size: 13px;
+        }
+
+        .table td {
+            vertical-align: middle;
+        }
+
+        .record-row {
+            cursor: pointer;
+        }
+
+        .record-row:hover {
+            background-color: #f8f5fb;
+        }
+
+        .record-row.selected {
+            background-color: #f0e8f7;
+        }
+
+        .detail-card {
+            border: 0;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,.06);
+            position: sticky;
+            top: 20px;
+        }
+
+        .detail-label {
+            font-size: 12px;
+            color: #6c757d;
+            margin-bottom: 3px;
+        }
+
+        .detail-value {
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .status-badge {
+            font-size: 11px;
+            padding: 5px 9px;
+            border-radius: 20px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: #6c757d;
+        }
+
+        .loading-state {
+            text-align: center;
+            padding: 50px 20px;
+        }
+
+        .btn-primary {
+            background-color: #6A1B9A;
+            border-color: #6A1B9A;
+        }
+
+        .btn-primary:hover {
+            background-color: #4A148C;
+            border-color: #4A148C;
+        }
+
+        .btn-outline-primary {
+            color: #6A1B9A;
+            border-color: #6A1B9A;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: #6A1B9A;
+            border-color: #6A1B9A;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container-fluid py-4 px-4">
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+
+        <h2 class="page-title">
+            Field Office Master
+        </h2>
+
+        <div class="page-subtitle">
+            Review and validate NBI Regional and District Office records.
+        </div>
+
+    </div>
+
+
+    <!-- SUMMARY -->
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-4">
+
+            <div class="card summary-card">
+
+                <div class="card-body">
+
+                    <div class="text-muted small">
+                        For Validation
+                    </div>
+
+                    <div
+                        id="pendingCount"
+                        class="summary-number"
+                    >
+                        0
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4">
+
+            <div class="card summary-card">
+
+                <div class="card-body">
+
+                    <div class="text-muted small">
+                        Regional Offices
+                    </div>
+
+                    <div
+                        id="regionalCount"
+                        class="summary-number"
+                    >
+                        0
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4">
+
+            <div class="card summary-card">
+
+                <div class="card-body">
+
+                    <div class="text-muted small">
+                        District Offices
+                    </div>
+
+                    <div
+                        id="districtCount"
+                        class="summary-number"
+                    >
+                        0
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- MAIN CONTENT -->
+    <div class="row g-4">
+
+        <!-- TABLE -->
+        <div class="col-lg-8">
+
+            <div class="card master-table-card">
+
+                <div class="card-body">
+
+                    <div
+                        id="loadingState"
+                        class="loading-state"
+                    >
+
+                        <div
+                            class="spinner-border text-secondary"
+                            role="status"
+                        ></div>
+
+                        <div class="mt-3">
+                            Loading field offices...
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        id="emptyState"
+                        class="empty-state d-none"
+                    >
+
+                        <h5>
+                            No records for validation
+                        </h5>
+
+                        <p class="mb-0">
+                            All field-office records have been processed.
+                        </p>
+
+                    </div>
+
+
+                    <div
+                        id="tableContainer"
+                        class="table-responsive d-none"
+                    >
+
+                        <table class="table table-hover align-middle">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>Office</th>
+                                    <th>Type</th>
+                                    <th>Region</th>
+                                    <th>Location</th>
+                                    <th>Status</th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody
+                                id="fieldOfficeTableBody"
+                            ></tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- DETAILS -->
+        <div class="col-lg-4">
+
+            <div class="card detail-card">
+
+                <div class="card-body">
+
+                    <h5 class="mb-4">
+                        Record Details
+                    </h5>
+
+
+                    <div id="noSelection">
+
+                        <div class="text-muted">
+                            Select a field-office record
+                            from the list to review its details.
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        id="recordDetails"
+                        class="d-none"
+                    >
+
+                        <div class="detail-label">
+                            Field Office ID
+                        </div>
+
+                        <div
+                            id="detailFieldOfficeID"
+                            class="detail-value"
+                        ></div>
+
+
+                        <div class="detail-label">
+                            Office Name
+                        </div>
+
+                        <div
+                            id="detailOfficeName"
+                            class="detail-value"
+                        ></div>
+
+
+                        <div class="detail-label">
+                            Acronym
+                        </div>
+
+                        <div
+                            id="detailAcronym"
+                            class="detail-value"
+                        ></div>
+
+
+                        <div class="detail-label">
+                            Office Type
+                        </div>
+
+                        <div
+                            id="detailOfficeType"
+                            class="detail-value"
+                        ></div>
+
+
+                        <div class="detail-label">
+                            Region
+                        </div>
+
+                        <div
+                            id="detailRegion"
+                            class="detail-value"
+                        ></div>
+
+
+                        <div class="detail-label">
+                            Province / City
+                        </div>
+
+                        <div
+                            id="detailLocation"
+                            class="detail-value"
+                        ></div>
+
+
+                        <div class="detail-label">
+                            Parent Organizational Unit
+                        </div>
+
+                        <div
+                            id="detailParentOrg"
+                            class="detail-value"
+                        ></div>
+
+
+                        <div class="detail-label">
+                            Validation Status
+                        </div>
+
+                        <div
+                            id="detailValidationStatus"
+                            class="detail-value"
+                        ></div>
+
+
+                        <div class="mb-3">
+
+                            <label
+                                for="remarksInput"
+                                class="form-label"
+                            >
+                                Remarks
+                            </label>
+
+                            <textarea
+                                id="remarksInput"
+                                class="form-control"
+                                rows="3"
+                                placeholder="Optional remarks..."
+                            ></textarea>
+
+                        </div>
+
+
+                        <div class="d-grid gap-2">
+
+                            <button
+                                id="validateBtn"
+                                class="btn btn-primary"
+                                type="button"
+                            >
+                                ✓ Validate
+                            </button>
+
+
+                            <button
+                                id="revisionBtn"
+                                class="btn btn-outline-danger"
+                                type="button"
+                            >
+                                Needs Revision
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- SCRIPTS -->
+
+<script src="../assets/js/config.js"></script>
+
+<script src="../assets/js/api.js"></script>
+
+<script src="../assets/js/session.js"></script>
+
+<script src="../assets/js/pages/ldd-field-office-master.js"></script>
+
+</body>
+</html>

@@ -7,7 +7,7 @@
 
 
 /* ==========================================================
-   Elements
+   ELEMENTS
 ========================================================== */
 
 const loginForm =
@@ -27,66 +27,60 @@ const alertMessage =
 
 
 /* ==========================================================
-   Show Alert
+   SHOW ALERT
 ========================================================== */
 
-function showAlert(message, type = "danger") {
+function showAlert(
+    message,
+    type = "danger"
+) {
 
     if (!alertMessage) {
         return;
     }
 
-
     alertMessage.innerHTML = "";
 
-
-    const alert = document.createElement("div");
+    const alert =
+        document.createElement("div");
 
     alert.className =
         `alert alert-${type} alert-dismissible fade show`;
-
 
     alert.setAttribute(
         "role",
         "alert"
     );
 
-
     alert.appendChild(
         document.createTextNode(
-            message || "An unexpected error occurred."
+            message ||
+            "An unexpected error occurred."
         )
     );
-
 
     const closeButton =
         document.createElement("button");
 
-
     closeButton.type =
         "button";
 
-
     closeButton.className =
         "btn-close";
-
 
     closeButton.setAttribute(
         "data-bs-dismiss",
         "alert"
     );
 
-
     closeButton.setAttribute(
         "aria-label",
         "Close"
     );
 
-
     alert.appendChild(
         closeButton
     );
-
 
     alertMessage.appendChild(
         alert
@@ -96,50 +90,43 @@ function showAlert(message, type = "danger") {
 
 
 /* ==========================================================
-   Determine Dashboard By Role
+   GET DASHBOARD BY ROLE
 ========================================================== */
 
-function getDashboardByRole(role) {
+function getDashboardByRole(
+    role
+) {
 
     const normalizedRole =
-        String(role || "")
-            .trim()
-            .toUpperCase();
+        String(
+            role || ""
+        )
+        .trim()
+        .toUpperCase();
 
 
-    /* ------------------------------------------------------
-       Administrator
-    ------------------------------------------------------ */
-
-    if (
-        normalizedRole === "ADMIN" ||
-        normalizedRole === "ADMINISTRATOR"
-    ) {
-
-        return "dashboard.html";
-
-    }
+    console.log(
+        "LOGIN ROLE:",
+        role
+    );
 
 
-    /* ------------------------------------------------------
-       Employee
-    ------------------------------------------------------ */
-
-    if (
-        normalizedRole === "EMPLOYEE"
-    ) {
-
-        return "employee/dashboard.html";
-
-    }
+    console.log(
+        "NORMALIZED ROLE:",
+        normalizedRole
+    );
 
 
-    /* ------------------------------------------------------
-       Supervisor
-    ------------------------------------------------------ */
+    /* ======================================================
+       IMMEDIATE SUPERVISOR
+    ====================================================== */
 
     if (
-        normalizedRole === "SUPERVISOR"
+        normalizedRole ===
+            "IMMEDIATE SUPERVISOR" ||
+
+        normalizedRole ===
+            "SUPERVISOR"
     ) {
 
         return "supervisor/dashboard.html";
@@ -147,11 +134,68 @@ function getDashboardByRole(role) {
     }
 
 
-    /* ------------------------------------------------------
-       Unknown role
-       Keep the user on the existing root dashboard
-       rather than sending them to a non-existent page.
-    ------------------------------------------------------ */
+    /* ======================================================
+       ADMINISTRATOR
+    ====================================================== */
+
+    if (
+        normalizedRole ===
+            "ADMIN" ||
+
+        normalizedRole ===
+            "ADMINISTRATOR"
+    ) {
+
+        return "dashboard.html";
+
+    }
+
+
+    /* ======================================================
+       LDD PERSONNEL
+    ====================================================== */
+
+    if (
+        normalizedRole ===
+            "LDD PERSONNEL" ||
+
+        normalizedRole ===
+            "LDD" ||
+
+        normalizedRole ===
+            "L&D OFFICER" ||
+
+        normalizedRole ===
+            "L&D PERSONNEL"
+    ) {
+
+        return "ldd/dashboard.html";
+
+    }
+
+
+    /* ======================================================
+       EMPLOYEE
+    ====================================================== */
+
+    if (
+        normalizedRole ===
+            "EMPLOYEE"
+    ) {
+
+        return "employee/dashboard.html";
+
+    }
+
+
+    /* ======================================================
+       DEFAULT
+    ====================================================== */
+
+    console.warn(
+        "Unknown role. Using default dashboard:",
+        role
+    );
 
     return "dashboard.html";
 
@@ -159,35 +203,45 @@ function getDashboardByRole(role) {
 
 
 /* ==========================================================
-   Login
+   LOGIN
 ========================================================== */
 
 if (loginForm) {
 
     loginForm.addEventListener(
         "submit",
-        async (e) => {
+        async function (e) {
 
             e.preventDefault();
 
 
+            const employeeIDElement =
+                document.getElementById(
+                    "employeeID"
+                );
+
+
+            const passwordElement =
+                document.getElementById(
+                    "password"
+                );
+
+
             const employeeID =
-                document
-                    .getElementById("employeeID")
-                    .value
-                    .trim();
+                employeeIDElement
+                    ? employeeIDElement.value.trim()
+                    : "";
 
 
             const password =
-                document
-                    .getElementById("password")
-                    .value
-                    .trim();
+                passwordElement
+                    ? passwordElement.value.trim()
+                    : "";
 
 
-            /* --------------------------------------------------
-               Basic Validation
-            -------------------------------------------------- */
+            /* ==================================================
+               VALIDATION
+            ================================================== */
 
             if (!employeeID) {
 
@@ -211,26 +265,40 @@ if (loginForm) {
             }
 
 
-            /* --------------------------------------------------
-               Loading State
-            -------------------------------------------------- */
+            /* ==================================================
+               LOADING
+            ================================================== */
 
-            loginButton.disabled = true;
+            if (loginButton) {
 
-            buttonText.classList.add(
-                "d-none"
-            );
+                loginButton.disabled = true;
 
-            loadingSpinner.classList.remove(
-                "d-none"
-            );
+            }
+
+
+            if (buttonText) {
+
+                buttonText.classList.add(
+                    "d-none"
+                );
+
+            }
+
+
+            if (loadingSpinner) {
+
+                loadingSpinner.classList.remove(
+                    "d-none"
+                );
+
+            }
 
 
             try {
 
-                /* ----------------------------------------------
-                   Authenticate
-                ---------------------------------------------- */
+                /* =================================================
+                   AUTHENTICATE
+                ================================================= */
 
                 const result =
                     await API.login(
@@ -239,44 +307,72 @@ if (loginForm) {
                     );
 
 
-                /* ----------------------------------------------
-                   Successful Login
-                ---------------------------------------------- */
+                console.log(
+                    "LOGIN RESPONSE:",
+                    result
+                );
 
-                if (result && result.success) {
 
+                /* =================================================
+                   LOGIN SUCCESS
+                ================================================= */
 
-                    /*
-                     * Save the complete authenticated response.
-                     *
-                     * This now includes:
-                     *
-                     * employeeID
-                     * fullname
-                     * position
-                     * assignment
-                     * role
-                     * email
-                     */
+                if (
+                    result &&
+                    result.success
+                ) {
+
+                    /* ---------------------------------------------
+                       SAVE SESSION
+                    --------------------------------------------- */
 
                     Session.save(
                         result
                     );
 
 
-                    /* ------------------------------------------
-                       Determine destination by role
-                    ------------------------------------------ */
+                    /* ---------------------------------------------
+                       GET ROLE
+                    --------------------------------------------- */
 
-                    const destination =
-                        getDashboardByRole(
-                            result.role
+                    const role =
+                        result.role ||
+                        result.Role ||
+                        (
+                            result.user
+                                ? (
+                                    result.user.role ||
+                                    result.user.Role
+                                )
+                                : ""
                         );
 
 
-                    /*
-                     * Redirect according to authenticated role.
-                     */
+                    console.log(
+                        "USER ROLE:",
+                        role
+                    );
+
+
+                    /* ---------------------------------------------
+                       GET DESTINATION
+                    --------------------------------------------- */
+
+                    const destination =
+                        getDashboardByRole(
+                            role
+                        );
+
+
+                    console.log(
+                        "LOGIN DESTINATION:",
+                        destination
+                    );
+
+
+                    /* ---------------------------------------------
+                       REDIRECT
+                    --------------------------------------------- */
 
                     window.location.href =
                         destination;
@@ -287,9 +383,9 @@ if (loginForm) {
                 }
 
 
-                /* ----------------------------------------------
-                   Failed Login
-                ---------------------------------------------- */
+                /* =================================================
+                   LOGIN FAILED
+                ================================================== */
 
                 showAlert(
                     result?.message ||
@@ -312,22 +408,30 @@ if (loginForm) {
 
             } finally {
 
-                /* ----------------------------------------------
-                   Restore Login Button
-                ---------------------------------------------- */
+                if (loginButton) {
 
-                loginButton.disabled =
-                    false;
+                    loginButton.disabled =
+                        false;
 
-
-                buttonText.classList.remove(
-                    "d-none"
-                );
+                }
 
 
-                loadingSpinner.classList.add(
-                    "d-none"
-                );
+                if (buttonText) {
+
+                    buttonText.classList.remove(
+                        "d-none"
+                    );
+
+                }
+
+
+                if (loadingSpinner) {
+
+                    loadingSpinner.classList.add(
+                        "d-none"
+                    );
+
+                }
 
             }
 
@@ -338,7 +442,7 @@ if (loginForm) {
 
 
 /* ==========================================================
-   Toggle Password
+   TOGGLE PASSWORD
 ========================================================== */
 
 const togglePassword =
@@ -363,8 +467,16 @@ if (togglePassword) {
                 this.querySelector("i");
 
 
+            if (!password) {
+
+                return;
+
+            }
+
+
             if (
-                password.type === "password"
+                password.type ===
+                "password"
             ) {
 
                 password.type =
@@ -377,7 +489,6 @@ if (togglePassword) {
                         "bi bi-eye-slash";
 
                 }
-
 
             } else {
 

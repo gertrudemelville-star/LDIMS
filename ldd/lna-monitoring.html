@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>LNA Monitoring | LDD | LDIMS</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+    <link
+        rel="stylesheet"
+        href="../assets/css/style.css">
+</head>
+
+
+<body>
+
+
+<!-- ==========================================================
+     HEADER
+========================================================== -->
+
+<header class="header">
+
+    <div class="header-title">
+        LDIMS
+    </div>
+
+    <div>
+
+        <span class="me-4">🔔</span>
+
+        <strong id="headerRole">
+            LDD Personnel
+        </strong>
+
+    </div>
+
+</header>
+
+
+
+<!-- ==========================================================
+     SIDEBAR
+========================================================== -->
+
+<aside class="sidebar">
+
+    <ul>
+
+        <li>
+            <a href="dashboard.html">
+                🏠 Dashboard
+            </a>
+        </li>
+
+        <li>
+            <a href="employees.html">
+                👥 Employees
+            </a>
+        </li>
+
+        <li>
+            <a href="lna-monitoring.html">
+                📋 LNA Monitoring
+            </a>
+        </li>
+
+        <li>
+            <a href="training-monitoring.html">
+                🎓 Training Monitoring
+            </a>
+        </li>
+
+        <li>
+            <a href="learning-interventions.html">
+                📚 Learning Interventions
+            </a>
+        </li>
+
+        <li>
+            <a href="reports.html">
+                📊 Reports
+            </a>
+        </li>
+
+        <li>
+            <a href="notifications.html">
+                🔔 Notifications
+            </a>
+        </li>
+
+        <li>
+            <a href="../index.html"
+               id="logoutLink">
+                🚪 Logout
+            </a>
+        </li>
+
+    </ul>
+
+</aside>
+
+
+
+<!-- ==========================================================
+     MAIN CONTENT
+========================================================== -->
+
+<main class="content">
+
+
+    <div class="mb-4">
+
+        <h2 class="mb-1">
+            LNA Monitoring
+        </h2>
+
+        <p class="text-muted mb-0">
+            Monitor Learning Needs Assessment submissions of employees.
+        </p>
+
+    </div>
+
+
+
+    <!-- ======================================================
+         SUMMARY
+    ======================================================= -->
+
+    <div class="row g-4 mb-4">
+
+
+        <div class="col-md-4">
+
+            <div class="card stat-card">
+
+                <h2 id="totalEmployees">
+                    0
+                </h2>
+
+                <p>
+                    Total Employees
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4">
+
+            <div class="card stat-card">
+
+                <h2 id="completedLNA">
+                    0
+                </h2>
+
+                <p>
+                    LNA Completed
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4">
+
+            <div class="card stat-card">
+
+                <h2 id="pendingLNA">
+                    0
+                </h2>
+
+                <p>
+                    LNA Pending
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ======================================================
+         LNA MONITORING CARD
+    ======================================================= -->
+
+    <div class="card p-4">
+
+
+        <div class="d-flex justify-content-between
+                    align-items-center mb-3">
+
+            <h4 class="card-title mb-0">
+                Employee LNA Status
+            </h4>
+
+            <span
+                id="loadingStatus"
+                class="badge bg-secondary">
+
+                Loading...
+
+            </span>
+
+        </div>
+
+
+        <hr>
+
+
+
+        <!-- ==================================================
+             SEARCH / SORT / EXPORT
+        =================================================== -->
+
+        <div class="row g-2 mb-3">
+
+
+            <!-- SEARCH -->
+
+            <div class="col-md-5">
+
+                <div class="input-group">
+
+                    <span class="input-group-text">
+                        🔎
+                    </span>
+
+                    <input
+                        type="text"
+                        id="searchInput"
+                        class="form-control"
+                        placeholder="Search employee, ID, position...">
+
+                </div>
+
+            </div>
+
+
+
+            <!-- SORT -->
+
+            <div class="col-md-4">
+
+                <select
+                    id="sortSelect"
+                    class="form-select">
+
+                    <option value="employeeID">
+                        Sort: Employee ID
+                    </option>
+
+                    <option value="name">
+                        Sort: Employee Name
+                    </option>
+
+                    <option value="position">
+                        Sort: Position
+                    </option>
+
+                    <option value="assignment">
+                        Sort: Place of Assignment
+                    </option>
+
+                    <option value="status">
+                        Sort: LNA Status
+                    </option>
+
+                    <option value="date">
+                        Sort: Submission Date
+                    </option>
+
+                </select>
+
+            </div>
+
+
+
+            <!-- EXPORT -->
+
+            <div class="col-md-3">
+
+                <button
+                    type="button"
+                    id="exportButton"
+                    class="btn btn-primary w-100">
+
+                    📥 Export to File
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ==================================================
+             TABLE
+        =================================================== -->
+
+        <div class="table-responsive">
+
+            <table
+                class="table table-hover align-middle"
+                id="lnaTable">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Employee ID
+                        </th>
+
+                        <th>
+                            Employee
+                        </th>
+
+                        <th>
+                            Position
+                        </th>
+
+                        <th>
+                            Place of Assignment
+                        </th>
+
+                        <th>
+                            LNA Status
+                        </th>
+
+                        <th>
+                            Submission Date
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="lnaTableBody">
+
+                    <tr>
+
+                        <td
+                            colspan="6"
+                            class="text-center text-muted">
+
+                            Loading LNA records...
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+</main>
+
+
+
+<!-- ==========================================================
+     FOOTER
+========================================================== -->
+
+<footer class="footer">
+
+    © 2026 National Bureau of Investigation
+
+    <br>
+
+    Learning & Development Division
+
+</footer>
+
+
+
+<!-- ==========================================================
+     JAVASCRIPT
+========================================================== -->
+
+<script src="../assets/js/config.js"></script>
+
+<script src="../assets/js/api.js"></script>
+
+<script src="../assets/js/session.js"></script>
+
+<script src="../assets/js/utils.js"></script>
+
+
+<script>
+
+"use strict";
+
+
+let lnaResults = [];
+
+
+
+/* ==========================================================
+   INITIALIZE
+========================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    loadLNAMonitoring
+);
+
+
+
+/* ==========================================================
+   LOAD LNA MONITORING
+========================================================== */
+
+async function loadLNAMonitoring() {
+
+    const tableBody =
+        document.getElementById(
+            "lnaTableBody"
+        );
+
+
+    const loadingStatus =
+        document.getElementById(
+            "loadingStatus"
+        );
+
+
+    try {
+
+        Session.requireLogin();
+
+
+        const user =
+            Session.get();
+
+
+        if (user) {
+
+            const headerRole =
+                document.getElementById(
+                    "headerRole"
+                );
+
+
+            if (headerRole) {
+
+                headerRole.textContent =
+                    user.role ||
+                    "LDD Personnel";
+
+            }
+
+        }
+
+
+        /* --------------------------------------------------
+           GET EMPLOYEES
+        -------------------------------------------------- */
+
+        const employeeResponse =
+            await API.getEmployees();
+
+
+        console.log(
+            "LNA Monitoring Employees:",
+            employeeResponse
+        );
+
+
+        if (
+            !employeeResponse ||
+            employeeResponse.success !== true
+        ) {
+
+            throw new Error(
+                employeeResponse?.message ||
+                "Unable to load employees."
+            );
+
+        }
+
+
+        const employees =
+            employeeResponse.data ||
+            employeeResponse.employees ||
+            [];
+
+
+        document.getElementById(
+            "totalEmployees"
+        ).textContent =
+            employees.length;
+
+
+
+        /* --------------------------------------------------
+           CHECK LNA
+        -------------------------------------------------- */
+
+        lnaResults = await Promise.all(
+
+            employees.map(
+                async employee => {
+
+                    const employeeID =
+                        employee.employeeID ||
+                        employee.EmployeeID ||
+                        "";
+
+
+                    let lna = null;
+
+
+                    try {
+
+                        const response =
+                            await API.post({
+
+                                action:
+                                    "getLNAByEmployeeID",
+
+                                employeeID:
+                                    String(
+                                        employeeID
+                                    ).trim()
+
+                            });
+
+
+                        if (
+                            response &&
+                            response.success === true
+                        ) {
+
+                            lna = response;
+
+                        }
+
+                    } catch (error) {
+
+                        console.error(
+                            "LNA check failed:",
+                            employeeID,
+                            error
+                        );
+
+                    }
+
+
+                    return {
+                        employee,
+                        lna
+                    };
+
+                }
+            )
+
+        );
+
+
+
+        /* --------------------------------------------------
+           COUNT
+        -------------------------------------------------- */
+
+        let completed = 0;
+
+        let pending = 0;
+
+
+        lnaResults.forEach(
+            item => {
+
+                if (
+                    item.lna &&
+                    item.lna.submitted === true
+                ) {
+
+                    completed++;
+
+                } else {
+
+                    pending++;
+
+                }
+
+            }
+        );
+
+
+        document.getElementById(
+            "completedLNA"
+        ).textContent =
+            completed;
+
+
+        document.getElementById(
+            "pendingLNA"
+        ).textContent =
+            pending;
+
+
+
+        /* --------------------------------------------------
+           DISPLAY
+        -------------------------------------------------- */
+
+        renderLNATable(lnaResults);
+
+
+        loadingStatus.textContent =
+            "Updated";
+
+
+        loadingStatus.className =
+            "badge bg-success";
+
+
+    } catch (error) {
+
+        console.error(
+            "LNA Monitoring Error:",
+            error
+        );
+
+
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="6"
+                    class="text-center text-danger">
+                    Unable to load LNA monitoring data.
+                </td>
+            </tr>
+        `;
+
+
+        loadingStatus.textContent =
+            "Error";
+
+
+        loadingStatus.className =
+            "badge bg-danger";
+
+    }
+
+}
+
+
+
+/* ==========================================================
+   RENDER TABLE
+========================================================== */
+
+function renderLNATable(results) {
+
+    const tableBody =
+        document.getElementById(
+            "lnaTableBody"
+        );
+
+
+    tableBody.innerHTML = "";
+
+
+    if (!results.length) {
+
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="6"
+                    class="text-center text-muted">
+                    No matching employee records found.
+                </td>
+            </tr>
+        `;
+
+        return;
+
+    }
+
+
+    results.forEach(
+        item => {
+
+            const employee =
+                item.employee;
+
+
+            const lna =
+                item.lna;
+
+
+            const employeeID =
+                employee.employeeID ||
+                employee.EmployeeID ||
+                "-";
+
+
+            const lastName =
+                employee.lastName ||
+                employee.LastName ||
+                "";
+
+
+            const firstName =
+                employee.firstName ||
+                employee.FirstName ||
+                "";
+
+
+            const middleName =
+                employee.middleName ||
+                employee.MiddleName ||
+                "";
+
+
+            const fullName =
+                [
+                    lastName,
+                    firstName,
+                    middleName
+                ]
+                .filter(Boolean)
+                .join(", ") ||
+                "-";
+
+
+            const position =
+                employee.position ||
+                employee.Position ||
+                "-";
+
+
+            const assignment =
+                employee.placeOfAssignment ||
+                employee.PlaceOfAssignment ||
+                employee.assignment ||
+                "-";
+
+
+            const submitted =
+                lna &&
+                lna.submitted === true;
+
+
+            const timestamp =
+                submitted
+                    ? (
+                        lna.record?.timestamp ||
+                        lna.timestamp ||
+                        ""
+                      )
+                    : "";
+
+
+            const statusHTML =
+                submitted
+
+                    ? `
+                        <span class="badge bg-success">
+                            Submitted
+                        </span>
+                      `
+
+                    : `
+                        <span class="badge bg-warning text-dark">
+                            Pending
+                        </span>
+                      `;
+
+
+            const dateText =
+                timestamp
+                    ? formatDate(timestamp)
+                    : "-";
+
+
+            const row =
+                document.createElement("tr");
+
+
+            row.innerHTML = `
+
+                <td>
+                    <strong>
+                        ${escapeHTML(employeeID)}
+                    </strong>
+                </td>
+
+                <td>
+                    ${escapeHTML(fullName)}
+                </td>
+
+                <td>
+                    ${escapeHTML(position)}
+                </td>
+
+                <td>
+                    ${escapeHTML(assignment)}
+                </td>
+
+                <td>
+                    ${statusHTML}
+                </td>
+
+                <td>
+                    ${escapeHTML(dateText)}
+                </td>
+
+            `;
+
+
+            tableBody.appendChild(row);
+
+        }
+    );
+
+}
+
+
+
+/* ==========================================================
+   SEARCH
+========================================================== */
+
+document
+    .getElementById("searchInput")
+    ?.addEventListener(
+        "input",
+        function () {
+
+            const keyword =
+                this.value
+                    .toLowerCase()
+                    .trim();
+
+
+            if (!keyword) {
+
+                renderLNATable(
+                    lnaResults
+                );
+
+                return;
+
+            }
+
+
+            const filtered =
+                lnaResults.filter(
+                    item => {
+
+                        const employee =
+                            item.employee;
+
+
+                        const employeeID =
+                            employee.employeeID ||
+                            employee.EmployeeID ||
+                            "";
+
+
+                        const lastName =
+                            employee.lastName ||
+                            employee.LastName ||
+                            "";
+
+
+                        const firstName =
+                            employee.firstName ||
+                            employee.FirstName ||
+                            "";
+
+
+                        const position =
+                            employee.position ||
+                            employee.Position ||
+                            "";
+
+
+                        const assignment =
+                            employee.placeOfAssignment ||
+                            employee.PlaceOfAssignment ||
+                            "";
+
+
+                        const searchable =
+                            [
+                                employeeID,
+                                lastName,
+                                firstName,
+                                position,
+                                assignment
+                            ]
+                            .join(" ")
+                            .toLowerCase();
+
+
+                        return searchable.includes(
+                            keyword
+                        );
+
+                    }
+                );
+
+
+            renderLNATable(
+                filtered
+            );
+
+        }
+    );
+
+
+
+/* ==========================================================
+   SORT
+========================================================== */
+
+document
+    .getElementById("sortSelect")
+    ?.addEventListener(
+        "change",
+        function () {
+
+            const sortBy =
+                this.value;
+
+
+            const sorted =
+                [...lnaResults];
+
+
+            sorted.sort(
+                (a, b) => {
+
+                    const employeeA =
+                        a.employee;
+
+
+                    const employeeB =
+                        b.employee;
+
+
+                    let valueA = "";
+
+                    let valueB = "";
+
+
+                    if (
+                        sortBy ===
+                        "employeeID"
+                    ) {
+
+                        valueA =
+                            employeeA.employeeID ||
+                            employeeA.EmployeeID ||
+                            "";
+
+                        valueB =
+                            employeeB.employeeID ||
+                            employeeB.EmployeeID ||
+                            "";
+
+                    }
+
+
+                    else if (
+                        sortBy ===
+                        "name"
+                    ) {
+
+                        valueA =
+                            getEmployeeName(
+                                employeeA
+                            );
+
+                        valueB =
+                            getEmployeeName(
+                                employeeB
+                            );
+
+                    }
+
+
+                    else if (
+                        sortBy ===
+                        "position"
+                    ) {
+
+                        valueA =
+                            employeeA.position ||
+                            employeeA.Position ||
+                            "";
+
+                        valueB =
+                            employeeB.position ||
+                            employeeB.Position ||
+                            "";
+
+                    }
+
+
+                    else if (
+                        sortBy ===
+                        "assignment"
+                    ) {
+
+                        valueA =
+                            employeeA.placeOfAssignment ||
+                            employeeA.PlaceOfAssignment ||
+                            "";
+
+                        valueB =
+                            employeeB.placeOfAssignment ||
+                            employeeB.PlaceOfAssignment ||
+                            "";
+
+                    }
+
+
+                    else if (
+                        sortBy ===
+                        "status"
+                    ) {
+
+                        valueA =
+                            a.lna?.submitted
+                                ? "Submitted"
+                                : "Pending";
+
+                        valueB =
+                            b.lna?.submitted
+                                ? "Submitted"
+                                : "Pending";
+
+                    }
+
+
+                    else if (
+                        sortBy ===
+                        "date"
+                    ) {
+
+                        valueA =
+                            a.lna?.record?.timestamp ||
+                            "";
+
+                        valueB =
+                            b.lna?.record?.timestamp ||
+                            "";
+
+                    }
+
+
+                    return String(valueA)
+                        .localeCompare(
+                            String(valueB),
+                            undefined,
+                            {
+                                numeric: true,
+                                sensitivity: "base"
+                            }
+                        );
+
+                }
+            );
+
+
+            renderLNATable(
+                sorted
+            );
+
+        }
+    );
+
+
+
+/* ==========================================================
+   EXPORT CSV
+========================================================== */
+
+document
+    .getElementById("exportButton")
+    ?.addEventListener(
+        "click",
+        exportLNA
+    );
+
+
+function exportLNA() {
+
+    if (!lnaResults.length) {
+
+        alert(
+            "No LNA records available to export."
+        );
+
+        return;
+
+    }
+
+
+    const rows = [];
+
+
+    rows.push([
+        "Employee ID",
+        "Employee",
+        "Position",
+        "Place of Assignment",
+        "LNA Status",
+        "Submission Date"
+    ]);
+
+
+    lnaResults.forEach(
+        item => {
+
+            const employee =
+                item.employee;
+
+
+            const lna =
+                item.lna;
+
+
+            const employeeID =
+                employee.employeeID ||
+                employee.EmployeeID ||
+                "";
+
+
+            const name =
+                getEmployeeName(
+                    employee
+                );
+
+
+            const position =
+                employee.position ||
+                employee.Position ||
+                "";
+
+
+            const assignment =
+                employee.placeOfAssignment ||
+                employee.PlaceOfAssignment ||
+                employee.assignment ||
+                "";
+
+
+            const status =
+                lna?.submitted === true
+                    ? "Submitted"
+                    : "Pending";
+
+
+            const timestamp =
+                lna?.record?.timestamp ||
+                lna?.timestamp ||
+                "";
+
+
+            rows.push([
+                employeeID,
+                name,
+                position,
+                assignment,
+                status,
+                timestamp
+                    ? formatDate(timestamp)
+                    : ""
+            ]);
+
+        }
+    );
+
+
+    const csv =
+        rows
+            .map(
+                row =>
+                    row
+                        .map(
+                            value =>
+                                `"${String(value)
+                                    .replace(/"/g, '""')}"`
+                        )
+                        .join(",")
+            )
+            .join("\r\n");
+
+
+    const blob =
+        new Blob(
+            [csv],
+            {
+                type:
+                    "text/csv;charset=utf-8;"
+            }
+        );
+
+
+    const url =
+        URL.createObjectURL(
+            blob
+        );
+
+
+    const link =
+        document.createElement("a");
+
+
+    link.href =
+        url;
+
+
+    link.download =
+        "LDIMS_LNA_Monitoring.csv";
+
+
+    document.body.appendChild(
+        link
+    );
+
+
+    link.click();
+
+
+    document.body.removeChild(
+        link
+    );
+
+
+    URL.revokeObjectURL(
+        url
+    );
+
+}
+
+
+
+/* ==========================================================
+   HELPERS
+========================================================== */
+
+function getEmployeeName(employee) {
+
+    const lastName =
+        employee.lastName ||
+        employee.LastName ||
+        "";
+
+
+    const firstName =
+        employee.firstName ||
+        employee.FirstName ||
+        "";
+
+
+    const middleName =
+        employee.middleName ||
+        employee.MiddleName ||
+        "";
+
+
+    return [
+        lastName,
+        firstName,
+        middleName
+    ]
+    .filter(Boolean)
+    .join(", ");
+
+}
+
+
+function formatDate(value) {
+
+    try {
+
+        const date =
+            new Date(value);
+
+
+        if (
+            Number.isNaN(
+                date.getTime()
+            )
+        ) {
+
+            return String(value);
+
+        }
+
+
+        return date.toLocaleString(
+            "en-PH",
+            {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+                hour: "numeric",
+                minute: "2-digit"
+            }
+        );
+
+    } catch (error) {
+
+        return String(value);
+
+    }
+
+}
+
+
+function escapeHTML(value) {
+
+    return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+
+/* ==========================================================
+   LOGOUT
+========================================================== */
+
+document
+    .getElementById("logoutLink")
+    ?.addEventListener(
+        "click",
+        function (event) {
+
+            event.preventDefault();
+
+
+            if (
+                typeof Session !== "undefined" &&
+                typeof Session.logout === "function"
+            ) {
+
+                Session.logout();
+
+                return;
+
+            }
+
+
+            localStorage.clear();
+
+
+            window.location.href =
+                "../index.html";
+
+        }
+    );
+
+</script>
+
+
+</body>
+
+</html>

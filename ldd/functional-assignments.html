@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Functional Assignments | LDIMS
+    </title>
+
+    <!-- LDIMS Theme -->
+    <link
+        rel="stylesheet"
+        href="../assets/css/style.css"
+    >
+
+    <!-- Bootstrap -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <!-- Page-specific NBI Purple Theme -->
+    <style>
+
+        :root {
+            --ldims-purple: #6A1B9A;
+            --ldims-purple-dark: #4A148C;
+            --ldims-purple-light: #8E24AA;
+        }
+
+
+        /* PAGE TITLES */
+
+        h2,
+        h5 {
+            color: var(--ldims-purple-dark);
+        }
+
+
+        /* PRIMARY BUTTONS */
+
+        .btn-primary {
+            background-color: var(--ldims-purple);
+            border-color: var(--ldims-purple);
+        }
+
+
+        .btn-primary:hover,
+        .btn-primary:focus,
+        .btn-primary:active {
+            background-color: var(--ldims-purple-dark) !important;
+            border-color: var(--ldims-purple-dark) !important;
+        }
+
+
+        /* VALIDATE BUTTON */
+
+        #validateButton {
+            background-color: var(--ldims-purple);
+            border-color: var(--ldims-purple);
+        }
+
+
+        #validateButton:hover,
+        #validateButton:focus {
+            background-color: var(--ldims-purple-dark);
+            border-color: var(--ldims-purple-dark);
+        }
+
+
+        /* STATUS BADGE */
+
+        #validationBadge.bg-secondary {
+            background-color: var(--ldims-purple) !important;
+        }
+
+
+        /* FORM LABELS */
+
+        .form-label {
+            color: var(--ldims-purple-dark);
+        }
+
+
+        /* INPUT FOCUS */
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--ldims-purple-light);
+
+            box-shadow:
+                0 0 0 0.2rem
+                rgba(106, 27, 154, 0.15);
+        }
+
+
+        /* CARD HEADERS */
+
+        #employeeCard .card-header,
+        #assignmentCard .card-header,
+        #validationCard .card-header {
+            border-top:
+                3px solid var(--ldims-purple);
+        }
+
+
+        /* CARD TITLES */
+
+        #employeeCard h5,
+        #assignmentCard h5,
+        #validationCard h5 {
+            color: var(--ldims-purple-dark);
+        }
+
+
+        /* LINK / TEXT ACCENT */
+
+        #functionalAreaHelp,
+        #functionalRoleHelp {
+            color: #666;
+        }
+
+
+        /* BACK BUTTON */
+
+        #backButton {
+            border-color: var(--ldims-purple);
+            color: var(--ldims-purple);
+        }
+
+
+        #backButton:hover {
+            background-color: var(--ldims-purple);
+            border-color: var(--ldims-purple);
+            color: #fff;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="container-fluid py-4">
+
+
+    <!-- ==================================================
+         PAGE HEADER
+    =================================================== -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2 class="fw-bold mb-1">
+                Functional Assignments
+            </h2>
+
+            <p class="text-muted mb-0">
+                Maintain and validate employee functional assignments
+                for competency mapping.
+            </p>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="btn btn-outline-secondary"
+            id="backButton"
+        >
+            Back
+        </button>
+
+    </div>
+
+
+
+    <!-- ==================================================
+         ALERT
+    =================================================== -->
+
+    <div
+        id="alertContainer"
+        class="mb-3"
+    ></div>
+
+
+
+    <!-- ==================================================
+         SEARCH
+    =================================================== -->
+
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <div class="row g-3 align-items-end">
+
+                <div class="col-md-8">
+
+                    <label
+                        for="employeeID"
+                        class="form-label fw-semibold"
+                    >
+                        Employee ID
+                    </label>
+
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="employeeID"
+                        placeholder="Enter Employee ID"
+                        autocomplete="off"
+                    >
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <button
+                        type="button"
+                        class="btn btn-primary w-100"
+                        id="loadEmployeeButton"
+                    >
+
+                        <span id="loadButtonText">
+                            Load Assignment
+                        </span>
+
+                        <span
+                            id="loadSpinner"
+                            class="spinner-border spinner-border-sm d-none"
+                            role="status"
+                            aria-hidden="true"
+                        ></span>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ==================================================
+         EMPLOYEE INFORMATION
+    =================================================== -->
+
+    <div
+        id="employeeCard"
+        class="card shadow-sm border-0 mb-4 d-none"
+    >
+
+        <div class="card-header bg-white">
+
+            <h5 class="mb-0 fw-semibold">
+                Employee Information
+            </h5>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <div class="row g-3">
+
+                <div class="col-md-4">
+
+                    <small class="text-muted">
+                        Employee ID
+                    </small>
+
+                    <div
+                        id="displayEmployeeID"
+                        class="fw-semibold"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <small class="text-muted">
+                        Name
+                    </small>
+
+                    <div
+                        id="displayEmployeeName"
+                        class="fw-semibold"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <small class="text-muted">
+                        Position
+                    </small>
+
+                    <div
+                        id="displayEmployeePosition"
+                        class="fw-semibold"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ==================================================
+         FUNCTIONAL ASSIGNMENT
+    =================================================== -->
+
+    <div
+        id="assignmentCard"
+        class="card shadow-sm border-0 mb-4 d-none"
+    >
+
+        <div class="card-header bg-white">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <div>
+
+                    <h5 class="mb-1 fw-semibold">
+                        Functional Assignment
+                    </h5>
+
+                    <small class="text-muted">
+                        Define the employee's actual functional assignment
+                        based on current duties and responsibilities.
+                    </small>
+
+                </div>
+
+
+                <span
+                    id="validationBadge"
+                    class="badge bg-secondary"
+                >
+                    For Validation
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <form id="assignmentForm">
+
+                <div class="row g-3">
+
+
+                    <!-- SERVICE / OFFICE -->
+
+                    <div class="col-md-6">
+
+                        <label
+                            for="serviceOffice"
+                            class="form-label fw-semibold"
+                        >
+                            Service / Office
+                            <span class="text-danger">*</span>
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="serviceOffice"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- DIVISION -->
+
+                    <div class="col-md-6">
+
+                        <label
+                            for="divisionUnit"
+                            class="form-label fw-semibold"
+                        >
+                            Division / Unit
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="divisionUnit"
+                        >
+
+                    </div>
+
+
+                    <!-- SECTION -->
+
+                    <div class="col-md-6">
+
+                        <label
+                            for="sectionSpecialization"
+                            class="form-label fw-semibold"
+                        >
+                            Section / Specialization
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="sectionSpecialization"
+                        >
+
+                    </div>
+
+
+                    <!-- PRIMARY / ADDITIONAL -->
+
+                    <div class="col-md-6">
+
+                        <label
+                            for="primaryAdditional"
+                            class="form-label fw-semibold"
+                        >
+                            Functional Assignment Type
+                        </label>
+
+                        <select
+                            class="form-select"
+                            id="primaryAdditional"
+                        >
+
+                            <option value="Primary">
+                                Primary
+                            </option>
+
+                            <option value="Additional">
+                                Additional
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- FUNCTIONAL AREA -->
+
+                    <div class="col-md-6">
+
+                        <label
+                            for="functionalArea"
+                            class="form-label fw-semibold"
+                        >
+                            Functional Area
+                            <span class="text-danger">*</span>
+                        </label>
+
+
+                        <select
+                            class="form-select"
+                            id="functionalArea"
+                            required
+                        >
+
+                            <option value="">
+                                Select Functional Area
+                            </option>
+
+                        </select>
+
+
+                        <small
+                            id="functionalAreaHelp"
+                            class="text-muted"
+                        >
+                            Loading validated functional areas...
+                        </small>
+
+                    </div>
+
+
+                    <!-- FUNCTIONAL ROLE -->
+
+                    <div class="col-md-6">
+
+                        <label
+                            for="functionalRole"
+                            class="form-label fw-semibold"
+                        >
+                            Functional Role / Duties
+                            <span class="text-danger">*</span>
+                        </label>
+
+
+                        <select
+                            class="form-select"
+                            id="functionalRole"
+                            required
+                            disabled
+                        >
+
+                            <option value="">
+                                Select Functional Role / Duties
+                            </option>
+
+                        </select>
+
+
+                        <small
+                            id="functionalRoleHelp"
+                            class="text-muted"
+                        >
+                            Select a Functional Area first.
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- REVISION -->
+
+                <div
+                    id="revisionBox"
+                    class="alert alert-warning mt-4 d-none"
+                >
+
+                    <strong>
+                        Needs Revision
+                    </strong>
+
+                    <div
+                        id="revisionRemarks"
+                        class="mt-1"
+                    ></div>
+
+                </div>
+
+
+
+                <!-- ACTIONS -->
+
+                <div class="d-flex justify-content-end gap-2 mt-4">
+
+                    <button
+                        type="button"
+                        class="btn btn-outline-secondary"
+                        id="clearButton"
+                    >
+                        Clear
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                        id="saveButton"
+                    >
+
+                        <span id="saveButtonText">
+                            Save Assignment
+                        </span>
+
+                        <span
+                            id="saveSpinner"
+                            class="spinner-border spinner-border-sm d-none"
+                            role="status"
+                            aria-hidden="true"
+                        ></span>
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ==================================================
+         LDD VALIDATION
+    =================================================== -->
+
+    <div
+        id="validationCard"
+        class="card shadow-sm border-0 d-none"
+    >
+
+        <div class="card-header bg-white">
+
+            <h5 class="mb-0 fw-semibold">
+                LDD Validation
+            </h5>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <p class="text-muted">
+                Review the functional assignment before validating it.
+            </p>
+
+
+            <div class="mb-3">
+
+                <label
+                    for="validationRemarks"
+                    class="form-label fw-semibold"
+                >
+                    Remarks
+                </label>
+
+                <textarea
+                    id="validationRemarks"
+                    class="form-control"
+                    rows="3"
+                    placeholder="Required when returning the assignment for revision."
+                ></textarea>
+
+            </div>
+
+
+            <div class="d-flex justify-content-end gap-2">
+
+                <button
+                    type="button"
+                    class="btn btn-warning"
+                    id="revisionButton"
+                >
+                    Return for Revision
+                </button>
+
+
+                <button
+                    type="button"
+                    class="btn btn-success"
+                    id="validateButton"
+                >
+                    Validate Assignment
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ==========================================================
+     LDIMS JAVASCRIPT
+========================================================== -->
+
+<script
+    src="../assets/js/config.js"
+></script>
+
+<script
+    src="../assets/js/api.js"
+></script>
+
+<script
+    src="../assets/js/session.js"
+></script>
+
+<script
+    src="../assets/js/pages/ldd-functional-assignments.js"
+></script>
+
+
+</body>
+
+</html>
