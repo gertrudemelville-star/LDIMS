@@ -518,19 +518,158 @@ async function loadLNAStatus(
         );
 
 
+        /* ----------------------------------------------------
+           LNA RECORD FOUND
+        ---------------------------------------------------- */
+
         if (
             response &&
             response.success === true &&
-            response.submitted === true
+            response.submitted === true &&
+            response.record
         ) {
+
+            const record =
+                response.record;
+
+
+            const status =
+                String(
+                    record.status ||
+                    "Submitted"
+                )
+                .trim()
+                .toLowerCase();
+
+
+            /* --------------------------------------------
+               FOR REVISION
+            -------------------------------------------- */
+
+            if (
+                status === "for revision" ||
+                status === "revision" ||
+                status === "returned" ||
+                status === "for completion"
+            ) {
+
+                if (statusElement) {
+
+                    statusElement.textContent =
+                        "For Revision";
+
+                    statusElement.className =
+                        "badge bg-danger";
+
+                }
+
+
+                if (dateElement) {
+
+                    dateElement.textContent =
+                        record.timestamp
+                            ? "Submitted: " +
+                              formatDate(
+                                  record.timestamp
+                              )
+                            : "LNA returned for revision.";
+
+                }
+
+
+                return;
+
+            }
+
+
+            /* --------------------------------------------
+               VALIDATED
+            -------------------------------------------- */
+
+            if (
+                status === "validated" ||
+                status === "approved"
+            ) {
+
+                if (statusElement) {
+
+                    statusElement.textContent =
+                        "Validated";
+
+                    statusElement.className =
+                        "badge bg-success";
+
+                }
+
+
+                if (dateElement) {
+
+                    dateElement.textContent =
+                        record.timestamp
+                            ? "Submitted: " +
+                              formatDate(
+                                  record.timestamp
+                              )
+                            : "";
+
+                }
+
+
+                return;
+
+            }
+
+
+            /* --------------------------------------------
+               FOR REVIEW
+            -------------------------------------------- */
+
+            if (
+                status === "for review" ||
+                status === "submitted"
+            ) {
+
+                if (statusElement) {
+
+                    statusElement.textContent =
+                        "Submitted";
+
+                    statusElement.className =
+                        "badge bg-success";
+
+                }
+
+
+                if (dateElement) {
+
+                    dateElement.textContent =
+                        record.timestamp
+                            ? "Submitted: " +
+                              formatDate(
+                                  record.timestamp
+                              )
+                            : "";
+
+                }
+
+
+                return;
+
+            }
+
+
+            /* --------------------------------------------
+               OTHER / UNKNOWN STATUS
+            -------------------------------------------- */
 
             if (statusElement) {
 
                 statusElement.textContent =
+                    record.status ||
                     "Submitted";
 
                 statusElement.className =
-                    "badge bg-success";
+                    "badge bg-secondary";
 
             }
 
@@ -538,10 +677,10 @@ async function loadLNAStatus(
             if (dateElement) {
 
                 dateElement.textContent =
-                    response.record?.timestamp
+                    record.timestamp
                         ? "Submitted: " +
                           formatDate(
-                              response.record.timestamp
+                              record.timestamp
                           )
                         : "";
 
@@ -554,7 +693,7 @@ async function loadLNAStatus(
 
 
         /* ----------------------------------------------------
-           Not Yet Submitted
+           NOT YET SUBMITTED
         ---------------------------------------------------- */
 
         if (statusElement) {

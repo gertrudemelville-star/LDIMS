@@ -1367,6 +1367,525 @@ function formatLNADate(
 
 }
 
+/* ==========================================================
+   LOAD FUNCTIONAL ASSIGNMENT & APPLICABLE COMPETENCIES
+========================================================== */
+
+async function loadLNACompetencyContext() {
+
+    const employeeID =
+        getEmployeeIDFromSession();
+
+
+    if (!employeeID) {
+
+        showCompetencyError(
+            "Employee session not found. Please log in again."
+        );
+
+        return;
+
+    }
+
+
+    showCompetencyLoading();
+
+
+    try {
+
+        const response =
+            await API.post({
+
+                action:
+                    "getEmployeeLNACompetencyContext",
+
+                employeeID:
+                    employeeID
+
+            });
+
+
+        console.log(
+            "LNA Competency Context:",
+            response
+        );
+
+
+        if (
+            !response ||
+            response.success !== true
+        ) {
+
+            showCompetencyError(
+                response?.message ||
+                "Unable to retrieve functional assignment and competency information."
+            );
+
+            return;
+
+        }
+
+
+        renderLNACompetencyContext(
+            response
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Unable to load LNA competency context:",
+            error
+        );
+
+
+        showCompetencyError(
+            "Unable to retrieve competency information. Please try again later."
+        );
+
+    }
+
+}
+
+
+/* ==========================================================
+   SHOW COMPETENCY LOADING
+========================================================== */
+
+function showCompetencyLoading() {
+
+    const loading =
+        document.getElementById(
+            "competencyContextLoading"
+        );
+
+
+    if (loading) {
+
+        loading.classList.remove(
+            "d-none"
+        );
+
+    }
+
+
+    hideElement(
+        "functionalAssignmentSection"
+    );
+
+    hideElement(
+        "applicableCompetenciesSection"
+    );
+
+    hideElement(
+        "competencyValidationNotice"
+    );
+
+    hideElement(
+        "competencyEmptyNotice"
+    );
+
+    hideElement(
+        "competencyErrorNotice"
+    );
+
+}
+
+
+/* ==========================================================
+   RENDER COMPETENCY CONTEXT
+========================================================== */
+
+function renderLNACompetencyContext(
+    response
+) {
+
+    hideElement(
+        "competencyContextLoading"
+    );
+
+
+    const assignment =
+        response.assignment || null;
+
+
+    if (assignment) {
+
+        showElement(
+            "functionalAssignmentSection"
+        );
+
+
+        setText(
+            "lnaServiceOffice",
+            assignment.serviceOffice ||
+            "—"
+        );
+
+
+        setText(
+            "lnaDivisionUnit",
+            assignment.divisionUnit ||
+            "—"
+        );
+
+
+        setText(
+            "lnaSectionSpecialization",
+            assignment.sectionSpecialization ||
+            "—"
+        );
+
+
+        setText(
+            "lnaFunctionalArea",
+            assignment.functionalArea ||
+            "—"
+        );
+
+
+        setText(
+            "lnaFunctionalRole",
+            assignment.functionalRole ||
+            "—"
+        );
+
+
+        const status =
+            String(
+                assignment.validationStatus ||
+                response.validationStatus ||
+                "For Validation"
+            ).trim();
+
+
+        const statusElement =
+            document.getElementById(
+                "lnaAssignmentStatus"
+            );
+
+
+        if (statusElement) {
+
+            statusElement.textContent =
+                status;
+
+
+            if (
+                status.toLowerCase() ===
+                "validated"
+            ) {
+
+                statusElement.className =
+                    "badge bg-success";
+
+            } else if (
+                status.toLowerCase() ===
+                "needs revision"
+            ) {
+
+                statusElement.className =
+                    "badge bg-danger";
+
+            } else {
+
+                statusElement.className =
+                    "badge bg-warning text-dark";
+
+            }
+
+        }
+
+    }
+
+
+    const competencies =
+        Array.isArray(
+            response.competencies
+        )
+            ? response.competencies
+            : [];
+
+
+    /* ======================================================
+       NOT VALIDATED
+    ====================================================== */
+
+    if (
+        response.validationStatus !==
+        "Validated"
+    ) {
+
+        showElement(
+            "competencyValidationNotice"
+        );
+
+
+        setText(
+            "competencyValidationMessage",
+            response.message ||
+            "Your applicable technical competencies will appear once your functional assignment and competency mapping have been validated by the Learning & Development Division."
+        );
+
+
+        return;
+
+    }
+
+
+    /* ======================================================
+       VALIDATED BUT NO COMPETENCIES
+    ====================================================== */
+
+    if (
+        competencies.length === 0
+    ) {
+
+        showElement(
+            "competencyEmptyNotice"
+        );
+
+
+        return;
+
+    }
+
+
+    /* ======================================================
+       RENDER COMPETENCIES
+    ====================================================== */
+
+    showElement(
+        "applicableCompetenciesSection"
+    );
+
+
+    setText(
+        "competencyCount",
+        String(
+            competencies.length
+        )
+    );
+
+
+    const list =
+        document.getElementById(
+            "competencyList"
+        );
+
+
+    if (!list) {
+
+        return;
+
+    }
+
+
+    list.innerHTML = "";
+
+
+    competencies.forEach(
+        function(
+            competency,
+            index
+        ) {
+
+            const item =
+                document.createElement(
+                    "div"
+                );
+
+
+            item.className =
+                "list-group-item";
+
+
+            const name =
+                competency.competencyName ||
+                competency.name ||
+                competency.description ||
+                competency.competency ||
+                competency.LNACompetencyCode ||
+                competency.lnaCompetencyCode ||
+                "Technical Competency";
+
+
+            const code =
+                competency.masterCompetencyCode ||
+                competency.MasterCompetencyCode ||
+                competency.competencyCode ||
+                competency.code ||
+                "";
+
+
+            const requiredLevel =
+                competency.requiredLevel ||
+                competency.RequiredLevel ||
+                "";
+
+
+            item.innerHTML = `
+
+                <div class="d-flex
+                            justify-content-between
+                            align-items-start
+                            gap-3">
+
+                    <div>
+
+                        <div class="fw-semibold">
+
+                            ${escapeHTML(name)}
+
+                        </div>
+
+                        ${
+                            code
+                                ? `
+                                    <small class="text-muted">
+                                        ${escapeHTML(code)}
+                                    </small>
+                                  `
+                                : ""
+                        }
+
+                    </div>
+
+
+                    <div class="text-end">
+
+                        <small class="text-muted d-block">
+                            Required Level
+                        </small>
+
+                        <span class="badge bg-primary">
+
+                            ${
+                                requiredLevel
+                                    ? escapeHTML(
+                                        String(
+                                            requiredLevel
+                                        )
+                                      )
+                                    : "For Validation"
+                            }
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            `;
+
+
+            list.appendChild(
+                item
+            );
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   UI HELPERS
+========================================================== */
+
+function showElement(
+    id
+) {
+
+    const element =
+        document.getElementById(
+            id
+        );
+
+
+    if (element) {
+
+        element.classList.remove(
+            "d-none"
+        );
+
+    }
+
+}
+
+
+function hideElement(
+    id
+) {
+
+    const element =
+        document.getElementById(
+            id
+        );
+
+
+    if (element) {
+
+        element.classList.add(
+            "d-none"
+        );
+
+    }
+
+}
+
+
+function setText(
+    id,
+    value
+) {
+
+    const element =
+        document.getElementById(
+            id
+        );
+
+
+    if (element) {
+
+        element.textContent =
+            value ??
+            "—";
+
+    }
+
+}
+
+
+function escapeHTML(
+    value
+) {
+
+    return String(
+        value ?? ""
+    )
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+    .replace(
+        /</g,
+        "&lt;"
+    )
+    .replace(
+        />/g,
+        "&gt;"
+    )
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
+}
 
 /* ==========================================================
    LOGOUT
@@ -1442,14 +1961,35 @@ function handleLogout(
 
 document.addEventListener(
     "DOMContentLoaded",
-    function () {
+    async function () {
+
+        /* ======================================================
+           BASIC EMPLOYEE INFORMATION
+        ====================================================== */
 
         displayUserRole();
 
         displayEmployeeID();
 
-        loadLNAStatus();
 
+        /* ======================================================
+           LNA STATUS
+        ====================================================== */
+
+        await loadLNAStatus();
+
+
+        /* ======================================================
+           FUNCTIONAL ASSIGNMENT
+           + APPLICABLE COMPETENCIES
+        ====================================================== */
+
+        await loadLNACompetencyContext();
+
+
+        /* ======================================================
+           START LNA BUTTON
+        ====================================================== */
 
         const startLnaButton =
             document.getElementById(
@@ -1466,6 +2006,10 @@ document.addEventListener(
 
         }
 
+
+        /* ======================================================
+           LOGOUT
+        ====================================================== */
 
         const logoutLink =
             document.getElementById(

@@ -2,29 +2,38 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Supervisor Dashboard | LDIMS</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
-    <!-- EXISTING GLOBAL STYLE -->
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <title>LDIMS | Supervisor Dashboard</title>
 
-    <!-- SUPERVISOR STYLE -->
-    <link rel="stylesheet" href="../assets/css/supervisor.css">
+    <link
+        rel="stylesheet"
+        href="../assets/css/style.css">
+
+    <link
+        rel="stylesheet"
+        href="../assets/css/supervisor.css">
+
 </head>
 
 
 <body>
 
+
 <div class="app-shell">
 
 
-    <!-- ======================================================
+    <!-- =====================================================
          SIDEBAR
-    ======================================================= -->
+    ====================================================== -->
 
     <aside class="sidebar">
+
 
         <div class="sidebar-brand">
 
@@ -33,13 +42,15 @@
             </div>
 
             <div>
+
                 <div class="brand-title">
                     LDIMS
                 </div>
 
                 <div class="brand-subtitle">
-                    Supervisor Portal
+                    Employee & Supervisor Portal
                 </div>
+
             </div>
 
         </div>
@@ -47,60 +58,153 @@
 
         <nav class="sidebar-nav">
 
+
+            <!-- DASHBOARD -->
+
             <a
-                href="dashboard.html"
+                href="#dashboard"
                 class="nav-item active"
+                data-view="dashboard"
             >
+
                 <span>⌂</span>
+
                 Dashboard
+
             </a>
 
 
+            <!-- MY LEARNING -->
+
+            <div class="sidebar-section-label">
+                MY LEARNING
+            </div>
+
+
             <a
-                href="#personnel"
+                href="#profile"
                 class="nav-item"
+                data-view="profile"
             >
-                <span>♟</span>
-                My Personnel
+
+                <span>♙</span>
+
+                My Profile
+
             </a>
 
 
             <a
                 href="#lna"
                 class="nav-item"
+                data-view="lna"
             >
+
                 <span>☷</span>
-                LNA Review
+
+                My LNA
+
+            </a>
+
+
+            <a
+                href="#training"
+                class="nav-item"
+                data-view="training"
+            >
+
+                <span>◆</span>
+
+                My Training
+
+            </a>
+
+
+            <a
+                href="#history"
+                class="nav-item"
+                data-view="history"
+            >
+
+                <span>≡</span>
+
+                Learning History
+
+            </a>
+
+
+            <a
+                href="#certificates"
+                class="nav-item"
+                data-view="certificates"
+            >
+
+                <span>▧</span>
+
+                Certificates
+
+            </a>
+
+
+            <!-- SUPERVISOR -->
+
+            <div class="sidebar-section-label">
+                SUPERVISOR
+            </div>
+
+
+            <a
+                href="#personnel"
+                class="nav-item"
+                data-view="personnel"
+            >
+
+                <span>♙</span>
+
+                My Personnel
+
             </a>
 
 
             <a
                 href="#validation"
                 class="nav-item"
+                data-view="validation"
             >
+
                 <span>✓</span>
+
                 For Validation
+
             </a>
-            
+
+
             <a
                 href="#interventions"
                 class="nav-item"
+                data-view="interventions"
             >
+
                 <span>◎</span>
+
                 Interventions
+
             </a>
-            <div style="
-                margin: 18px 14px;
-                border-top: 1px solid rgba(255,255,255,0.12);
-            "></div>
+
+
+            <div class="sidebar-divider"></div>
+
 
             <a
                 href="#"
                 class="nav-item"
-                onclick="supervisorLogout(); return false;"
+                onclick="logoutSupervisor(); return false;"
             >
+
                 <span>⇥</span>
+
                 Logout
+
             </a>
 
         </nav>
@@ -122,27 +226,29 @@
 
 
 
-    <!-- ======================================================
+    <!-- =====================================================
          MAIN CONTENT
-    ======================================================= -->
+    ====================================================== -->
 
     <main class="main-content">
 
 
-        <!-- ==================================================
-             TOPBAR
-        =================================================== -->
+        <!-- TOPBAR -->
 
         <header class="topbar">
+
 
             <div>
 
                 <div class="page-eyebrow">
-                    SUPERVISOR PORTAL
+                    EMPLOYEE & SUPERVISOR PORTAL
                 </div>
 
-                <h1 class="page-title">
-                    Supervisor Dashboard
+                <h1
+                    class="page-title"
+                    id="viewTitle"
+                >
+                    Dashboard
                 </h1>
 
             </div>
@@ -150,9 +256,14 @@
 
             <div class="topbar-user">
 
-                <div class="user-avatar">
+
+                <div
+                    class="user-avatar"
+                    id="supervisorAvatar"
+                >
                     S
                 </div>
+
 
                 <div class="user-info">
 
@@ -172,395 +283,530 @@
 
 
 
-        <!-- ==================================================
-             WELCOME
-        =================================================== -->
+        <!-- =================================================
+             VIEW CONTAINER
+        ================================================== -->
 
-        <section class="dashboard-welcome">
+        <div id="supervisorViewContainer">
 
-            <span class="section-label">
-                LEARNING & DEVELOPMENT
-            </span>
 
-            <h2>
-                Welcome, <span id="welcomeName">Supervisor</span>!
-            </h2>
+            <!-- =================================================
+                 DASHBOARD VIEW
+            ================================================== -->
 
-            <p>
-                Review the learning and development needs
-                of personnel assigned to your office and
-                provide validation for their development needs.
-            </p>
-
-        </section>
-
-
-
-        <!-- ==================================================
-             SUMMARY
-        =================================================== -->
-
-        <section>
-
-            <div class="summary-grid">
-
-
-                <div class="summary-card">
-
-                    <div class="summary-card-label">
-                        MY PERSONNEL
-                    </div>
-
-                    <div
-                        class="summary-card-value"
-                        id="totalPersonnel"
-                    >
-                        0
-                    </div>
-
-                    <div class="summary-card-description">
-                        Active personnel under your assignment
-                    </div>
-
-                </div>
-
-
-
-                <div class="summary-card">
-
-                    <div class="summary-card-label">
-                        LNA FOR REVIEW
-                    </div>
-
-                    <div
-                        class="summary-card-value"
-                        id="pendingLNA"
-                    >
-                        0
-                    </div>
-
-                    <div class="summary-card-description">
-                        Learning needs requiring supervisor review
-                    </div>
-
-                </div>
-
-
-
-                <div class="summary-card">
-
-                    <div class="summary-card-label">
-                        VALIDATED
-                    </div>
-
-                    <div
-                        class="summary-card-value"
-                        id="validatedLNA"
-                    >
-                        0
-                    </div>
-
-                    <div class="summary-card-description">
-                        Personnel with validated learning needs
-                    </div>
-
-                </div>
-
-
-            </div>
-
-        </section>
-
-
-
-        <!-- ==================================================
-             MY PERSONNEL
-        =================================================== -->
-
-        <section
-            class="content-card"
-            id="personnel"
-        >
-
-            <div class="content-card-header">
-
-                <div>
-
-                    <span class="section-label">
-                        PERSONNEL
-                    </span>
-
-                    <h2>
-                        My Personnel
-                    </h2>
-
-                    <p>
-                        Personnel assigned to your Place of Assignment.
-                    </p>
-
-                </div>
-
-
-                <div class="assignment-badge">
-
-                    <span>
-                        PLACE OF ASSIGNMENT
-                    </span>
-
-                    <strong id="assignmentName">
-                        —
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-
-            <div class="table-container">
-
-                <table class="data-table">
-
-                    <thead>
-
-                        <tr>
-
-                            <th>
-                                Employee ID
-                            </th>
-
-                            <th>
-                                Employee
-                            </th>
-
-                            <th>
-                                Position
-                            </th>
-
-                            <th>
-                                Assignment
-                            </th>
-
-                            <th>
-                                LNA Status
-                            </th>
-
-                            <th>
-                                Action
-                            </th>
-
-                        </tr>
-
-                    </thead>
-
-
-                    <tbody id="personnelTableBody">
-
-                        <tr>
-
-                            <td
-                                colspan="6"
-                                class="loading-state"
-                            >
-                                Loading personnel...
-                            </td>
-
-                        </tr>
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </section>
-
-
-
-        <!-- ==================================================
-             LNA REVIEW
-        =================================================== -->
-
-        <section
-            class="content-card"
-            id="lna"
-        >
-
-            <div class="content-card-header">
-
-                <div>
-
-                    <span class="section-label">
-                        LEARNING NEEDS ASSESSMENT
-                    </span>
-
-                    <h2>
-                        Supervisor Review
-                    </h2>
-
-                    <p>
-                        Review and validate the learning needs
-                        identified by your personnel.
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <div
-                class="empty-state-panel"
-                id="lnaReviewPanel"
+            <section
+                id="view-dashboard"
+                class="supervisor-view"
             >
 
-                <div class="empty-state-icon">
-                    ✓
-                </div>
 
-                <h3>
-                    LNA Review Workspace
-                </h3>
-
-                <p>
-                    Select a personnel record above to review
-                    their Learning Needs Analysis.
-                </p>
-
-            </div>
-
-        </section>
-
-
-
-        <!-- ==================================================
-             VALIDATION
-        =================================================== -->
-
-        <section
-            class="content-card"
-            id="validation"
-        >
-
-            <div class="content-card-header">
-
-                <div>
-
-                    <span class="section-label">
-                        SUPERVISOR ACTION
-                    </span>
-
-                    <h2>
-                        For Validation
-                    </h2>
-
-                    <p>
-                        Learning needs requiring your validation.
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <div
-                class="empty-state-panel"
-                id="validationPanel"
-            >
-
-                <div class="empty-state-icon">
-                    ✓
-                </div>
-
-                <h3>
-                    No items for validation
-                </h3>
-
-                <p>
-                    Learning needs requiring your review
-                    will appear here.
-                </p>
-
-            </div>
-
-        </section>
-
-
-
-        <!-- ==================================================
-             INTERVENTIONS
-        =================================================== -->
-
-        <section
-            class="content-card"
-            id="interventions"
-        >
-
-            <div class="content-card-header">
-
-                <div>
+                <section class="dashboard-welcome">
 
                     <span class="section-label">
                         LEARNING & DEVELOPMENT
                     </span>
 
+
                     <h2>
-                        Learning Interventions
+
+                        Welcome,
+                        <span id="welcomeName">
+                            Supervisor
+                        </span>!
+
                     </h2>
 
+
                     <p>
-                        Proposed interventions for personnel
-                        under your supervision.
+
+                        Manage your own learning and development
+                        while reviewing and validating the learning
+                        needs of personnel under your supervision.
+
                     </p>
 
+                </section>
+
+
+
+                <!-- MY LEARNING -->
+
+                <section class="dashboard-section">
+
+
+                    <div class="section-heading">
+
+                        <div>
+
+                            <span class="section-label">
+                                MY EMPLOYEE PROFILE
+                            </span>
+
+                            <h2>
+                                My Learning & Development
+                            </h2>
+
+                        </div>
+
+
+                        <span class="role-badge">
+                            EMPLOYEE + SUPERVISOR
+                        </span>
+
+                    </div>
+
+
+
+                    <div class="employee-summary-grid">
+
+
+                        <div class="summary-card">
+
+                            <div class="summary-card-label">
+                                MY TRAINING
+                            </div>
+
+                            <div
+                                class="summary-card-value"
+                                id="myTrainingCount"
+                            >
+                                0
+                            </div>
+
+                            <div class="summary-card-description">
+                                Recorded learning activities
+                            </div>
+
+                        </div>
+
+
+                        <div class="summary-card">
+
+                            <div class="summary-card-label">
+                                LEARNING HOURS
+                            </div>
+
+                            <div
+                                class="summary-card-value"
+                                id="myLearningHours"
+                            >
+                                0
+                            </div>
+
+                            <div class="summary-card-description">
+                                Total learning hours
+                            </div>
+
+                        </div>
+
+
+                        <div class="summary-card">
+
+                            <div class="summary-card-label">
+                                CERTIFICATES
+                            </div>
+
+                            <div
+                                class="summary-card-value"
+                                id="myCertificateCount"
+                            >
+                                0
+                            </div>
+
+                            <div class="summary-card-description">
+                                Training certificates
+                            </div>
+
+                        </div>
+
+
+                        <div class="summary-card">
+
+                            <div class="summary-card-label">
+                                MY LNA
+                            </div>
+
+                            <div
+                                class="summary-card-status"
+                                id="myLNAStatus"
+                            >
+                                —
+                            </div>
+
+                            <div class="summary-card-description">
+                                Learning Needs Assessment
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- SUPERVISOR OVERVIEW -->
+
+                <section class="dashboard-section">
+
+
+                    <div class="section-heading">
+
+                        <div>
+
+                            <span class="section-label">
+                                SUPERVISOR FUNCTIONS
+                            </span>
+
+                            <h2>
+                                Supervisor Overview
+                            </h2>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="supervisor-summary-grid">
+
+
+                        <div class="summary-card">
+
+                            <div class="summary-card-label">
+                                MY PERSONNEL
+                            </div>
+
+                            <div
+                                class="summary-card-value"
+                                id="totalPersonnel"
+                            >
+                                0
+                            </div>
+
+                            <div class="summary-card-description">
+                                Personnel under supervision
+                            </div>
+
+                        </div>
+
+
+                        <div class="summary-card">
+
+                            <div class="summary-card-label">
+                                LNA FOR REVIEW
+                            </div>
+
+                            <div
+                                class="summary-card-value"
+                                id="pendingLNA"
+                            >
+                                0
+                            </div>
+
+                            <div class="summary-card-description">
+                                Awaiting supervisory review
+                            </div>
+
+                        </div>
+
+
+                        <div class="summary-card">
+
+                            <div class="summary-card-label">
+                                FOR COMPLETION
+                            </div>
+
+                            <div
+                                class="summary-card-value"
+                                id="forCompletion"
+                            >
+                                0
+                            </div>
+
+                            <div class="summary-card-description">
+                                Personnel with incomplete LNA
+                            </div>
+
+                        </div>
+
+
+                        <div class="summary-card">
+
+                            <div class="summary-card-label">
+                                VALIDATED
+                            </div>
+
+                            <div
+                                class="summary-card-value"
+                                id="validatedLNA"
+                            >
+                                0
+                            </div>
+
+                            <div class="summary-card-description">
+                                Validated learning needs
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 PERSONNEL VIEW
+            ================================================== -->
+
+            <section
+                id="view-personnel"
+                class="supervisor-view"
+                style="display:none;"
+            >
+
+
+                <section class="content-card">
+
+
+                    <div class="content-card-header">
+
+                        <div>
+
+                            <span class="section-label">
+                                SUPERVISOR WORKSPACE
+                            </span>
+
+                            <h2>
+                                My Personnel
+                            </h2>
+
+                            <p>
+                                Personnel assigned to your
+                                Place of Assignment.
+                            </p>
+
+                        </div>
+
+
+                        <div class="assignment-badge">
+
+                            <span>
+                                PLACE OF ASSIGNMENT
+                            </span>
+
+                            <strong id="assignmentName">
+                                —
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="table-container">
+
+                        <table class="data-table">
+
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Employee ID
+                                    </th>
+
+                                    <th>
+                                        Employee
+                                    </th>
+
+                                    <th>
+                                        Position
+                                    </th>
+
+                                    <th>
+                                        Assignment
+                                    </th>
+
+                                    <th>
+                                        LNA Status
+                                    </th>
+
+                                    <th>
+                                        Action
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody id="personnelTableBody">
+
+                                <tr>
+
+                                    <td
+                                        colspan="6"
+                                        class="loading-state"
+                                    >
+                                        Loading personnel...
+                                    </td>
+
+                                </tr>
+
+                            </tbody>
+
+
+                        </table>
+
+                    </div>
+
+                </section>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 VALIDATION VIEW
+            ================================================== -->
+
+            <section
+                id="view-validation"
+                class="supervisor-view"
+                style="display:none;"
+            >
+
+                <section class="content-card">
+
+                    <div class="content-card-header">
+
+                        <div>
+
+                            <span class="section-label">
+                                SUPERVISOR WORKSPACE
+                            </span>
+
+                            <h2>
+                                For Validation
+                            </h2>
+
+                            <p>
+                                Personnel LNA submissions requiring
+                                supervisory validation.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        id="validationPersonnelContainer"
+                        class="table-container"
+                    ></div>
+
+                </section>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 INTERVENTIONS VIEW
+            ================================================== -->
+
+            <section
+                id="view-interventions"
+                class="supervisor-view"
+                style="display:none;"
+            >
+
+                <section class="content-card">
+
+                    <div class="content-card-header">
+
+                        <div>
+
+                            <span class="section-label">
+                                SUPERVISOR WORKSPACE
+                            </span>
+
+                            <h2>
+                                Learning Interventions
+                            </h2>
+
+                            <p>
+                                Review learning needs and
+                                recommended interventions of
+                                personnel under your supervision.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        id="interventionsPersonnelContainer"
+                        class="table-container"
+                    ></div>
+
+                </section>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 EMPLOYEE MODULE VIEW
+            ================================================== -->
+
+            <section
+                id="view-employee"
+                class="supervisor-view"
+                style="display:none;"
+            >
+
+                <div class="employee-module-frame">
+
+                    <iframe
+                        id="employeeModuleFrame"
+                        title="LDIMS Employee Module"
+                        frameborder="0"
+                    ></iframe>
+
                 </div>
 
-            </div>
+            </section>
 
 
-            <div class="empty-state-panel">
-
-                <div class="empty-state-icon">
-                    ◎
-                </div>
-
-                <h3>
-                    No interventions yet
-                </h3>
-
-                <p>
-                    Proposed learning interventions will
-                    appear here after LNA review.
-                </p>
-
-            </div>
-
-        </section>
+        </div>
 
 
 
-        <!-- ==================================================
+        <!-- =================================================
              FOOTER
-        =================================================== -->
+        ================================================== -->
 
-        <footer class="page-footer">
+        <div class="page-footer">
 
             <span>
                 LDIMS
             </span>
 
-            <span>|</span>
-
-            <span>
-                National Bureau of Investigation
-            </span>
-
-            <span>|</span>
+            <span>•</span>
 
             <span>
                 Learning & Development Division
             </span>
 
-        </footer>
+        </div>
 
 
     </main>
@@ -569,15 +815,264 @@
 
 
 
-<!-- ========================================================
-     JAVASCRIPT
-========================================================= -->
+<!-- =========================================================
+     LNA MODAL
+========================================================== -->
+
+<div
+    id="lnaModal"
+    class="lna-modal"
+    aria-hidden="true"
+>
+
+
+    <div class="lna-modal-backdrop"></div>
+
+
+    <div
+        class="lna-modal-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="lnaModalTitle"
+    >
+
+
+        <div class="lna-modal-header">
+
+            <div>
+
+                <span class="section-label">
+                    LEARNING NEEDS ASSESSMENT
+                </span>
+
+                <h2 id="lnaModalTitle">
+                    Personnel LNA
+                </h2>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="lna-modal-close"
+                onclick="closeLNAModal();"
+                aria-label="Close"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+
+        <div class="lna-modal-meta">
+
+
+            <div>
+
+                <span>
+                    EMPLOYEE ID
+                </span>
+
+                <strong id="lnaEmployeeID">
+                    —
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    EMPLOYEE
+                </span>
+
+                <strong id="lnaEmployeeName">
+                    —
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    POSITION
+                </span>
+
+                <strong id="lnaEmployeePosition">
+                    —
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    ASSIGNMENT
+                </span>
+
+                <strong id="lnaEmployeeAssignment">
+                    —
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    STATUS
+                </span>
+
+                <strong id="lnaStatus">
+                    —
+                </strong>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="lna-modal-body">
+
+
+            <section>
+
+                <div class="lna-modal-section-heading">
+
+                    <span class="section-label">
+                        LNA DETAILS
+                    </span>
+
+                    <h3>
+                        Learning Needs Assessment
+                    </h3>
+
+                </div>
+
+
+                <div id="lnaDetails">
+
+                    <div class="empty-state">
+                        Select an employee to view the LNA.
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <section class="lna-modal-training">
+
+                <div class="lna-modal-section-heading">
+
+                    <span class="section-label">
+                        LEARNING HISTORY
+                    </span>
+
+                    <h3>
+                        Training History
+                    </h3>
+
+                </div>
+
+
+                <div id="trainingHistory">
+
+                    <div class="empty-state">
+                        No training history loaded.
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <section>
+
+                <div id="supervisorLNAActions"></div>
+
+            </section>
+
+        </div>
+
+
+
+        <div class="lna-modal-footer">
+
+            <button
+                type="button"
+                class="btn btn-secondary"
+                onclick="closeLNAModal();"
+            >
+                Close
+            </button>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================================================
+     LOADING
+========================================================== -->
+
+<div
+    id="supervisorLoading"
+    class="supervisor-loading"
+    style="display:none;"
+>
+
+    <div class="supervisor-loading-box">
+
+        <div class="supervisor-spinner"></div>
+
+        <div>
+            Loading...
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================================================
+     MESSAGE
+========================================================== -->
+
+<div
+    id="supervisorMessage"
+    class="supervisor-message"
+    style="display:none;"
+></div>
+
+
+
+<!-- =========================================================
+     SCRIPTS
+========================================================== -->
 
 <script src="../assets/js/config.js"></script>
+
 <script src="../assets/js/api.js"></script>
+
 <script src="../assets/js/session.js"></script>
 
+<script src="../assets/js/utils.js"></script>
+
 <script src="../assets/js/pages/supervisor.js"></script>
+
+<script src="../assets/js/pages/supervisor-assessment.js"></script>
 
 
 </body>

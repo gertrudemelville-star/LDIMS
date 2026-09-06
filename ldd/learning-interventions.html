@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
 
     <meta name="viewport"
@@ -84,6 +83,107 @@
             white-space: nowrap;
         }
 
+        .detail-table td {
+            vertical-align: top;
+        }
+
+        .learning-request,
+        .learning-method,
+        .recommended-program {
+            min-width: 190px;
+            white-space: pre-wrap;
+        }
+
+        .supervisor-recommendation {
+            min-width: 260px;
+            white-space: pre-wrap;
+        }
+
+        .supervisor-need {
+            min-width: 240px;
+            white-space: pre-wrap;
+        }
+
+        .detail-summary {
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            padding: 12px 14px;
+            background: #fafafa;
+            margin-bottom: 15px;
+        }
+
+        .detail-summary strong {
+            color: #4a148c;
+        }
+
+        /* ======================================================
+           VISIBLE HORIZONTAL SCROLLBAR
+        ====================================================== */
+
+        .detail-horizontal-scroll {
+            width: 100%;
+            overflow-x: auto;
+            overflow-y: hidden;
+            height: 18px;
+            margin-bottom: 6px;
+            border: 1px solid #e1e5ea;
+            border-radius: 6px;
+            background: #f3f5f7;
+        }
+
+        .detail-horizontal-scroll-inner {
+            height: 1px;
+        }
+
+        .detail-table-wrap {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: 430px;
+            border: 1px solid #e5e5e5;
+            border-radius: 6px;
+        }
+
+        .detail-table-wrap .detail-table {
+            min-width: 1650px;
+            margin-bottom: 0;
+        }
+
+        .detail-horizontal-scroll::-webkit-scrollbar {
+            height: 14px;
+        }
+
+        .detail-horizontal-scroll::-webkit-scrollbar-thumb {
+            background: #9aa4b2;
+            border-radius: 8px;
+        }
+
+        .detail-horizontal-scroll::-webkit-scrollbar-track {
+            background: #eef1f4;
+        }
+
+        .detail-table-wrap::-webkit-scrollbar {
+            height: 14px;
+        }
+
+        .detail-table-wrap::-webkit-scrollbar-thumb {
+            background: #9aa4b2;
+            border-radius: 8px;
+        }
+
+        .detail-table-wrap::-webkit-scrollbar-track {
+            background: #eef1f4;
+        }
+
+        .supervisor-status {
+            min-width: 150px;
+        }
+
+        .detail-view-btn {
+            white-space: nowrap;
+        }
+
     </style>
 
 </head>
@@ -109,13 +209,12 @@
         </span>
 
         <strong id="headerRole">
-            L&D Officer
+            LDD Personnel
         </strong>
 
     </div>
 
 </header>
-
 
 
 <!-- ==========================================================
@@ -181,7 +280,6 @@
 </aside>
 
 
-
 <!-- ==========================================================
      MAIN CONTENT
 ========================================================== -->
@@ -189,9 +287,7 @@
 <main class="content">
 
 
-    <!-- ======================================================
-         PAGE HEADER
-    ======================================================= -->
+    <!-- PAGE HEADER -->
 
     <div class="d-flex
                 justify-content-between
@@ -207,12 +303,12 @@
             </h2>
 
             <p class="text-muted mb-0">
-                Competency needs identified through the Learning
-                Needs Analysis and areas requiring LDD action.
+                Consolidated employee learning needs and
+                supervisor recommendations for LDD review,
+                planning, and intervention.
             </p>
 
         </div>
-
 
         <button
             type="button"
@@ -226,13 +322,7 @@
     </div>
 
 
-
-    <!-- ======================================================
-         ALERT
-    ======================================================= -->
-
     <div id="alertMessage"></div>
-
 
 
     <!-- ======================================================
@@ -250,9 +340,9 @@
                 </h5>
 
                 <p class="text-muted small mb-0">
-                    Competencies identified by priority and
-                    competency category. Click a competency to
-                    view the personnel requiring the competency.
+                    Competencies identified from employee LNA
+                    and supervisor assessment. Click a competency
+                    to view the affected personnel.
                 </p>
 
             </div>
@@ -291,7 +381,6 @@
 
                     </thead>
 
-
                     <tbody id="matrixTableBody">
 
                         <tr>
@@ -317,7 +406,6 @@
     </div>
 
 
-
     <!-- ======================================================
          LDD PLANNING SNAPSHOT
     ======================================================= -->
@@ -333,15 +421,14 @@
                 </h5>
 
                 <p class="text-muted small mb-0">
-                    High-level view of the current learning needs
-                    requiring LDD review and planning.
+                    High-level view of personnel and competency
+                    needs requiring LDD action.
                 </p>
 
             </div>
 
 
             <div class="row g-3">
-
 
                 <div class="col-md-3">
 
@@ -356,9 +443,7 @@
                             <div
                                 class="stat-number mt-2"
                                 id="totalNeeds">
-
                                 0
-
                             </div>
 
                         </div>
@@ -381,9 +466,7 @@
                             <div
                                 class="stat-number mt-2 text-danger"
                                 id="highNeeds">
-
                                 0
-
                             </div>
 
                         </div>
@@ -406,9 +489,7 @@
                             <div
                                 class="stat-number mt-2"
                                 id="commonCompetencies">
-
                                 0
-
                             </div>
 
                         </div>
@@ -431,9 +512,7 @@
                             <div
                                 class="stat-number mt-2"
                                 id="affectedAssignments">
-
                                 0
-
                             </div>
 
                         </div>
@@ -447,7 +526,6 @@
         </div>
 
     </div>
-
 
 
     <!-- ======================================================
@@ -475,8 +553,6 @@
             <div class="row g-3">
 
 
-                <!-- HIGH PRIORITY -->
-
                 <div class="col-md-4">
 
                     <div
@@ -485,8 +561,7 @@
 
                         <div class="card-body">
 
-                            <div class="d-flex
-                                        justify-content-between">
+                            <div class="d-flex justify-content-between">
 
                                 <div>
 
@@ -509,9 +584,7 @@
                             <div
                                 class="stat-number mt-3"
                                 id="actionHigh">
-
                                 0
-
                             </div>
 
                         </div>
@@ -521,9 +594,6 @@
                 </div>
 
 
-
-                <!-- PROGRAM MATCHING -->
-
                 <div class="col-md-4">
 
                     <div
@@ -532,8 +602,7 @@
 
                         <div class="card-body">
 
-                            <div class="d-flex
-                                        justify-content-between">
+                            <div class="d-flex justify-content-between">
 
                                 <div>
 
@@ -556,9 +625,7 @@
                             <div
                                 class="stat-number mt-3"
                                 id="actionProgram">
-
                                 0
-
                             </div>
 
                         </div>
@@ -568,9 +635,6 @@
                 </div>
 
 
-
-                <!-- TRAINING -->
-
                 <div class="col-md-4">
 
                     <div
@@ -579,8 +643,7 @@
 
                         <div class="card-body">
 
-                            <div class="d-flex
-                                        justify-content-between">
+                            <div class="d-flex justify-content-between">
 
                                 <div>
 
@@ -603,9 +666,7 @@
                             <div
                                 class="stat-number mt-3"
                                 id="actionTraining">
-
                                 0
-
                             </div>
 
                         </div>
@@ -615,9 +676,6 @@
                 </div>
 
 
-
-                <!-- COACHING -->
-
                 <div class="col-md-4">
 
                     <div
@@ -626,8 +684,7 @@
 
                         <div class="card-body">
 
-                            <div class="d-flex
-                                        justify-content-between">
+                            <div class="d-flex justify-content-between">
 
                                 <div>
 
@@ -650,9 +707,7 @@
                             <div
                                 class="stat-number mt-3"
                                 id="actionCoaching">
-
                                 0
-
                             </div>
 
                         </div>
@@ -662,9 +717,6 @@
                 </div>
 
 
-
-                <!-- OTHER -->
-
                 <div class="col-md-4">
 
                     <div
@@ -673,8 +725,7 @@
 
                         <div class="card-body">
 
-                            <div class="d-flex
-                                        justify-content-between">
+                            <div class="d-flex justify-content-between">
 
                                 <div>
 
@@ -697,9 +748,7 @@
                             <div
                                 class="stat-number mt-3"
                                 id="actionOther">
-
                                 0
-
                             </div>
 
                         </div>
@@ -709,9 +758,6 @@
                 </div>
 
 
-
-                <!-- REVIEW -->
-
                 <div class="col-md-4">
 
                     <div
@@ -720,8 +766,7 @@
 
                         <div class="card-body">
 
-                            <div class="d-flex
-                                        justify-content-between">
+                            <div class="d-flex justify-content-between">
 
                                 <div>
 
@@ -744,9 +789,7 @@
                             <div
                                 class="stat-number mt-3"
                                 id="actionReview">
-
                                 0
-
                             </div>
 
                         </div>
@@ -760,7 +803,6 @@
         </div>
 
     </div>
-
 
 
     <!-- ======================================================
@@ -778,8 +820,8 @@
                 </h5>
 
                 <p class="text-muted small mb-0">
-                    Initial planning view showing areas where
-                    similar competency needs are concentrated.
+                    Areas where similar competency needs are
+                    concentrated.
                 </p>
 
             </div>
@@ -809,7 +851,6 @@
 
                     </thead>
 
-
                     <tbody id="assignmentSummaryBody">
 
                         <tr>
@@ -838,7 +879,6 @@
 </main>
 
 
-
 <!-- ==========================================================
      DETAIL MODAL
 ========================================================== -->
@@ -862,19 +902,15 @@
                     <h5
                         class="modal-title"
                         id="detailsModalTitle">
-
                         Details
-
                     </h5>
 
                     <div
                         class="small text-muted"
                         id="detailsModalSubtitle">
-
                     </div>
 
                 </div>
-
 
                 <button
                     type="button"
@@ -888,36 +924,27 @@
             <div class="modal-body">
 
 
-                <!-- TOOLBAR -->
-
-                <div class="row g-3 mb-4">
-
+                <div class="row g-3 mb-3">
 
                     <div class="col-lg-6">
 
-                        <label
-                            class="form-label fw-semibold">
-
+                        <label class="form-label fw-semibold">
                             Search
-
                         </label>
 
                         <input
                             type="text"
                             id="detailSearch"
                             class="form-control"
-                            placeholder="Search ID, name, competency, assignment...">
+                            placeholder="Search ID, name, competency, recommendation...">
 
                     </div>
 
 
                     <div class="col-lg-3">
 
-                        <label
-                            class="form-label fw-semibold">
-
+                        <label class="form-label fw-semibold">
                             Sort By
-
                         </label>
 
                         <select
@@ -932,10 +959,6 @@
                                 Competency
                             </option>
 
-                            <option value="category">
-                                Category
-                            </option>
-
                             <option value="priority">
                                 Priority
                             </option>
@@ -944,13 +967,16 @@
                                 Assignment
                             </option>
 
+                            <option value="status">
+                                Status
+                            </option>
+
                         </select>
 
                     </div>
 
 
-                    <div class="col-lg-3 d-flex
-                                align-items-end">
+                    <div class="col-lg-3 d-flex align-items-end">
 
                         <button
                             type="button"
@@ -966,18 +992,21 @@
                 </div>
 
 
+                <div
+                    id="detailSummary"
+                    class="detail-summary">
+                </div>
+
 
                 <div class="d-flex
                             justify-content-between
                             align-items-center
-                            mb-3">
+                            mb-2">
 
                     <span class="text-muted">
 
                         Showing
-                        <strong id="detailCount">
-                            0
-                        </strong>
+                        <strong id="detailCount">0</strong>
                         record(s)
 
                     </span>
@@ -985,8 +1014,25 @@
                 </div>
 
 
+                <!-- VISIBLE TOP SCROLLBAR -->
 
-                <div class="table-responsive">
+                <div
+                    id="detailHorizontalScroll"
+                    class="detail-horizontal-scroll">
+
+                    <div
+                        id="detailHorizontalScrollInner"
+                        class="detail-horizontal-scroll-inner">
+                    </div>
+
+                </div>
+
+
+                <!-- TABLE -->
+
+                <div
+                    id="detailTableWrap"
+                    class="detail-table-wrap">
 
                     <table
                         class="table table-hover align-middle detail-table">
@@ -995,49 +1041,51 @@
 
                             <tr>
 
-                                <th>
-                                    ID
+                                <th>ID</th>
+
+                                <th>Name</th>
+
+                                <th>Position</th>
+
+                                <th>Assignment</th>
+
+                                <th>Competency Gap</th>
+
+                                <th>Category</th>
+
+                                <th>Priority</th>
+
+                                <th class="learning-request">
+                                    Employee Requested Learning
                                 </th>
 
-                                <th>
-                                    Name
+                                <th class="learning-method">
+                                    Preferred Learning Method
                                 </th>
 
-                                <th>
-                                    Position
+                                <th class="supervisor-need">
+                                    Supervisor Development Need
                                 </th>
 
-                                <th>
-                                    Assignment
+                                <th class="supervisor-recommendation">
+                                    Supervisor Recommended Intervention
                                 </th>
 
-                                <th>
-                                    Competency
+                                <th class="recommended-program">
+                                    LDD / Recommended Program
                                 </th>
 
-                                <th>
-                                    Category
+                                <th class="supervisor-status">
+                                    Supervisor Assessment
                                 </th>
 
-                                <th>
-                                    Priority
-                                </th>
-
-                                <th>
-                                    Proposed Intervention
-                                </th>
-
-                                <th>
-                                    Status
-                                </th>
+                                <th>Status</th>
 
                             </tr>
 
                         </thead>
 
-
                         <tbody id="detailTableBody">
-
                         </tbody>
 
                     </table>
@@ -1067,27 +1115,15 @@
 </div>
 
 
-
-<!-- ==========================================================
-     BOOTSTRAP
-========================================================== -->
-
 <script
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js">
 </script>
-
-
-
-<!-- ==========================================================
-     LDIMS CORE
-========================================================== -->
 
 <script src="../assets/js/config.js"></script>
 
 <script src="../assets/js/api.js"></script>
 
 <script src="../assets/js/session.js"></script>
-
 
 
 <script>
@@ -1106,9 +1142,8 @@ let detailRecords = [];
 let currentDetailTitle = "";
 
 
-
 /* ==========================================================
-   CATEGORY DEFINITIONS
+   CATEGORY
 ========================================================== */
 
 const categoryOrder = [
@@ -1122,9 +1157,9 @@ const categoryOrder = [
 const priorityOrder = {
     "High": 1,
     "Medium": 2,
-    "Low": 3
+    "Low": 3,
+    "For Review": 4
 };
-
 
 
 /* ==========================================================
@@ -1132,40 +1167,37 @@ const priorityOrder = {
 ========================================================== */
 
 const matrixTableBody =
-    document.getElementById(
-        "matrixTableBody"
-    );
+    document.getElementById("matrixTableBody");
 
 const assignmentSummaryBody =
-    document.getElementById(
-        "assignmentSummaryBody"
-    );
+    document.getElementById("assignmentSummaryBody");
 
 const refreshButton =
-    document.getElementById(
-        "refreshButton"
-    );
+    document.getElementById("refreshButton");
 
 const detailSearch =
-    document.getElementById(
-        "detailSearch"
-    );
+    document.getElementById("detailSearch");
 
 const detailSort =
-    document.getElementById(
-        "detailSort"
-    );
+    document.getElementById("detailSort");
 
 const detailExport =
-    document.getElementById(
-        "detailExport"
-    );
+    document.getElementById("detailExport");
 
 const detailTableBody =
-    document.getElementById(
-        "detailTableBody"
-    );
+    document.getElementById("detailTableBody");
 
+const detailSummary =
+    document.getElementById("detailSummary");
+
+const detailTableWrap =
+    document.getElementById("detailTableWrap");
+
+const detailHorizontalScroll =
+    document.getElementById("detailHorizontalScroll");
+
+const detailHorizontalScrollInner =
+    document.getElementById("detailHorizontalScrollInner");
 
 
 /* ==========================================================
@@ -1174,33 +1206,24 @@ const detailTableBody =
 
 function escapeHtml(value) {
 
-    return String(
-        value ?? ""
-    )
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 
 }
-
 
 
 /* ==========================================================
    ALERT
 ========================================================== */
 
-function showAlert(
-    message,
-    type = "danger"
-) {
+function showAlert(message, type = "danger") {
 
     const container =
-        document.getElementById(
-            "alertMessage"
-        );
-
+        document.getElementById("alertMessage");
 
     container.innerHTML = `
 
@@ -1224,112 +1247,139 @@ function showAlert(
 }
 
 
-
 /* ==========================================================
-   PRIORITY NORMALIZATION
+   PRIORITY
 ========================================================== */
 
-function normalizePriority(
-    priority
-) {
+function normalizePriority(priority) {
 
     const value =
-        String(
-            priority || ""
-        )
-        .trim()
-        .toUpperCase();
+        String(priority || "")
+            .trim()
+            .toUpperCase();
 
+    if (value === "HIGH") return "High";
 
-    if (value === "HIGH") {
-        return "High";
-    }
+    if (value === "MEDIUM") return "Medium";
 
-    if (value === "MEDIUM") {
-        return "Medium";
-    }
+    if (value === "LOW") return "Low";
 
-    if (value === "LOW") {
-        return "Low";
-    }
-
-    return priority || "—";
+    return priority || "For Review";
 
 }
 
 
-
 /* ==========================================================
-   CATEGORY DETECTION
+   VALUE HELPER
 ========================================================== */
 
-function determineCategory(
-    competency,
-    functionalArea
-) {
+function firstValue(record, fields) {
 
-    const text =
-        String(
-            competency || ""
-        )
-        .toLowerCase();
+    for (const field of fields) {
+
+        const value =
+            record?.[field];
+
+        if (
+            value !== undefined &&
+            value !== null &&
+            String(value).trim() !== ""
+        ) {
+
+            return value;
+
+        }
+
+    }
+
+    return "";
+
+}
 
 
-    const functional =
-        String(
-            functionalArea || ""
-        )
-        .toLowerCase();
+/* ==========================================================
+   SPLIT COMPETENCIES
+========================================================== */
 
-
-    const technicalKeywords = [
-
-        "information management",
-        "digital information",
-        "information security",
-        "data analysis",
-        "research and analysis",
-        "risk assessment",
-        "legal and regulatory",
-        "project / activity",
-        "presentation and briefing",
-        "stakeholder coordination",
-        "ict",
-        "technical",
-        "records management"
-
-    ];
-
+function splitCompetencies(value) {
 
     if (
-        technicalKeywords.some(
-            keyword =>
-                text.includes(keyword)
-        )
-        ||
-        functional
+        value === null ||
+        value === undefined
     ) {
 
-        return "Technical";
+        return [];
 
     }
 
 
-    const leadershipKeywords = [
+    if (Array.isArray(value)) {
 
-        "leadership",
-        "people development",
-        "change and innovation",
-        "management"
+        const result = [];
 
-    ];
+        value.forEach(item => {
+
+            if (
+                item &&
+                typeof item === "object"
+            ) {
+
+                const competency =
+                    item.competency ||
+                    item.name ||
+                    item.title ||
+                    "";
+
+                if (
+                    String(competency).trim()
+                ) {
+
+                    result.push(
+                        String(competency).trim()
+                    );
+
+                }
+
+            } else if (
+                String(item).trim()
+            ) {
+
+                result.push(
+                    String(item).trim()
+                );
+
+            }
+
+        });
+
+        return [...new Set(result)];
+
+    }
+
+
+    return String(value)
+        .split(/[;,|]/)
+        .map(item => item.trim())
+        .filter(Boolean);
+
+}
+
+
+/* ==========================================================
+   DETERMINE CATEGORY
+========================================================== */
+
+function determineCategory(competency) {
+
+    const text =
+        String(competency || "")
+            .toLowerCase();
 
 
     if (
-        leadershipKeywords.some(
-            keyword =>
-                text.includes(keyword)
-        )
+        text.includes("leadership") ||
+        text.includes("people development") ||
+        text.includes("change and innovation")
     ) {
 
         return "Leadership";
@@ -1337,26 +1387,16 @@ function determineCategory(
     }
 
 
-    const organizationalKeywords = [
-
-        "organizational awareness",
-        "coordination",
-        "stakeholder management",
-        "adaptability",
-        "continuous learning",
-        "accountability",
-        "results orientation",
-        "compliance",
-        "policy adherence"
-
-    ];
-
-
     if (
-        organizationalKeywords.some(
-            keyword =>
-                text.includes(keyword)
-        )
+        text.includes("organizational awareness") ||
+        text.includes("coordination") ||
+        text.includes("stakeholder management") ||
+        text.includes("adaptability") ||
+        text.includes("continuous learning") ||
+        text.includes("accountability") ||
+        text.includes("results orientation") ||
+        text.includes("compliance") ||
+        text.includes("policy adherence")
     ) {
 
         return "Organizational";
@@ -1364,25 +1404,21 @@ function determineCategory(
     }
 
 
-    const coreKeywords = [
-
-        "integrity",
-        "ethical conduct",
-        "service orientation",
-        "communication",
-        "collaboration"
-
-    ];
-
-
     if (
-        coreKeywords.some(
-            keyword =>
-                text.includes(keyword)
-        )
+        text.includes("information") ||
+        text.includes("data analysis") ||
+        text.includes("research") ||
+        text.includes("risk assessment") ||
+        text.includes("legal") ||
+        text.includes("project") ||
+        text.includes("presentation") ||
+        text.includes("technical") ||
+        text.includes("records management") ||
+        text.includes("digital") ||
+        text.includes("ict")
     ) {
 
-        return "Core";
+        return "Technical";
 
     }
 
@@ -1392,97 +1428,45 @@ function determineCategory(
 }
 
 
-
-/* ==========================================================
-   COMPETENCY CLEANUP
-========================================================== */
-
-function cleanCompetency(
-    value
-) {
-
-    if (!value) {
-        return "—";
-    }
-
-
-    let text =
-        String(value)
-            .trim();
-
-
-    text =
-        text.replace(
-            /^competency\s*:\s*/i,
-            ""
-        );
-
-
-    return text || "—";
-
-}
-
-
-
 /* ==========================================================
    COMPETENCY CODE
 ========================================================== */
 
-function getCompetencyCode(
-    category,
-    competency
-) {
+function getCompetencyCode(category, competency) {
 
-    /*
-     * Existing master competency codes can later replace
-     * these generated display codes.
-     *
-     * For now, each competency receives a stable code
-     * based on its position within its category.
-     */
+    const prefix = {
 
-    const categoryPrefix = {
+        Core: "C",
 
-        "Core": "C",
+        Organizational: "O",
 
-        "Organizational": "O",
+        Technical: "T",
 
-        "Technical": "T",
+        Leadership: "L"
 
-        "Leadership": "L"
-
-    };
+    }[category] || "X";
 
 
-    const prefix =
-        categoryPrefix[
-            category
-        ] || "X";
-
-
-    const categoryRecords =
-        interventionRecords
-            .filter(
-                record =>
-                    record.category ===
-                    category
-            );
-
-
-    const names = [
-        ...new Set(
-            categoryRecords.map(
-                record =>
-                    String(
-                        record.competency || ""
+    const names =
+        [
+            ...new Set(
+                interventionRecords
+                    .filter(
+                        record =>
+                            record.category === category
                     )
-                    .trim()
-                    .toLowerCase()
+                    .map(
+                        record =>
+                            String(
+                                record.competency || ""
+                            )
+                            .trim()
+                            .toLowerCase()
+                    )
+                    .filter(Boolean)
             )
-        )
-    ]
-    .filter(Boolean)
-    .sort();
+        ]
+        .sort();
 
 
     const index =
@@ -1495,97 +1479,196 @@ function getCompetencyCode(
         );
 
 
-    if (index < 0) {
-        return prefix + "01";
-    }
-
-
     return prefix +
         String(
-            index + 1
-        ).padStart(
-            2,
-            "0"
-        );
+            index >= 0 ? index + 1 : 1
+        )
+        .padStart(2, "0");
 
 }
-
 
 
 /* ==========================================================
    NORMALIZE RECORDS
+   ----------------------------------------------------------
+   IMPORTANT:
+   One employee may have several competency gaps.
+   We expand them into individual records for the matrix.
 ========================================================== */
 
-function normalizeRecords(
-    records
-) {
+function normalizeRecords(records) {
 
-    return records.map(
-        record => {
-
-            const competency =
-                cleanCompetency(
-                    record.competencyNeed
-                );
+    const normalized = [];
 
 
-            const category =
-                determineCategory(
-                    competency,
-                    record.functionalArea
-                );
+    records.forEach(record => {
+
+        const supervisorCompetencies =
+            splitCompetencies(
+                record.supervisorDevelopmentCompetencies
+            );
 
 
-            return {
+        const lnaCompetencies =
+            splitCompetencies(
+                record.competencyNeed
+            );
 
-                ...record,
 
-                employeeID:
-                    record.employeeID ?? "",
+        /*
+         * Supervisor assessment is the stronger source
+         * for validated competency needs.
+         */
 
-                name:
-                    record.name ?? "",
+        let competencies =
+            supervisorCompetencies.length
+                ? supervisorCompetencies
+                : lnaCompetencies;
 
-                position:
-                    record.position ?? "",
 
-                placeOfAssignment:
-                    record.placeOfAssignment ?? "",
+        /*
+         * If no competency was supplied,
+         * preserve one record using current competency.
+         */
 
-                competency:
-                    competency,
+        if (
+            competencies.length === 0
+        ) {
 
-                category:
-                    category,
-
-                priority:
-                    normalizePriority(
-                        record.developmentPriority
-                    ),
-
-                status:
-                    record.status ||
-                    "For Review",
-
-                recommendedPrograms:
-                    record.recommendedPrograms ||
-                    "",
-
-                proposedLearning:
-                    record.proposedLearning ||
-                    "",
-
-                learningMethod:
-                    record.learningMethod ||
-                    ""
-
-            };
+            competencies = [
+                "Unspecified Competency Need"
+            ];
 
         }
-    );
+
+
+        competencies.forEach(
+            competency => {
+
+                normalized.push({
+
+                    ...record,
+
+                    employeeID:
+                        firstValue(
+                            record,
+                            [
+                                "employeeID",
+                                "EmployeeID"
+                            ]
+                        ),
+
+                    name:
+                        firstValue(
+                            record,
+                            [
+                                "name",
+                                "fullName",
+                                "employeeName"
+                            ]
+                        ),
+
+                    position:
+                        firstValue(
+                            record,
+                            [
+                                "position"
+                            ]
+                        ),
+
+                    placeOfAssignment:
+                        firstValue(
+                            record,
+                            [
+                                "placeOfAssignment",
+                                "assignment"
+                            ]
+                        ),
+
+                    competency:
+                        competency,
+
+                    category:
+                        determineCategory(
+                            competency
+                        ),
+
+                    priority:
+                        normalizePriority(
+                            firstValue(
+                                record,
+                                [
+                                    "developmentPriority",
+                                    "priority"
+                                ]
+                            )
+                        ),
+
+                    employeeRequestedLearning:
+                        firstValue(
+                            record,
+                            [
+                                "employeeRequestedLearning",
+                                "proposedLearning"
+                            ]
+                        ),
+
+                    preferredLearningMethod:
+                        firstValue(
+                            record,
+                            [
+                                "preferredLearningMethod",
+                                "learningMethod"
+                            ]
+                        ),
+
+                    supervisorDevelopmentNeed:
+                        firstValue(
+                            record,
+                            [
+                                "supervisorDevelopmentNeed"
+                            ]
+                        ),
+
+                    supervisorRecommendedIntervention:
+                        firstValue(
+                            record,
+                            [
+                                "supervisorRecommendedIntervention",
+                                "recommendedIntervention"
+                            ]
+                        ),
+
+                    lddRecommendedProgram:
+                        firstValue(
+                            record,
+                            [
+                                "lddRecommendedProgram",
+                                "recommendedPrograms",
+                                "supervisorRecommendedIntervention"
+                            ]
+                        ),
+
+                    status:
+                        firstValue(
+                            record,
+                            [
+                                "status"
+                            ]
+                        ) ||
+                        "For Review"
+
+                });
+
+            }
+        );
+
+    });
+
+
+    return normalized;
 
 }
-
 
 
 /* ==========================================================
@@ -1605,8 +1688,7 @@ async function loadLearningInterventions() {
                     class="text-center text-muted py-5">
 
                     <div
-                        class="spinner-border spinner-border-sm"
-                        role="status">
+                        class="spinner-border spinner-border-sm">
                     </div>
 
                     <span class="ms-2">
@@ -1649,16 +1731,12 @@ async function loadLearningInterventions() {
 
 
         interventionRecords =
-            Array.isArray(
-                result.interventions
-            )
-                ? result.interventions
-                : [];
-
-
-        interventionRecords =
             normalizeRecords(
-                interventionRecords
+                Array.isArray(
+                    result.interventions
+                )
+                    ? result.interventions
+                    : []
             );
 
 
@@ -1704,23 +1782,6 @@ async function loadLearningInterventions() {
         `;
 
 
-        assignmentSummaryBody.innerHTML = `
-
-            <tr>
-
-                <td
-                    colspan="3"
-                    class="text-center text-danger py-4">
-
-                    Unable to load summary.
-
-                </td>
-
-            </tr>
-
-        `;
-
-
         showAlert(
             error.message ||
             "Unable to load learning interventions."
@@ -1729,7 +1790,6 @@ async function loadLearningInterventions() {
     }
 
 }
-
 
 
 /* ==========================================================
@@ -1741,220 +1801,198 @@ function renderMatrix() {
     const matrix = {};
 
 
-    ["High", "Medium", "Low"]
-        .forEach(
-            priority => {
+    ["High", "Medium", "Low"].forEach(priority => {
 
-                matrix[
-                    priority
-                ] = {
+        matrix[priority] = {
 
-                    Core: new Set(),
+            Core: new Set(),
 
-                    Organizational:
-                        new Set(),
+            Organizational: new Set(),
 
-                    Technical:
-                        new Set(),
+            Technical: new Set(),
 
-                    Leadership:
-                        new Set()
+            Leadership: new Set()
 
-                };
+        };
 
-            }
-        );
+    });
 
 
-    interventionRecords.forEach(
-        record => {
+    interventionRecords.forEach(record => {
 
-            const priority =
-                record.priority;
+        const priority =
+            record.priority;
 
+        const category =
+            record.category;
 
-            const category =
-                record.category;
-
-
-            const competency =
-                record.competency;
+        const competency =
+            record.competency;
 
 
-            if (
-                matrix[priority] &&
-                matrix[priority][category] &&
-                competency &&
-                competency !== "—"
-            ) {
+        if (
+            matrix[priority] &&
+            matrix[priority][category] &&
+            competency &&
+            competency !== "Unspecified Competency Need"
+        ) {
 
-                matrix[
-                    priority
-                ][
-                    category
-                ].add(
-                    competency
-                );
-
-            }
+            matrix[
+                priority
+            ][
+                category
+            ].add(
+                competency
+            );
 
         }
-    );
+
+    });
 
 
     matrixTableBody.innerHTML =
+
         ["High", "Medium", "Low"]
-            .map(
-                priority => {
+            .map(priority => {
 
-                    return `
+                return `
 
-                        <tr>
+                    <tr>
 
-                            <th>
+                        <th>
+                            ${getPriorityBadge(
+                                priority
+                            )}
+                        </th>
 
-                                ${getPriorityBadge(
-                                    priority
-                                )}
+                        ${categoryOrder
+                            .map(category => {
 
-                            </th>
-
-                            ${categoryOrder
-                                .map(
-                                    category => {
-
-                                        const items =
-                                            Array.from(
-                                                matrix[
-                                                    priority
-                                                ][
-                                                    category
-                                                ]
-                                            )
-                                            .sort();
+                                const items =
+                                    Array.from(
+                                        matrix[
+                                            priority
+                                        ][
+                                            category
+                                        ]
+                                    ).sort();
 
 
-                                        if (
-                                            items.length ===
-                                            0
-                                        ) {
+                                if (
+                                    items.length === 0
+                                ) {
 
-                                            return `
+                                    return `
 
-                                                <td>
+                                        <td>
 
-                                                    <div
-                                                        class="matrix-empty">
+                                            <div
+                                                class="matrix-empty">
+                                                —
+                                            </div>
 
-                                                        —
+                                        </td>
 
-                                                    </div>
+                                    `;
 
-                                                </td>
-
-                                            `;
-
-                                        }
+                                }
 
 
-                                        return `
+                                return `
 
-                                            <td>
+                                    <td>
 
-                                                <div
-                                                    class="competency-cell">
+                                        <div
+                                            class="competency-cell">
 
-                                                    ${items
-                                                        .map(
-                                                            competency => {
+                                            ${items
+                                                .map(
+                                                    competency => {
 
-                                                                const code =
-                                                                    getCompetencyCode(
-                                                                        category,
+                                                        const code =
+                                                            getCompetencyCode(
+                                                                category,
+                                                                competency
+                                                            );
+
+
+                                                        const count =
+                                                            getCompetencyRecords(
+                                                                competency,
+                                                                priority,
+                                                                category
+                                                            ).length;
+
+
+                                                        return `
+
+                                                            <div
+                                                                class="competency-item"
+                                                                onclick='openCompetencyDetails(
+                                                                    ${JSON.stringify(
                                                                         competency
-                                                                    );
-
-
-                                                                const count =
-                                                                    getCompetencyRecords(
-                                                                        competency,
-                                                                        priority,
+                                                                    )},
+                                                                    ${JSON.stringify(
+                                                                        priority
+                                                                    )},
+                                                                    ${JSON.stringify(
                                                                         category
-                                                                    ).length;
+                                                                    )}
+                                                                )'>
 
+                                                                <span
+                                                                    class="competency-code">
 
-                                                                return `
+                                                                    ${escapeHtml(
+                                                                        code
+                                                                    )}
 
-                                                                    <div
-                                                                        class="competency-item"
-                                                                        onclick='openCompetencyDetails(
-                                                                            ${JSON.stringify(
-                                                                                competency
-                                                                            )},
-                                                                            ${JSON.stringify(
-                                                                                priority
-                                                                            )},
-                                                                            ${JSON.stringify(
-                                                                                category
-                                                                            )}
-                                                                        )'>
+                                                                </span>
 
-                                                                        <span
-                                                                            class="competency-code">
+                                                                <span>
 
-                                                                            ${escapeHtml(
-                                                                                code
-                                                                            )}
+                                                                    ${escapeHtml(
+                                                                        competency
+                                                                    )}
 
-                                                                        </span>
+                                                                </span>
 
-                                                                        <span>
+                                                                <span
+                                                                    class="badge bg-light text-dark border float-end">
 
-                                                                            ${escapeHtml(
-                                                                                competency
-                                                                            )}
+                                                                    ${count}
 
-                                                                        </span>
+                                                                </span>
 
-                                                                        <span
-                                                                            class="badge bg-light text-dark border float-end">
+                                                            </div>
 
-                                                                            ${count}
+                                                        `;
 
-                                                                        </span>
+                                                    }
+                                                )
+                                                .join("")}
 
-                                                                    </div>
+                                        </div>
 
-                                                                `;
+                                    </td>
 
-                                                            }
-                                                        )
-                                                        .join("")}
+                                `;
 
-                                                </div>
+                            })
+                            .join("")}
 
-                                            </td>
+                    </tr>
 
-                                        `;
+                `;
 
-                                    }
-                                )
-                                .join("")}
-
-                        </tr>
-
-                    `;
-
-                }
-            )
+            })
             .join("");
 
 }
 
 
-
 /* ==========================================================
-   COMPETENCY RECORDS
+   GET COMPETENCY RECORDS
 ========================================================== */
 
 function getCompetencyRecords(
@@ -1963,48 +2001,42 @@ function getCompetencyRecords(
     category = null
 ) {
 
-    return interventionRecords.filter(
-        record => {
+    return interventionRecords.filter(record => {
 
-            if (
-                record.competency !==
-                competency
-            ) {
+        if (
+            record.competency !== competency
+        ) {
 
-                return false;
-
-            }
-
-
-            if (
-                priority &&
-                record.priority !==
-                priority
-            ) {
-
-                return false;
-
-            }
-
-
-            if (
-                category &&
-                record.category !==
-                category
-            ) {
-
-                return false;
-
-            }
-
-
-            return true;
+            return false;
 
         }
-    );
+
+
+        if (
+            priority &&
+            record.priority !== priority
+        ) {
+
+            return false;
+
+        }
+
+
+        if (
+            category &&
+            record.category !== category
+        ) {
+
+            return false;
+
+        }
+
+
+        return true;
+
+    });
 
 }
-
 
 
 /* ==========================================================
@@ -2013,19 +2045,37 @@ function getCompetencyRecords(
 
 function renderSnapshot() {
 
-    const total =
-        interventionRecords.length;
+    const personnel =
+        new Set(
+            interventionRecords
+                .map(
+                    record =>
+                        String(
+                            record.employeeID || ""
+                        ).trim()
+                )
+                .filter(Boolean)
+        );
 
 
-    const high =
-        interventionRecords.filter(
-            record =>
-                record.priority ===
-                "High"
-        ).length;
+    const highPersonnel =
+        new Set(
+            interventionRecords
+                .filter(
+                    record =>
+                        record.priority === "High"
+                )
+                .map(
+                    record =>
+                        String(
+                            record.employeeID || ""
+                        ).trim()
+                )
+                .filter(Boolean)
+        );
 
 
-    const uniqueCompetencies =
+    const competencies =
         new Set(
             interventionRecords
                 .map(
@@ -2035,9 +2085,10 @@ function renderSnapshot() {
                 .filter(
                     competency =>
                         competency &&
-                        competency !== "—"
+                        competency !==
+                            "Unspecified Competency Need"
                 )
-        ).size;
+        );
 
 
     const assignments =
@@ -2046,138 +2097,167 @@ function renderSnapshot() {
                 .map(
                     record =>
                         String(
-                            record.placeOfAssignment ||
-                            ""
+                            record.placeOfAssignment || ""
                         )
                         .trim()
                         .toLowerCase()
                 )
                 .filter(Boolean)
-        ).size;
+        );
 
 
     document.getElementById(
         "totalNeeds"
     ).textContent =
-        total;
+        personnel.size;
 
 
     document.getElementById(
         "highNeeds"
     ).textContent =
-        high;
+        highPersonnel.size;
 
 
     document.getElementById(
         "commonCompetencies"
     ).textContent =
-        uniqueCompetencies;
+        competencies.size;
 
 
     document.getElementById(
         "affectedAssignments"
     ).textContent =
-        assignments;
+        assignments.size;
 
 }
 
 
-
 /* ==========================================================
-   ACTION COUNTS
+   ACTIONS
 ========================================================== */
 
 function renderActions() {
 
     const high =
-        interventionRecords.filter(
-            record =>
-                record.priority ===
-                "High"
-        ).length;
+        uniqueEmployeeCount(
+            interventionRecords.filter(
+                record =>
+                    record.priority === "High"
+            )
+        );
 
-
-    const review =
-        interventionRecords.filter(
-            record => {
-
-                const status =
-                    String(
-                        record.status ||
-                        ""
-                    )
-                    .trim()
-                    .toUpperCase();
-
-
-                return (
-                    status === "FOR REVIEW" ||
-                    status === "PENDING" ||
-                    !status
-                );
-
-            }
-        ).length;
-
-
-    /*
-     * Since LDD has not yet made intervention decisions,
-     * these remain zero until the workflow is implemented.
-     */
 
     const program =
-        review;
+        uniqueEmployeeCount(
+            interventionRecords.filter(
+                record =>
+                    !record.supervisorAssessmentCompleted
+            )
+        );
 
 
     const training =
-        0;
+        uniqueEmployeeCount(
+            interventionRecords.filter(
+                record =>
+                    String(
+                        record.status || ""
+                    )
+                    .toUpperCase() ===
+                    "TRAINING"
+            )
+        );
 
 
     const coaching =
-        0;
+        uniqueEmployeeCount(
+            interventionRecords.filter(
+                record =>
+                    String(
+                        record.status || ""
+                    )
+                    .toUpperCase() ===
+                    "COACHING"
+            )
+        );
 
 
     const other =
-        0;
+        uniqueEmployeeCount(
+            interventionRecords.filter(
+                record =>
+                    String(
+                        record.status || ""
+                    )
+                    .toUpperCase()
+                    .includes("OTHER")
+            )
+        );
+
+
+    const review =
+        uniqueEmployeeCount(
+            interventionRecords.filter(
+                record =>
+                    String(
+                        record.status || ""
+                    )
+                    .toUpperCase() ===
+                    "FOR VALIDATION"
+            )
+        );
 
 
     document.getElementById(
         "actionHigh"
-    ).textContent =
-        high;
+    ).textContent = high;
 
 
     document.getElementById(
         "actionProgram"
-    ).textContent =
-        program;
+    ).textContent = program;
 
 
     document.getElementById(
         "actionTraining"
-    ).textContent =
-        training;
+    ).textContent = training;
 
 
     document.getElementById(
         "actionCoaching"
-    ).textContent =
-        coaching;
+    ).textContent = coaching;
 
 
     document.getElementById(
         "actionOther"
-    ).textContent =
-        other;
+    ).textContent = other;
 
 
     document.getElementById(
         "actionReview"
-    ).textContent =
-        review;
+    ).textContent = review;
 
 }
 
+
+/* ==========================================================
+   UNIQUE EMPLOYEE COUNT
+========================================================== */
+
+function uniqueEmployeeCount(records) {
+
+    return new Set(
+        records
+            .map(
+                record =>
+                    String(
+                        record.employeeID || ""
+                    ).trim()
+            )
+            .filter(Boolean)
+    ).size;
+
+}
 
 
 /* ==========================================================
@@ -2190,71 +2270,65 @@ function renderAssignmentSummary() {
         new Map();
 
 
-    interventionRecords.forEach(
-        record => {
+    interventionRecords.forEach(record => {
 
-            const assignment =
-                String(
-                    record.placeOfAssignment ||
-                    "Unspecified"
-                ).trim() ||
-                "Unspecified";
-
-
-            if (
-                !assignmentMap.has(
-                    assignment
-                )
-            ) {
-
-                assignmentMap.set(
-                    assignment,
-                    {
-
-                        personnel:
-                            new Set(),
-
-                        competencies:
-                            new Set()
-
-                    }
-                );
-
-            }
+        const assignment =
+            String(
+                record.placeOfAssignment ||
+                "Unspecified"
+            ).trim() ||
+            "Unspecified";
 
 
-            const item =
-                assignmentMap.get(
-                    assignment
-                );
+        if (
+            !assignmentMap.has(
+                assignment
+            )
+        ) {
 
-
-            if (
-                record.employeeID
-            ) {
-
-                item.personnel.add(
-                    String(
-                        record.employeeID
-                    )
-                );
-
-            }
-
-
-            if (
-                record.competency &&
-                record.competency !== "—"
-            ) {
-
-                item.competencies.add(
-                    record.competency
-                );
-
-            }
+            assignmentMap.set(
+                assignment,
+                {
+                    personnel: new Set(),
+                    competencies: new Set()
+                }
+            );
 
         }
-    );
+
+
+        const item =
+            assignmentMap.get(
+                assignment
+            );
+
+
+        if (
+            record.employeeID
+        ) {
+
+            item.personnel.add(
+                String(
+                    record.employeeID
+                )
+            );
+
+        }
+
+
+        if (
+            record.competency &&
+            record.competency !==
+                "Unspecified Competency Need"
+        ) {
+
+            item.competencies.add(
+                record.competency
+            );
+
+        }
+
+    });
 
 
     const rows =
@@ -2310,16 +2384,12 @@ function renderAssignmentSummary() {
 
                         </td>
 
-
                         <td>
 
                             ${Array.from(
                                 data.competencies
                             )
-                            .slice(
-                                0,
-                                5
-                            )
+                            .slice(0, 5)
                             .map(
                                 competency =>
                                     `<span
@@ -2333,15 +2403,13 @@ function renderAssignmentSummary() {
 
                             ${
                                 data.competencies.size > 5
-                                    ? `<span
-                                        class="text-muted small">
+                                    ? `<span class="text-muted small">
                                         +${data.competencies.size - 5} more
                                        </span>`
                                     : ""
                             }
 
                         </td>
-
 
                         <td class="text-center">
 
@@ -2363,20 +2431,16 @@ function renderAssignmentSummary() {
 }
 
 
-
 /* ==========================================================
    PRIORITY BADGE
 ========================================================== */
 
-function getPriorityBadge(
-    priority
-) {
+function getPriorityBadge(priority) {
 
     const normalized =
         String(
             priority || ""
-        )
-        .toUpperCase();
+        ).toUpperCase();
 
 
     if (
@@ -2384,14 +2448,9 @@ function getPriorityBadge(
     ) {
 
         return `
-
-            <span
-                class="badge bg-danger">
-
+            <span class="badge bg-danger">
                 High
-
             </span>
-
         `;
 
     }
@@ -2402,14 +2461,9 @@ function getPriorityBadge(
     ) {
 
         return `
-
-            <span
-                class="badge bg-warning text-dark">
-
+            <span class="badge bg-warning text-dark">
                 Medium
-
             </span>
-
         `;
 
     }
@@ -2420,43 +2474,30 @@ function getPriorityBadge(
     ) {
 
         return `
-
-            <span
-                class="badge bg-success">
-
+            <span class="badge bg-success">
                 Low
-
             </span>
-
         `;
 
     }
 
 
     return `
-
-        <span
-            class="badge bg-secondary">
-
+        <span class="badge bg-secondary">
             ${escapeHtml(
-                priority || "—"
+                priority || "For Review"
             )}
-
         </span>
-
     `;
 
 }
-
 
 
 /* ==========================================================
    STATUS BADGE
 ========================================================== */
 
-function getStatusBadge(
-    status
-) {
+function getStatusBadge(status) {
 
     const normalized =
         String(
@@ -2471,6 +2512,7 @@ function getStatusBadge(
 
 
     if (
+        normalized === "FOR VALIDATION" ||
         normalized === "FOR REVIEW" ||
         normalized === "PENDING"
     ) {
@@ -2517,7 +2559,7 @@ function getStatusBadge(
             class="badge ${badgeClass}">
 
             ${escapeHtml(
-                status || "—"
+                status || "For Review"
             )}
 
         </span>
@@ -2526,6 +2568,33 @@ function getStatusBadge(
 
 }
 
+
+/* ==========================================================
+   SUPERVISOR STATUS
+========================================================== */
+
+function getSupervisorAssessmentBadge(record) {
+
+    if (
+        record.supervisorAssessmentCompleted
+    ) {
+
+        return `
+            <span class="badge bg-success">
+                Completed
+            </span>
+        `;
+
+    }
+
+
+    return `
+        <span class="badge bg-secondary">
+            Not Yet Completed
+        </span>
+    `;
+
+}
 
 
 /* ==========================================================
@@ -2565,49 +2634,52 @@ function openCompetencyDetails(
     detailSearch.value = "";
 
 
+    renderDetailSummary(
+        detailRecords,
+        competency,
+        priority,
+        category
+    );
+
+
     renderDetailTable();
 
 
-    const modal =
-        bootstrap.Modal.getOrCreateInstance(
+    updateHorizontalScrollbar();
+
+
+    bootstrap.Modal
+        .getOrCreateInstance(
             document.getElementById(
                 "detailsModal"
             )
-        );
-
-
-    modal.show();
+        )
+        .show();
 
 }
-
 
 
 /* ==========================================================
    OPEN ACTION DETAILS
 ========================================================== */
 
-function openActionDetails(
-    action
-) {
+function openActionDetails(action) {
 
     let records = [];
 
-
     let title = "";
-
 
     let subtitle = "";
 
 
-    switch (action) {
+    switch(action) {
 
         case "high":
 
             records =
                 interventionRecords.filter(
                     record =>
-                        record.priority ===
-                        "High"
+                        record.priority === "High"
                 );
 
             title =
@@ -2623,31 +2695,15 @@ function openActionDetails(
 
             records =
                 interventionRecords.filter(
-                    record => {
-
-                        const status =
-                            String(
-                                record.status ||
-                                ""
-                            )
-                            .trim()
-                            .toUpperCase();
-
-
-                        return (
-                            status === "FOR REVIEW" ||
-                            status === "PENDING" ||
-                            !status
-                        );
-
-                    }
+                    record =>
+                        !record.supervisorAssessmentCompleted
                 );
 
             title =
                 "For Program Matching";
 
             subtitle =
-                "Needs currently available for LDD program assessment";
+                "Learning needs available for LDD program assessment";
 
             break;
 
@@ -2656,24 +2712,12 @@ function openActionDetails(
 
             records =
                 interventionRecords.filter(
-                    record => {
-
-                        const status =
-                            String(
-                                record.status ||
-                                ""
-                            )
-                            .trim()
-                            .toUpperCase();
-
-
-                        return (
-                            status === "FOR REVIEW" ||
-                            status === "PENDING" ||
-                            !status
-                        );
-
-                    }
+                    record =>
+                        String(
+                            record.status || ""
+                        )
+                        .toUpperCase() ===
+                        "FOR VALIDATION"
                 );
 
             title =
@@ -2687,39 +2731,63 @@ function openActionDetails(
 
         case "training":
 
-            records = [];
+            records =
+                interventionRecords.filter(
+                    record =>
+                        String(
+                            record.status || ""
+                        )
+                        .toUpperCase() ===
+                        "TRAINING"
+                );
 
             title =
                 "For Training";
 
             subtitle =
-                "No LDD training decisions have been recorded yet.";
+                "Personnel identified for training intervention";
 
             break;
 
 
         case "coaching":
 
-            records = [];
+            records =
+                interventionRecords.filter(
+                    record =>
+                        String(
+                            record.status || ""
+                        )
+                        .toUpperCase() ===
+                        "COACHING"
+                );
 
             title =
                 "Coaching / Mentoring";
 
             subtitle =
-                "No LDD coaching or mentoring decisions have been recorded yet.";
+                "Personnel identified for coaching or mentoring";
 
             break;
 
 
         case "other":
 
-            records = [];
+            records =
+                interventionRecords.filter(
+                    record =>
+                        String(
+                            record.status || ""
+                        )
+                        .toUpperCase()
+                        .includes("OTHER")
+                );
 
             title =
                 "Other Intervention";
 
             subtitle =
-                "No other intervention decisions have been recorded yet.";
+                "Personnel identified for other interventions";
 
             break;
 
@@ -2754,25 +2822,157 @@ function openActionDetails(
     detailSearch.value = "";
 
 
+    renderDetailSummary(
+        detailRecords,
+        title,
+        "",
+        ""
+    );
+
+
     renderDetailTable();
 
+    updateHorizontalScrollbar();
 
-    const modal =
-        bootstrap.Modal.getOrCreateInstance(
+
+    bootstrap.Modal
+        .getOrCreateInstance(
             document.getElementById(
                 "detailsModal"
             )
-        );
-
-
-    modal.show();
+        )
+        .show();
 
 }
 
 
+/* ==========================================================
+   DETAIL SUMMARY
+========================================================== */
+
+function renderDetailSummary(
+    records,
+    competency,
+    priority,
+    category
+) {
+
+    const personnelCount =
+        uniqueEmployeeCount(
+            records
+        );
+
+
+    const assessedCount =
+        uniqueEmployeeCount(
+            records.filter(
+                record =>
+                    record.supervisorAssessmentCompleted
+            )
+        );
+
+
+    const recommendationCount =
+        uniqueEmployeeCount(
+            records.filter(
+                record =>
+                    String(
+                        record.supervisorRecommendedIntervention ||
+                        ""
+                    ).trim()
+            )
+        );
+
+
+    detailSummary.innerHTML = `
+
+        <div class="row g-3">
+
+            <div class="col-md-3">
+
+                <div class="small text-muted">
+                    Competency
+                </div>
+
+                <strong>
+                    ${
+                        competency
+                            ? escapeHtml(
+                                competency
+                            )
+                            : "All applicable needs"
+                    }
+                </strong>
+
+            </div>
+
+
+            <div class="col-md-2">
+
+                <div class="small text-muted">
+                    Priority
+                </div>
+
+                <strong>
+                    ${
+                        priority
+                            ? escapeHtml(
+                                priority
+                            )
+                            : "All"
+                    }
+                </strong>
+
+            </div>
+
+
+            <div class="col-md-2">
+
+                <div class="small text-muted">
+                    Personnel
+                </div>
+
+                <strong>
+                    ${personnelCount}
+                </strong>
+
+            </div>
+
+
+            <div class="col-md-2">
+
+                <div class="small text-muted">
+                    Supervisor Assessed
+                </div>
+
+                <strong>
+                    ${assessedCount}
+                </strong>
+
+            </div>
+
+
+            <div class="col-md-3">
+
+                <div class="small text-muted">
+                    With Supervisor Recommendation
+                </div>
+
+                <strong>
+                    ${recommendationCount}
+                </strong>
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
 
 /* ==========================================================
-   DETAIL FILTER + SORT
+   FILTER + SORT
 ========================================================== */
 
 function getFilteredDetailRecords() {
@@ -2790,7 +2990,9 @@ function getFilteredDetailRecords() {
             record => {
 
                 if (!search) {
+
                     return true;
+
                 }
 
 
@@ -2810,9 +3012,15 @@ function getFilteredDetailRecords() {
 
                     record.priority,
 
-                    record.recommendedPrograms,
+                    record.employeeRequestedLearning,
 
-                    record.proposedLearning,
+                    record.preferredLearningMethod,
+
+                    record.supervisorDevelopmentNeed,
+
+                    record.supervisorRecommendedIntervention,
+
+                    record.lddRecommendedProgram,
 
                     record.status
 
@@ -2836,22 +3044,32 @@ function getFilteredDetailRecords() {
     records.sort(
         (a, b) => {
 
+            if (
+                field === "priority"
+            ) {
+
+                return (
+                    (
+                        priorityOrder[
+                            a.priority
+                        ] || 99
+                    ) -
+                    (
+                        priorityOrder[
+                            b.priority
+                        ] || 99
+                    )
+                );
+
+            }
+
+
             let valueA = "";
+
             let valueB = "";
 
 
-            switch (field) {
-
-                case "name":
-
-                    valueA =
-                        a.name || "";
-
-                    valueB =
-                        b.name || "";
-
-                    break;
-
+            switch(field) {
 
                 case "competency":
 
@@ -2864,32 +3082,6 @@ function getFilteredDetailRecords() {
                     break;
 
 
-                case "category":
-
-                    valueA =
-                        a.category || "";
-
-                    valueB =
-                        b.category || "";
-
-                    break;
-
-
-                case "priority":
-
-                    valueA =
-                        priorityOrder[
-                            a.priority
-                        ] || 99;
-
-                    valueB =
-                        priorityOrder[
-                            b.priority
-                        ] || 99;
-
-                    return valueA - valueB;
-
-
                 case "assignment":
 
                     valueA =
@@ -2899,6 +3091,26 @@ function getFilteredDetailRecords() {
                         b.placeOfAssignment || "";
 
                     break;
+
+
+                case "status":
+
+                    valueA =
+                        a.status || "";
+
+                    valueB =
+                        b.status || "";
+
+                    break;
+
+
+                default:
+
+                    valueA =
+                        a.name || "";
+
+                    valueB =
+                        b.name || "";
 
             }
 
@@ -2921,7 +3133,6 @@ function getFilteredDetailRecords() {
     return records;
 
 }
-
 
 
 /* ==========================================================
@@ -2949,7 +3160,7 @@ function renderDetailTable() {
             <tr>
 
                 <td
-                    colspan="9"
+                    colspan="14"
                     class="text-center text-muted py-5">
 
                     No records found.
@@ -2959,6 +3170,9 @@ function renderDetailTable() {
             </tr>
 
         `;
+
+
+        updateHorizontalScrollbar();
 
         return;
 
@@ -2973,39 +3187,56 @@ function renderDetailTable() {
                     <tr>
 
                         <td>
+
                             <strong>
                                 ${escapeHtml(
-                                    record.employeeID
+                                    record.employeeID ||
+                                    "—"
                                 )}
                             </strong>
+
                         </td>
 
 
                         <td>
+
                             ${escapeHtml(
-                                record.name
+                                record.name ||
+                                "—"
                             )}
+
                         </td>
 
 
                         <td>
+
                             ${escapeHtml(
-                                record.position
+                                record.position ||
+                                "—"
                             )}
+
                         </td>
 
 
                         <td>
+
                             ${escapeHtml(
-                                record.placeOfAssignment
+                                record.placeOfAssignment ||
+                                "—"
                             )}
+
                         </td>
 
 
                         <td>
-                            ${escapeHtml(
-                                record.competency
-                            )}
+
+                            <strong>
+                                ${escapeHtml(
+                                    record.competency ||
+                                    "—"
+                                )}
+                            </strong>
+
                         </td>
 
 
@@ -3015,7 +3246,8 @@ function renderDetailTable() {
                                 class="badge bg-light text-dark border">
 
                                 ${escapeHtml(
-                                    record.category
+                                    record.category ||
+                                    "—"
                                 )}
 
                             </span>
@@ -3032,12 +3264,81 @@ function renderDetailTable() {
                         </td>
 
 
-                        <td>
+                        <td
+                            class="learning-request">
 
-                            ${escapeHtml(
-                                record.recommendedPrograms ||
-                                record.proposedLearning ||
-                                "—"
+                            ${
+                                record.employeeRequestedLearning
+                                    ? escapeHtml(
+                                        record.employeeRequestedLearning
+                                    )
+                                    : "—"
+                            }
+
+                        </td>
+
+
+                        <td
+                            class="learning-method">
+
+                            ${
+                                record.preferredLearningMethod
+                                    ? escapeHtml(
+                                        record.preferredLearningMethod
+                                    )
+                                    : "—"
+                            }
+
+                        </td>
+
+
+                        <td
+                            class="supervisor-need">
+
+                            ${
+                                record.supervisorDevelopmentNeed
+                                    ? escapeHtml(
+                                        record.supervisorDevelopmentNeed
+                                    )
+                                    : "—"
+                            }
+
+                        </td>
+
+
+                        <td
+                            class="supervisor-recommendation">
+
+                            ${
+                                record.supervisorRecommendedIntervention
+                                    ? escapeHtml(
+                                        record.supervisorRecommendedIntervention
+                                    )
+                                    : "—"
+                            }
+
+                        </td>
+
+
+                        <td
+                            class="recommended-program">
+
+                            ${
+                                record.lddRecommendedProgram
+                                    ? escapeHtml(
+                                        record.lddRecommendedProgram
+                                    )
+                                    : "—"
+                            }
+
+                        </td>
+
+
+                        <td
+                            class="supervisor-status">
+
+                            ${getSupervisorAssessmentBadge(
+                                record
                             )}
 
                         </td>
@@ -3057,12 +3358,85 @@ function renderDetailTable() {
             )
             .join("");
 
+
+    updateHorizontalScrollbar();
+
 }
 
 
+/* ==========================================================
+   HORIZONTAL SCROLL SYNCHRONIZATION
+========================================================== */
+
+function updateHorizontalScrollbar() {
+
+    if (
+        !detailTableWrap ||
+        !detailHorizontalScroll ||
+        !detailHorizontalScrollInner
+    ) {
+
+        return;
+
+    }
+
+
+    const table =
+        detailTableWrap.querySelector(
+            "table"
+        );
+
+
+    if (!table) {
+
+        return;
+
+    }
+
+
+    detailHorizontalScrollInner.style.width =
+        table.scrollWidth + "px";
+
+}
+
+
+if (
+    detailHorizontalScroll &&
+    detailTableWrap
+) {
+
+    detailHorizontalScroll.addEventListener(
+        "scroll",
+        function() {
+
+            detailTableWrap.scrollLeft =
+                detailHorizontalScroll.scrollLeft;
+
+        }
+    );
+
+
+    detailTableWrap.addEventListener(
+        "scroll",
+        function() {
+
+            detailHorizontalScroll.scrollLeft =
+                detailTableWrap.scrollLeft;
+
+        }
+    );
+
+}
+
+
+window.addEventListener(
+    "resize",
+    updateHorizontalScrollbar
+);
+
 
 /* ==========================================================
-   EXPORT DETAILS
+   EXPORT
 ========================================================== */
 
 function exportDetailRecords() {
@@ -3088,13 +3462,31 @@ function exportDetailRecords() {
     const headers = [
 
         "ID",
+
         "Name",
+
         "Position",
+
         "Assignment",
-        "Competency",
+
+        "Competency Gap",
+
         "Category",
+
         "Priority",
-        "Proposed Learning Intervention",
+
+        "Employee Requested Learning",
+
+        "Preferred Learning Method",
+
+        "Supervisor Development Need",
+
+        "Supervisor Recommended Intervention",
+
+        "LDD / Recommended Program",
+
+        "Supervisor Assessment",
+
         "Status"
 
     ];
@@ -3118,8 +3510,19 @@ function exportDetailRecords() {
 
                 record.priority,
 
-                record.recommendedPrograms ||
-                record.proposedLearning,
+                record.employeeRequestedLearning,
+
+                record.preferredLearningMethod,
+
+                record.supervisorDevelopmentNeed,
+
+                record.supervisorRecommendedIntervention,
+
+                record.lddRecommendedProgram,
+
+                record.supervisorAssessmentCompleted
+                    ? "Completed"
+                    : "Not Yet Completed",
 
                 record.status
 
@@ -3153,8 +3556,7 @@ function exportDetailRecords() {
     const blob =
         new Blob(
             [
-                "\uFEFF" +
-                csv
+                "\uFEFF" + csv
             ],
             {
                 type:
@@ -3203,30 +3605,29 @@ function exportDetailRecords() {
 }
 
 
-
 /* ==========================================================
    EVENTS
 ========================================================== */
 
-refreshButton.addEventListener(
+refreshButton?.addEventListener(
     "click",
     loadLearningInterventions
 );
 
 
-detailSearch.addEventListener(
+detailSearch?.addEventListener(
     "input",
     renderDetailTable
 );
 
 
-detailSort.addEventListener(
+detailSort?.addEventListener(
     "change",
     renderDetailTable
 );
 
 
-detailExport.addEventListener(
+detailExport?.addEventListener(
     "click",
     exportDetailRecords
 );
@@ -3241,7 +3642,7 @@ document
 
             card.addEventListener(
                 "click",
-                function () {
+                function() {
 
                     openActionDetails(
                         this.dataset.action
@@ -3254,19 +3655,105 @@ document
     );
 
 
-
 /* ==========================================================
    INITIALIZE
 ========================================================== */
 
 document.addEventListener(
     "DOMContentLoaded",
-    function () {
+    function() {
+
+        try {
+
+            if (
+                typeof Session !==
+                "undefined"
+            ) {
+
+                Session.requireLogin();
+
+
+                const user =
+                    Session.get();
+
+
+                if (
+                    user
+                ) {
+
+                    const headerRole =
+                        document.getElementById(
+                            "headerRole"
+                        );
+
+
+                    if (
+                        headerRole
+                    ) {
+
+                        headerRole.textContent =
+                            user.role ||
+                            "LDD Personnel";
+
+                    }
+
+                }
+
+            }
+
+        } catch(error) {
+
+            console.error(
+                "LDD session initialization failed:",
+                error
+            );
+
+        }
+
 
         loadLearningInterventions();
 
     }
 );
+
+
+/* ==========================================================
+   LOGOUT
+========================================================== */
+
+document
+    .getElementById(
+        "logoutLink"
+    )
+    ?.addEventListener(
+        "click",
+        function(event) {
+
+            event.preventDefault();
+
+
+            if (
+                typeof Session !==
+                    "undefined" &&
+                typeof Session.logout ===
+                    "function"
+            ) {
+
+                Session.logout();
+
+                return;
+
+            }
+
+
+            localStorage.clear();
+
+
+            window.location.href =
+                "../index.html";
+
+        }
+    );
 
 </script>
 

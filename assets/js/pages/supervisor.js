@@ -1,5 +1,18 @@
 /* ==========================================================
-   LDIMS - Supervisor Dashboard Module
+   LDIMS - SUPERVISOR DASHBOARD
+   SUPERVISOR = EMPLOYEE + SUPERVISOR
+
+   FINAL LOCKED VERSION
+   ----------------------------------------------------------
+   - Single-shell Supervisor portal
+   - Employee modules preserved
+   - Supervisor personnel
+   - Read-only employee LNA
+   - Answered LNA sections only
+   - Competency gap analysis
+   - Validate / Return LNA
+   - Training history
+   - Logout
 ========================================================== */
 
 "use strict";
@@ -10,56 +23,76 @@
 ========================================================== */
 
 const SUPERVISOR = {
-
     user: null,
-
     employeeID: null,
-
     personnel: [],
-
-    selectedEmployeeID: null
-
+    selectedEmployeeID: null,
+    selectedLNARecord: null,
+    currentView: "dashboard",
+    employeeFrameObserver: null
 };
+
+
+/* ==========================================================
+   EMPLOYEE MODULES
+========================================================== */
+
+const EMPLOYEE_MODULES = {
+    profile: "../employee/profile.html",
+    lna: "../employee/lna.html",
+    training: "../employee/training-records.html",
+    history: "../employee/learning-history.html",
+    certificates: "../employee/certificates.html"
+};
+
+
+/* ==========================================================
+   LNA COMPETENCY FIELDS
+========================================================== */
+
+const LNA_COMPETENCY_FIELDS = [
+    "Integrity and Ethical Conduct",
+    "Service Orientation",
+    "Accountability and Results Orientation",
+    "Communication and Collaboration",
+    "Adaptability and Continuous Learning",
+    "Organizational Awareness",
+    "Compliance and Policy Adherence",
+    "Coordination and Stakeholder Management",
+    "Leadership and People Development",
+    "Change and Innovation",
+    "Research and Analysis",
+    "Data Analysis and Interpretation",
+    "Information Management",
+    "Digital Information Management",
+    "Information Security",
+    "Risk Assessment",
+    "Legal and Regulatory Compliance",
+    "Project / Activity Management",
+    "Presentation and Briefing",
+    "Stakeholder Coordination"
+];
 
 
 /* ==========================================================
    INITIALIZATION
 ========================================================== */
 
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
+document.addEventListener("DOMContentLoaded", initializeSupervisor);
 
-        initializeSupervisor();
-
-    }
-);
-
-
-/* ==========================================================
-   INITIALIZE SUPERVISOR
-========================================================== */
 
 async function initializeSupervisor() {
 
     try {
 
-        const session =
-            Session.get();
+        const session = Session.get();
 
         if (!session) {
-
-            window.location.href =
-                "../index.html";
-
+            window.location.href = "../index.html";
             return;
-
         }
 
-
-        SUPERVISOR.user =
-            session;
-
+        SUPERVISOR.user = session;
 
         SUPERVISOR.employeeID =
             session.employeeID ||
@@ -67,25 +100,26 @@ async function initializeSupervisor() {
             session.id ||
             "";
 
-
-        if (
-            !SUPERVISOR.employeeID
-        ) {
-
+        if (!SUPERVISOR.employeeID) {
             showSupervisorMessage(
                 "Unable to identify your Employee ID.",
                 "error"
             );
-
             return;
-
         }
 
-
         loadSupervisorIdentity();
+        initializeNavigation();
+        applySupervisorTypography();
+        initializeLNAModal();
 
         await loadSupervisorPersonnel();
+        await loadOwnEmployeeSummary();
 
+        navigateToView(
+            getViewFromHash() || "dashboard",
+            false
+        );
 
     } catch (error) {
 
@@ -99,128 +133,770 @@ async function initializeSupervisor() {
             "Unable to load Supervisor Dashboard.",
             "error"
         );
-
     }
-
 }
 
 
 /* ==========================================================
-   LOAD SUPERVISOR IDENTITY
+   IDENTITY
 ========================================================== */
 
 function loadSupervisorIdentity() {
 
-    const user =
-        SUPERVISOR.user || {};
+    const user = SUPERVISOR.user || {};
 
-
-    setText(
-        "supervisorName",
+    const fullName =
         user.fullname ||
         user.Fullname ||
         user.name ||
-        "Supervisor"
-    );
+        "Supervisor";
 
-
-    setText(
-        "supervisorPosition",
+    const position =
         user.position ||
         user.Position ||
-        ""
-    );
+        "";
 
-
-    setText(
-        "supervisorAssignment",
+    const assignment =
         user.placeOfAssignment ||
         user.PlaceOfAssignment ||
         user.assignment ||
-        ""
-    );
+        "—";
 
-
-    setText(
-        "supervisorRole",
+    const role =
         user.role ||
         user.Role ||
-        "Supervisor"
-    );
+        "Supervisor";
 
+    setText("supervisorName", fullName);
+    setText("supervisorPosition", position);
+    setText("supervisorAssignment", assignment);
+    setText("supervisorRole", role);
+    setText("welcomeName", fullName);
+    setText("assignmentName", assignment);
+
+    const avatar =
+        document.getElementById("supervisorAvatar");
+
+    if (avatar) {
+        avatar.textContent =
+            String(fullName).trim().charAt(0).toUpperCase() || "S";
+    }
 }
 
 
 /* ==========================================================
-   LOAD SUPERVISOR PERSONNEL
+   TYPOGRAPHY
+   ----------------------------------------------------------
+   Labels/text = 12px
+   Dashboard values remain larger.
+   Employee iframe values are preserved.
+========================================================== */
+
+function applySupervisorTypography() {
+
+    if (document.getElementById("supervisorTypographyOverride")) {
+        return;
+    }
+
+    const style = document.createElement("style");
+
+    style.id = "supervisorTypographyOverride";
+
+    style.textContent = `
+
+        /* ==================================================
+           GENERAL SUPERVISOR TEXT
+        ================================================== */
+
+        body {
+            font-size: 12px !important;
+        }
+
+        .sidebar,
+        .sidebar *,
+        .nav-item,
+        .nav-item *,
+        .supervisor-view,
+        .supervisor-view * {
+            font-size: 12px !important;
+        }
+
+
+        /* ==================================================
+           DASHBOARD NUMBERS
+           DO NOT SHRINK THESE
+        ================================================== */
+
+        .summary-card-value {
+            font-size: 20px !important;
+            line-height: 1 !important;
+            font-weight: 750 !important;
+        }
+
+        .summary-card-label {
+            font-size: 12px !important;
+        }
+
+        .summary-card-description {
+            font-size: 12px !important;
+        }
+
+
+        /* ==================================================
+           DASHBOARD HEADINGS
+        ================================================== */
+
+        .dashboard-welcome h2 {
+            font-size: 20px !important;
+        }
+
+
+        /* ==================================================
+           TABLES
+        ================================================== */
+
+        .data-table,
+        .data-table th,
+        .data-table td {
+            font-size: 12px !important;
+        }
+
+
+        /* ==================================================
+           LNA MODAL
+        ================================================== */
+
+        #lnaModal {
+            font-size: 12px !important;
+        }
+
+        #lnaModal .lna-readonly-section {
+            margin-bottom: 18px !important;
+            border: 1px solid #e8e1ec !important;
+            border-radius: 8px !important;
+            overflow: hidden !important;
+            background: #fff !important;
+        }
+
+        #lnaModal .lna-readonly-section-header {
+            padding: 12px 14px !important;
+            background: #f8f5fa !important;
+            border-bottom: 1px solid #e8e1ec !important;
+        }
+
+        #lnaModal .lna-readonly-section-title {
+            font-size: 15px !important;
+            font-weight: 700 !important;
+            line-height: 1.35 !important;
+        }
+
+        #lnaModal .lna-readonly-section-subtitle {
+            font-size: 11px !important;
+            line-height: 1.4 !important;
+        }
+
+        #lnaModal .lna-question-row {
+            display: grid !important;
+            grid-template-columns: minmax(280px, 42%) minmax(0, 58%) !important;
+            gap: 16px !important;
+            padding: 12px 14px !important;
+            border-bottom: 1px solid #eeeaf1 !important;
+        }
+
+        #lnaModal .lna-question-row:last-child {
+            border-bottom: 0 !important;
+        }
+
+        #lnaModal .lna-question {
+            font-size: 12px !important;
+            font-weight: 700 !important;
+            line-height: 1.5 !important;
+            color: #4a3b52 !important;
+        }
+
+        #lnaModal .lna-answer {
+            font-size: 12px !important;
+            line-height: 1.55 !important;
+            color: #29232e !important;
+            white-space: normal !important;
+            overflow-wrap: anywhere !important;
+        }
+
+
+        /* ==================================================
+           COMPETENCY GAP ANALYSIS
+        ================================================== */
+
+        #lnaModal .gap-analysis-header {
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: flex-start !important;
+            gap: 20px !important;
+            padding: 14px 16px !important;
+            margin-bottom: 14px !important;
+            border: 1px solid #e5dce9 !important;
+            border-radius: 8px !important;
+            background: #faf8fb !important;
+        }
+
+        #lnaModal .gap-analysis-title {
+            font-size: 16px !important;
+            font-weight: 700 !important;
+            color: #4a148c !important;
+            margin-bottom: 4px !important;
+        }
+
+        #lnaModal .gap-analysis-subtitle {
+            font-size: 12px !important;
+            line-height: 1.5 !important;
+            color: #6f6674 !important;
+        }
+
+
+        /* Summary cards */
+
+        #lnaModal .gap-analysis-card {
+            display: grid !important;
+            grid-template-columns: 220px minmax(0, 1fr) !important;
+            gap: 16px !important;
+            align-items: start !important;
+            padding: 12px 14px !important;
+            margin-bottom: 8px !important;
+            border: 1px solid #e8e1ec !important;
+            border-radius: 7px !important;
+            background: #fff !important;
+        }
+
+        #lnaModal .gap-analysis-label {
+            font-size: 11px !important;
+            font-weight: 700 !important;
+            text-transform: uppercase !important;
+            letter-spacing: .25px !important;
+            color: #766d7d !important;
+        }
+
+        #lnaModal .gap-analysis-value {
+            font-size: 12px !important;
+            line-height: 1.55 !important;
+            color: #2f2834 !important;
+            overflow-wrap: anywhere !important;
+        }
+
+
+        /* Competency table */
+
+        #lnaModal .gap-analysis-table-section {
+            margin-top: 18px !important;
+            border: 1px solid #e4dce8 !important;
+            border-radius: 8px !important;
+            overflow: hidden !important;
+            background: #fff !important;
+        }
+
+        #lnaModal .gap-analysis-section-title {
+            padding: 12px 14px !important;
+            font-size: 14px !important;
+            font-weight: 700 !important;
+            color: #4a148c !important;
+            background: #f8f5fa !important;
+            border-bottom: 1px solid #e4dce8 !important;
+        }
+
+        #lnaModal .gap-analysis-table-wrap {
+            width: 100% !important;
+            overflow-x: auto !important;
+        }
+
+        #lnaModal .gap-analysis-table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+            table-layout: fixed !important;
+        }
+
+        #lnaModal .gap-analysis-table th {
+            padding: 10px 11px !important;
+            background: #f3eef6 !important;
+            border-bottom: 1px solid #ddd3e2 !important;
+            color: #514556 !important;
+            font-size: 10px !important;
+            font-weight: 700 !important;
+            text-transform: uppercase !important;
+            line-height: 1.35 !important;
+            text-align: left !important;
+        }
+
+        #lnaModal .gap-analysis-table td {
+            padding: 11px !important;
+            border-bottom: 1px solid #eeeaf1 !important;
+            color: #302a35 !important;
+            font-size: 12px !important;
+            line-height: 1.45 !important;
+            vertical-align: top !important;
+            overflow-wrap: anywhere !important;
+        }
+
+        #lnaModal .gap-analysis-table tr:last-child td {
+            border-bottom: 0 !important;
+        }
+
+        #lnaModal .gap-analysis-table th:nth-child(1),
+        #lnaModal .gap-analysis-table td:nth-child(1) {
+            width: 31% !important;
+        }
+
+        #lnaModal .gap-analysis-table th:nth-child(2),
+        #lnaModal .gap-analysis-table td:nth-child(2) {
+            width: 23% !important;
+        }
+
+        #lnaModal .gap-analysis-table th:nth-child(3),
+        #lnaModal .gap-analysis-table td:nth-child(3) {
+            width: 17% !important;
+        }
+
+        #lnaModal .gap-analysis-table th:nth-child(4),
+        #lnaModal .gap-analysis-table td:nth-child(4) {
+            width: 13% !important;
+        }
+
+        #lnaModal .gap-analysis-table th:nth-child(5),
+        #lnaModal .gap-analysis-table td:nth-child(5) {
+            width: 16% !important;
+        }
+
+
+        /* Rating badge */
+
+        #lnaModal .competency-rating-badge {
+            display: inline-block !important;
+            padding: 4px 8px !important;
+            border-radius: 5px !important;
+            background: #f1edf4 !important;
+            font-size: 11px !important;
+            font-weight: 700 !important;
+            white-space: nowrap !important;
+        }
+
+        #lnaModal .pending-rating {
+            display: inline-block !important;
+            padding: 4px 7px !important;
+            border-radius: 5px !important;
+            background: #f4f1f5 !important;
+            color: #6f6674 !important;
+            font-size: 11px !important;
+            font-style: italic !important;
+        }
+
+
+        /* Supervisor action */
+
+        #lnaModal .gap-analysis-note {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 5px !important;
+            margin-top: 16px !important;
+            padding: 13px 15px !important;
+            border-left: 4px solid #6a1b9a !important;
+            background: #faf8fb !important;
+            border-radius: 5px !important;
+            font-size: 12px !important;
+            line-height: 1.5 !important;
+        }
+
+
+        /* ==================================================
+           RESPONSIVE
+        ================================================== */
+
+        @media (max-width: 800px) {
+
+            #lnaModal .lna-question-row {
+                grid-template-columns: 1fr !important;
+                gap: 6px !important;
+            }
+
+            #lnaModal .gap-analysis-card {
+                grid-template-columns: 1fr !important;
+                gap: 5px !important;
+            }
+
+        }
+
+    `;
+
+    document.head.appendChild(style);
+}
+
+/* ==========================================================
+   NAVIGATION
+========================================================== */
+
+function initializeNavigation() {
+
+    document
+        .querySelectorAll(".nav-item[data-view]")
+        .forEach(function(item) {
+
+            item.addEventListener("click", function(event) {
+
+                event.preventDefault();
+
+                const view =
+                    item.getAttribute("data-view");
+
+                if (view) {
+                    navigateToView(view, true);
+                }
+            });
+        });
+
+    window.addEventListener(
+        "hashchange",
+        function() {
+            navigateToView(
+                getViewFromHash(),
+                false
+            );
+        }
+    );
+}
+
+
+function getViewFromHash() {
+
+    return window.location.hash
+        .replace("#", "")
+        .trim()
+        .toLowerCase() || "dashboard";
+}
+
+
+function navigateToView(view, updateHash) {
+
+    const allowedViews = [
+        "dashboard",
+        "profile",
+        "lna",
+        "training",
+        "history",
+        "certificates",
+        "personnel",
+        "validation",
+        "interventions"
+    ];
+
+    if (!allowedViews.includes(view)) {
+        view = "dashboard";
+    }
+
+    SUPERVISOR.currentView = view;
+
+    updateActiveNavigation(view);
+    hideAllViews();
+
+    /*
+     * Intentionally no dynamic page title.
+     * Header remains:
+     * EMPLOYEE & SUPERVISOR PORTAL + employee name.
+     */
+
+    updateViewTitle(view);
+
+    if (view === "dashboard") {
+
+        showView("view-dashboard");
+
+    } else if (view === "personnel") {
+
+        showView("view-personnel");
+        renderPersonnelTable();
+
+    } else if (view === "validation") {
+
+        showView("view-validation");
+        renderValidationView();
+
+    } else if (view === "interventions") {
+
+        showView("view-interventions");
+        renderInterventionsView();
+
+    } else {
+
+        showView("view-employee");
+        loadEmployeeModule(view);
+
+    }
+
+    if (
+        updateHash &&
+        window.location.hash !== "#" + view
+    ) {
+
+        window.history.pushState(
+            null,
+            "",
+            "#" + view
+        );
+    }
+}
+
+
+function updateActiveNavigation(currentView) {
+
+    document
+        .querySelectorAll(".nav-item[data-view]")
+        .forEach(function(item) {
+
+            item.classList.toggle(
+                "active",
+                item.getAttribute("data-view") === currentView
+            );
+        });
+}
+
+
+function hideAllViews() {
+
+    document
+        .querySelectorAll(".supervisor-view")
+        .forEach(function(view) {
+
+            view.style.display = "none";
+
+        });
+}
+
+
+function showView(id) {
+
+    const view =
+        document.getElementById(id);
+
+    if (view) {
+        view.style.display = "";
+    }
+}
+
+
+function updateViewTitle() {
+
+    const element =
+        document.getElementById("viewTitle");
+
+    if (element) {
+        element.textContent = "";
+    }
+}
+
+
+/* ==========================================================
+   EMPLOYEE MODULE
+========================================================== */
+
+function loadEmployeeModule(view) {
+
+    const frame =
+        document.getElementById("employeeModuleFrame");
+
+    if (!frame) {
+        return;
+    }
+
+    const moduleURL =
+        EMPLOYEE_MODULES[view];
+
+    if (!moduleURL) {
+        return;
+    }
+
+    if (SUPERVISOR.employeeFrameObserver) {
+
+        try {
+            SUPERVISOR.employeeFrameObserver.disconnect();
+        } catch (error) {}
+
+        SUPERVISOR.employeeFrameObserver = null;
+    }
+
+    frame.onload = normalizeEmployeeFrame;
+    frame.src = moduleURL;
+}
+
+
+function normalizeEmployeeFrame() {
+
+    const frame =
+        document.getElementById("employeeModuleFrame");
+
+    if (!frame) {
+        return;
+    }
+
+    try {
+
+        const doc =
+            frame.contentDocument ||
+            frame.contentWindow.document;
+
+        if (!doc) {
+            return;
+        }
+
+        const hideNavigation = function() {
+
+            [
+                ".sidebar",
+                "#sidebar",
+                "#navbar",
+                ".navbar",
+                ".topbar",
+                ".employee-sidebar",
+                ".employee-navbar",
+                ".ldims-sidebar",
+                ".sidebar-container",
+                ".navigation",
+                ".side-navigation"
+            ].forEach(function(selector) {
+
+                doc
+                    .querySelectorAll(selector)
+                    .forEach(function(element) {
+
+                        element.style.setProperty(
+                            "display",
+                            "none",
+                            "important"
+                        );
+
+                        element.style.setProperty(
+                            "visibility",
+                            "hidden",
+                            "important"
+                        );
+                    });
+            });
+
+            [
+                ".main-content",
+                ".ldims-content",
+                ".content",
+                ".page-content",
+                ".main",
+                "main"
+            ].forEach(function(selector) {
+
+                doc
+                    .querySelectorAll(selector)
+                    .forEach(function(element) {
+
+                        element.style.setProperty(
+                            "margin-left",
+                            "0",
+                            "important"
+                        );
+
+                        element.style.setProperty(
+                            "padding-left",
+                            "20px",
+                            "important"
+                        );
+
+                        element.style.setProperty(
+                            "width",
+                            "100%",
+                            "important"
+                        );
+
+                        element.style.setProperty(
+                            "max-width",
+                            "100%",
+                            "important"
+                        );
+                    });
+            });
+
+            /*
+             * IMPORTANT:
+             * We do NOT resize employee module cards.
+             * Existing employee layouts remain intact.
+             */
+        };
+
+        hideNavigation();
+
+        if (SUPERVISOR.employeeFrameObserver) {
+            try {
+                SUPERVISOR.employeeFrameObserver.disconnect();
+            } catch (error) {}
+        }
+
+        if (doc.body) {
+
+            SUPERVISOR.employeeFrameObserver =
+                new MutationObserver(hideNavigation);
+
+            SUPERVISOR.employeeFrameObserver.observe(
+                doc.body,
+                {
+                    childList: true,
+                    subtree: true
+                }
+            );
+        }
+
+    } catch (error) {
+
+        console.warn(
+            "Unable to normalize employee module:",
+            error
+        );
+    }
+}
+
+
+/* ==========================================================
+   SUPERVISOR PERSONNEL
 ========================================================== */
 
 async function loadSupervisorPersonnel() {
 
     try {
 
-        showSupervisorLoading(
-            true
-        );
-
+        showSupervisorLoading(true);
 
         const response =
             await API.post({
-
-                action:
-                    "getSupervisorPersonnel",
-
-                employeeID:
-                    SUPERVISOR.employeeID
-
+                action: "getSupervisorPersonnel",
+                employeeID: SUPERVISOR.employeeID
             });
-
-
-        console.log(
-            "Supervisor personnel:",
-            response
-        );
-
 
         if (
             !response ||
             response.success !== true
         ) {
-
             throw new Error(
-                response &&
-                response.message
-                    ? response.message
-                    : "Unable to load personnel."
+                response?.message ||
+                "Unable to load personnel."
             );
-
         }
 
-
         SUPERVISOR.personnel =
-            Array.isArray(
-                response.personnel
-            )
+            Array.isArray(response.personnel)
                 ? response.personnel
                 : [];
 
-
         renderPersonnelTable();
-
         updatePersonnelSummary();
-
 
     } catch (error) {
 
         console.error(
-            "loadSupervisorPersonnel error:",
+            "loadSupervisorPersonnel:",
             error
         );
 
-
-        SUPERVISOR.personnel =
-            [];
-
+        SUPERVISOR.personnel = [];
 
         renderPersonnelTable();
 
@@ -230,225 +906,125 @@ async function loadSupervisorPersonnel() {
             "error"
         );
 
-
     } finally {
 
-        showSupervisorLoading(
-            false
-        );
+        showSupervisorLoading(false);
 
     }
-
 }
 
-
-/* ==========================================================
-   RENDER PERSONNEL TABLE
-========================================================== */
 
 function renderPersonnelTable() {
 
     const tableBody =
-        document.getElementById(
-            "personnelTableBody"
-        );
-
+        document.getElementById("personnelTableBody");
 
     if (!tableBody) {
-
-        console.warn(
-            "personnelTableBody not found."
-        );
-
         return;
-
     }
 
-
-    tableBody.innerHTML =
-        "";
-
-
-    if (
-        SUPERVISOR.personnel.length === 0
-    ) {
+    if (!SUPERVISOR.personnel.length) {
 
         tableBody.innerHTML = `
-
             <tr>
-
-                <td
-                    colspan="6"
-                    class="text-center"
-                >
+                <td colspan="6" class="text-center">
                     No personnel found.
                 </td>
-
             </tr>
-
         `;
 
         return;
-
     }
 
+    tableBody.innerHTML =
+        SUPERVISOR.personnel
+            .map(function(employee) {
 
-    SUPERVISOR.personnel.forEach(
-        function (employee) {
+                return `
+                    <tr>
+                        <td>
+                            ${escapeHTML(employee.employeeID || "-")}
+                        </td>
 
-            const row =
-                document.createElement(
-                    "tr"
-                );
+                        <td>
+                            ${escapeHTML(employee.name || "-")}
+                        </td>
 
+                        <td>
+                            ${escapeHTML(employee.position || "-")}
+                        </td>
 
-            const status =
-                normalizeStatus(
-                    employee.lnaStatus
-                );
+                        <td>
+                            ${escapeHTML(employee.assignment || "-")}
+                        </td>
 
+                        <td>
+                            ${getStatusBadge(employee.lnaStatus)}
+                        </td>
 
-            row.innerHTML = `
+                        <td>
+                            <button
+                                type="button"
+                                class="btn btn-sm btn-primary"
+                                onclick="openLNA('${escapeAttribute(employee.employeeID)}')"
+                            >
+                                View LNA
+                            </button>
+                        </td>
+                    </tr>
+                `;
 
-                <td>
-                    ${escapeHTML(
-                        employee.employeeID
-                    )}
-                </td>
-
-                <td>
-                    ${escapeHTML(
-                        employee.name ||
-                        "-"
-                    )}
-                </td>
-
-                <td>
-                    ${escapeHTML(
-                        employee.position ||
-                        "-"
-                    )}
-                </td>
-
-                <td>
-                    ${escapeHTML(
-                        employee.assignment ||
-                        "-"
-                    )}
-                </td>
-
-                <td>
-                    ${getStatusBadge(
-                        employee.lnaStatus
-                    )}
-                </td>
-
-                <td>
-
-                    <button
-                        type="button"
-                        class="btn btn-sm btn-primary"
-                        onclick="openLNA('${escapeAttribute(
-                            employee.employeeID
-                        )}')"
-                    >
-                        View LNA
-                    </button>
-
-                </td>
-
-            `;
-
-
-            tableBody.appendChild(
-                row
-            );
-
-        }
-    );
-
+            })
+            .join("");
 }
 
-
-/* ==========================================================
-   SUMMARY
-========================================================== */
 
 function updatePersonnelSummary() {
 
     const personnel =
         SUPERVISOR.personnel;
 
+    const statusCount =
+        function(status) {
 
-    const total =
-        personnel.length;
+            return personnel.filter(function(employee) {
 
-
-    const forCompletion =
-        personnel.filter(
-            employee =>
-                normalizeStatus(
+                return normalizeStatus(
                     employee.lnaStatus
-                ) === "for completion"
-        ).length;
+                ) === status;
 
-
-    const forReview =
-        personnel.filter(
-            employee =>
-                normalizeStatus(
-                    employee.lnaStatus
-                ) === "for review"
-        ).length;
-
-
-    const forRevision =
-        personnel.filter(
-            employee =>
-                normalizeStatus(
-                    employee.lnaStatus
-                ) === "for revision"
-        ).length;
-
-
-    const validated =
-        personnel.filter(
-            employee =>
-                [
-                    "validated",
-                    "approved"
-                ].includes(
-                    normalizeStatus(
-                        employee.lnaStatus
-                    )
-                )
-        ).length;
-
+            }).length;
+        };
 
     setText(
         "totalPersonnel",
-        total
+        personnel.length
     );
-
 
     setText(
         "pendingLNA",
-        forReview +
-        forRevision
+        statusCount("for review") +
+        statusCount("for revision")
     );
-
 
     setText(
         "forCompletion",
-        forCompletion
+        statusCount("for completion")
     );
-
 
     setText(
         "validatedLNA",
-        validated
-    );
+        personnel.filter(function(employee) {
 
+            return [
+                "validated",
+                "approved"
+            ].includes(
+                normalizeStatus(employee.lnaStatus)
+            );
+
+        }).length
+    );
 }
 
 
@@ -456,104 +1032,195 @@ function updatePersonnelSummary() {
    OPEN LNA
 ========================================================== */
 
-async function openLNA(
-    employeeID
-) {
+async function openLNA(employeeID) {
+
+    if (!employeeID) {
+
+        showSupervisorMessage(
+            "Invalid Employee ID.",
+            "error"
+        );
+
+        return;
+    }
+
+    SUPERVISOR.selectedEmployeeID =
+        employeeID;
+
+    openLNAModal();
+
+    setText("lnaEmployeeID", employeeID);
+    setText("lnaEmployeeName", "Loading...");
+    setText("lnaEmployeePosition", "—");
+    setText("lnaEmployeeAssignment", "—");
+
+    setHTML(
+        "lnaStatus",
+        getStatusBadge("Loading")
+    );
+
+    setHTML(
+        "lnaDetails",
+        `<div class="empty-state">
+            Loading LNA information...
+        </div>`
+    );
+
+    setHTML(
+        "trainingHistory",
+        `<div class="empty-state">
+            Loading training history...
+        </div>`
+    );
+
+    setHTML(
+        "supervisorLNAActions",
+        ""
+    );
 
     try {
 
-        SUPERVISOR.selectedEmployeeID =
-            employeeID;
-
-
-        showSupervisorLoading(
-            true
-        );
-
-
         const response =
             await API.post({
-
-                action:
-                    "getLNAByEmployeeID",
-
-                employeeID:
-                    employeeID
-
+                action: "getLNAByEmployeeID",
+                employeeID: employeeID
             });
-
-
-        console.log(
-            "Supervisor LNA:",
-            response
-        );
-
 
         if (
             !response ||
             response.success !== true
         ) {
-
             throw new Error(
-                response &&
-                response.message
-                    ? response.message
-                    : "Unable to retrieve LNA."
+                response?.message ||
+                "Unable to retrieve LNA."
             );
-
         }
-
 
         if (
             response.submitted !== true ||
             !response.record
         ) {
 
-            showLNAEmptyState(
+            showLNAEmptyState(employeeID);
+
+            await loadSupervisorTrainingHistory(
                 employeeID
             );
 
             return;
-
         }
 
+        SUPERVISOR.selectedLNARecord =
+            response.record;
 
         renderSupervisorLNA(
             response.record
         );
 
-
         await loadSupervisorTrainingHistory(
             employeeID
         );
 
-
-        showLNASection();
-
-
     } catch (error) {
 
         console.error(
-            "openLNA error:",
+            "openLNA:",
             error
         );
 
-
-        showSupervisorMessage(
-            error.message ||
-            "Unable to open LNA.",
-            "error"
+        setHTML(
+            "lnaDetails",
+            `<div class="empty-state">
+                Unable to load LNA information.
+                <br><br>
+                <small>
+                    ${escapeHTML(
+                        error.message ||
+                        "Please try again."
+                    )}
+                </small>
+            </div>`
         );
 
-
-    } finally {
-
-        showSupervisorLoading(
-            false
+        setHTML(
+            "lnaStatus",
+            getStatusBadge("Unavailable")
         );
+    }
+}
 
+
+/* ==========================================================
+   LNA MODAL
+========================================================== */
+
+function initializeLNAModal() {
+
+    const modal =
+        document.getElementById("lnaModal");
+
+    if (!modal) {
+        return;
     }
 
+    const backdrop =
+        modal.querySelector(".lna-modal-backdrop");
+
+    if (backdrop) {
+
+        backdrop.addEventListener(
+            "click",
+            closeLNAModal
+        );
+    }
+
+    document.addEventListener(
+        "keydown",
+        function(event) {
+
+            if (
+                event.key === "Escape" &&
+                modal.classList.contains("is-open")
+            ) {
+                closeLNAModal();
+            }
+        }
+    );
+}
+
+
+function openLNAModal() {
+
+    const modal =
+        document.getElementById("lnaModal");
+
+    if (!modal) {
+        return;
+    }
+
+    modal.classList.add("is-open");
+    modal.setAttribute("aria-hidden", "false");
+
+    document.body.classList.add("modal-open");
+}
+
+
+function closeLNAModal() {
+
+    const modal =
+        document.getElementById("lnaModal");
+
+    if (!modal) {
+        return;
+    }
+
+    modal.classList.remove("is-open");
+    modal.setAttribute("aria-hidden", "true");
+
+    document.body.classList.remove("modal-open");
+
+    SUPERVISOR.selectedEmployeeID = null;
+    SUPERVISOR.selectedLNARecord = null;
 }
 
 
@@ -561,359 +1228,970 @@ async function openLNA(
    RENDER SUPERVISOR LNA
 ========================================================== */
 
-function renderSupervisorLNA(
-    record
-) {
+function renderSupervisorLNA(record) {
 
     const employee =
-        findPersonnel(
-            record.employeeID
-        );
-
+        findPersonnel(record.employeeID);
 
     setText(
         "lnaEmployeeID",
-        record.employeeID
+        record.employeeID || "-"
     );
-
 
     setText(
         "lnaEmployeeName",
         record.name ||
-        (employee && employee.name) ||
+        employee?.name ||
         "-"
     );
-
 
     setText(
         "lnaEmployeePosition",
         record.position ||
-        (employee && employee.position) ||
+        employee?.position ||
         "-"
     );
-
 
     setText(
         "lnaEmployeeAssignment",
         record.placeOfAssignment ||
-        (employee && employee.assignment) ||
+        record.assignment ||
+        employee?.assignment ||
         "-"
     );
 
-
     setHTML(
         "lnaStatus",
-        getStatusBadge(
-            record.status
-        )
+        getStatusBadge(record.status)
     );
 
+    if (SUPERVISOR.currentView === "validation") {
 
-    renderLNASections(
-        record
-    );
+        renderCompetencyGapAnalysis(record);
 
+        renderSupervisorActions(
+            record,
+            true
+        );
+
+        return;
+    }
+
+    renderCompleteEmployeeLNA(record);
 
     renderSupervisorActions(
-        record
+        record,
+        false
     );
-
 }
 
 
 /* ==========================================================
-   CONTROLLED LNA DISPLAY
+   FINAL LOCKED LNA RENDERER
    ----------------------------------------------------------
-   Do NOT dump raw object fields.
+   The employee submission is the source of truth.
+
+   IMPORTANT:
+   We do NOT invent missing answers.
+   We render mapped sections from actual backend fields
+   and then render any remaining answered questions from
+   record.raw.
+
+   Empty sections are omitted.
 ========================================================== */
 
-function renderLNASections(
-    record
-) {
+function renderCompleteEmployeeLNA(record) {
 
     const container =
-        document.getElementById(
-            "lnaDetails"
-        );
-
+        document.getElementById("lnaDetails");
 
     if (!container) {
-
-        console.warn(
-            "lnaDetails not found."
-        );
-
         return;
+    }
 
+    const raw =
+        record?.raw &&
+        typeof record.raw === "object"
+            ? record.raw
+            : {};
+
+    let html = "";
+
+    /*
+     * Track raw questions already rendered so that
+     * remaining answers can still be shown.
+     */
+
+    const usedKeys = new Set();
+
+    function addSection(title, rows) {
+
+        const validRows =
+            rows.filter(function(row) {
+
+                return hasValue(row[1]);
+
+            });
+
+        if (!validRows.length) {
+            return;
+        }
+
+        validRows.forEach(function(row) {
+
+            const matchedKey =
+                findRawKey(raw, row[0]);
+
+            if (matchedKey) {
+                usedKeys.add(matchedKey);
+            }
+        });
+
+        html += renderLNAQuestionSection(
+            title,
+            validRows
+        );
     }
 
 
-    const sections = [
-
-        {
-            title:
-                "Development Priority",
-
-            value:
-                record.developmentPriority
-
-        },
-
-        {
-            title:
-                "Current Competencies / Development Needs",
-
-            value:
-                record.currentCompetencies
-
-        },
-
-        {
-            title:
-                "Future Competency Needs",
-
-            value:
-                record.futureNeeds
-
-        },
-
-        {
-            title:
-                "Emerging Skills / Technologies",
-
-            value:
-                record.emergingSkills
-
-        },
-
-        {
-            title:
-                "Proposed Learning / Intervention",
-
-            value:
-                record.proposedLearning
-
-        },
-
-        {
-            title:
-                "Preferred Learning Method",
-
-            value:
-                record.learningMethod
-
-        },
-
-        {
-            title:
-                "Current Responsibilities",
-
-            value:
-                record.currentResponsibilities
-
-        },
-
-        {
-            title:
-                "Technical Responsibility",
-
-            value:
-                record.technicalResponsibility
-
-        },
-
-        {
-            title:
-                "Changes in Duties",
-
-            value:
-                record.dutyChanges
-
-        },
-
-        {
-            title:
-                "Functional Area",
-
-            value:
-                record.functionalArea
-
-        },
-
-        {
-            title:
-                "Participation Barriers",
-
-            value:
-                record.participationBarriers
-
-        },
-
-        {
-            title:
-                "Other Barriers",
-
-            value:
-                record.otherBarriers
-
-        },
-
-        {
-            title:
-                "Expected Application",
-
-            value:
-                record.expectedApplication
-
-        },
-
-        {
-            title:
-                "Expected Improvement",
-
-            value:
-                record.expectedImprovement
-
-        },
-
-        {
-            title:
-                "Organizational Support",
-
-            value:
-                record.organizationalSupport
-
-        },
-
-        {
-            title:
-                "Knowledge / Skills to Share",
-
-            value:
-                record.knowledgeToShare
-
-        },
-
-        {
-            title:
-                "Willing to Facilitate",
-
-            value:
-                record.willingToFacilitate
-
-        },
-
-        {
-            title:
-                "Facilitation Topics",
-
-            value:
-                record.facilitationTopics
-
-        },
-
-        {
-            title:
-                "Recommended Programs",
-
-            value:
-                record.recommendedPrograms
-
-        },
-
-        {
-            title:
-                "Organization Comments",
-
-            value:
-                record.organizationComments
-
-        },
-
-        {
-            title:
-                "L&D Needs Comments",
-
-            value:
-                record.needsComments
-
-        },
-
-        {
-            title:
-                "Revision Reason",
-
-            value:
-                record.revisionReason
-
+    /* ======================================================
+       PART 1
+    ====================================================== */
+
+    addSection(
+        "1. Employee Information",
+        [
+            ["Employee ID", record.employeeID],
+            ["Name", record.name],
+            ["Position", record.position],
+            ["Place of Assignment", record.placeOfAssignment]
+        ]
+    );
+
+
+    /* ======================================================
+       PART 2
+    ====================================================== */
+
+    addSection(
+        "2. Current Work and Responsibilities",
+        [
+            [
+                "Three (3) most important current responsibilities",
+                firstAvailable(
+                    record.currentResponsibilities,
+                    getRawFieldValue(
+                        raw,
+                        "Give three (3) most important current responsibilities"
+                    )
+                )
+            ],
+            [
+                "Responsibility requiring the greatest knowledge, skill, or technical expertise",
+                firstAvailable(
+                    record.technicalResponsibility,
+                    getRawFieldValue(
+                        raw,
+                        "What responsibility requiring greatest knowledge/skill/technical expertise?"
+                    )
+                )
+            ],
+            [
+                "Changes in duties or responsibilities within the past two years",
+                firstAvailable(
+                    record.dutyChanges,
+                    getRawFieldValue(
+                        raw,
+                        "Do you have duties significantly changes"
+                    )
+                )
+            ]
+        ]
+    );
+
+
+    /* ======================================================
+       PART 3
+    ====================================================== */
+
+    const competencyRows = [];
+
+    LNA_COMPETENCY_FIELDS.forEach(function(field) {
+
+        const key =
+            findRawKey(raw, field);
+
+        const value =
+            key
+                ? raw[key]
+                : "";
+
+        if (hasValue(value)) {
+
+            usedKeys.add(key);
+
+            competencyRows.push([
+                field,
+                value
+            ]);
+        }
+    });
+
+    addSection(
+        "3. Core / Organizational / Cross-Functional Competencies",
+        competencyRows
+    );
+
+
+    /* ======================================================
+       PART 4
+    ====================================================== */
+
+    const technicalRows = [];
+
+    Object.keys(raw).forEach(function(key) {
+
+        const value = raw[key];
+
+        if (!hasValue(value)) {
+            return;
         }
 
-    ];
+        if (isMetadataKey(key)) {
+            return;
+        }
 
+        if (
+            LNA_COMPETENCY_FIELDS.some(function(field) {
 
-    const availableSections =
-        sections.filter(
-            section =>
-                hasValue(
-                    section.value
-                )
+                return normalizeHeader(field) ===
+                    normalizeHeader(key);
+
+            })
+        ) {
+            return;
+        }
+
+        if (isCompetencyRating(value)) {
+
+            usedKeys.add(key);
+
+            technicalRows.push([
+                key,
+                value
+            ]);
+        }
+    });
+
+    if (technicalRows.length) {
+
+        html += renderTechnicalRowsSection(
+            "4. Technical / Functional / Specialized Competencies",
+            technicalRows
         );
+    }
 
 
-    if (
-        availableSections.length === 0
-    ) {
+    /* ======================================================
+       PART 5
+    ====================================================== */
 
-        container.innerHTML = `
+    addSection(
+        "5. Competency Development Priorities",
+        [
+            [
+                "Top competency development priorities",
+                firstAvailable(
+                    record.developmentPriority,
+                    getRawFieldValue(
+                        raw,
+                        "Which competencies do you consider your top development priorities?"
+                    )
+                )
+            ],
+            [
+                "Competency or competencies most urgently needed to improve current performance",
+                firstAvailable(
+                    record.currentCompetencies,
+                    getRawFieldValue(
+                        raw,
+                        "Which competency or competencies do you most urgently need to develop"
+                    )
+                )
+            ]
+        ]
+    );
 
+
+    /* ======================================================
+       PART 6
+    ====================================================== */
+
+    addSection(
+        "6. Future Learning Needs",
+        [
+            [
+                "Competencies or areas of knowledge anticipated in the next 1–3 years",
+                firstAvailable(
+                    record.futureNeeds,
+                    getRawFieldValue(
+                        raw,
+                        "What competencies or areas of knowledge do you anticipate needing in the next 1–3 years"
+                    )
+                )
+            ],
+            [
+                "Emerging skills, technologies, tools, or practices",
+                firstAvailable(
+                    record.emergingSkills,
+                    getRawFieldValue(
+                        raw,
+                        "What emerging skills, technologies, tools, or practices do you think will become important"
+                    )
+                )
+            ]
+        ]
+    );
+
+
+    /* ======================================================
+       PART 7
+    ====================================================== */
+
+    addSection(
+        "7. Learning and Development Intervention",
+        [
+            [
+                "Specific learning, training, seminar, workshop, certification, or other development intervention",
+                firstAvailable(
+                    record.proposedLearning,
+                    getRawFieldValue(
+                        raw,
+                        "What specific learning, training, seminar, workshop, certification"
+                    )
+                )
+            ],
+            [
+                "Preferred learning methods",
+                firstAvailable(
+                    record.learningMethod,
+                    getRawFieldValue(
+                        raw,
+                        "Which learning methods do you prefer"
+                    )
+                )
+            ]
+        ]
+    );
+
+
+    /* ======================================================
+       PART 8
+    ====================================================== */
+
+    addSection(
+        "8. Barriers to Learning",
+        [
+            [
+                "Factors that may prevent or make participation difficult",
+                firstAvailable(
+                    record.participationBarriers,
+                    getRawFieldValue(
+                        raw,
+                        "What factors may prevent"
+                    )
+                )
+            ],
+            [
+                "Other barriers or challenges",
+                firstAvailable(
+                    record.otherBarriers,
+                    getRawFieldValue(
+                        raw,
+                        "Please specify any other barriers"
+                    )
+                )
+            ]
+        ]
+    );
+
+
+    /* ======================================================
+       PART 9
+    ====================================================== */
+
+    addSection(
+        "9. Application of Learning",
+        [
+            [
+                "Expected application of knowledge, skills, or competencies",
+                firstAvailable(
+                    record.expectedApplication,
+                    getRawFieldValue(
+                        raw,
+                        "How do you expect to apply"
+                    )
+                )
+            ],
+            [
+                "Expected improvements in work performance or outputs",
+                firstAvailable(
+                    record.expectedImprovement,
+                    getRawFieldValue(
+                        raw,
+                        "What improvements in your work performance"
+                    )
+                )
+            ],
+            [
+                "Organizational support needed to apply learning",
+                firstAvailable(
+                    record.organizationalSupport,
+                    getRawFieldValue(
+                        raw,
+                        "What organizational support"
+                    )
+                )
+            ]
+        ]
+    );
+
+
+    /* ======================================================
+       PART 10
+    ====================================================== */
+
+    addSection(
+        "10. Expertise and Knowledge Sharing",
+        [
+            [
+                "Knowledge, skills, or expertise that can be shared",
+                firstAvailable(
+                    record.knowledgeToShare,
+                    getRawFieldValue(
+                        raw,
+                        "knowledge to share"
+                    )
+                )
+            ],
+            [
+                "Willingness to serve as resource person, mentor, coach, or facilitator",
+                firstAvailable(
+                    record.willingToFacilitate,
+                    getRawFieldValue(
+                        raw,
+                        "Would you be willing to serve"
+                    )
+                )
+            ],
+            [
+                "Topics or areas where expertise can be shared",
+                firstAvailable(
+                    record.facilitationTopics,
+                    getRawFieldValue(
+                        raw,
+                        "If yes, please indicate the topic"
+                    )
+                )
+            ]
+        ]
+    );
+
+
+    /* ======================================================
+       PART 11
+    ====================================================== */
+
+    addSection(
+        "11. L&D Priorities and Comments",
+        [
+            [
+                "Recommended Learning and Development Programs",
+                firstAvailable(
+                    record.recommendedPrograms,
+                    getRawFieldValue(
+                        raw,
+                        "What specific learning and development programs"
+                    )
+                )
+            ],
+            [
+                "Organization Comments / Recommendations",
+                record.organizationComments
+            ],
+            [
+                "Employee L&D Needs Comments",
+                record.needsComments
+            ]
+        ]
+    );
+
+
+    /* ======================================================
+       PARTS 12–14
+       ------------------------------------------------------
+       Do NOT invent questions.
+
+       Remaining answered raw fields are grouped into
+       the remaining current LNA portions. This ensures
+       no employee answer disappears simply because a
+       question header was not included in an earlier
+       mapping.
+    ====================================================== */
+
+    const remainingRows =
+        Object.keys(raw)
+            .filter(function(key) {
+
+                if (usedKeys.has(key)) {
+                    return false;
+                }
+
+                if (isMetadataKey(key)) {
+                    return false;
+                }
+
+                if (!hasValue(raw[key])) {
+                    return false;
+                }
+
+                if (
+                    normalizeHeader(key)
+                        .includes("DATA PRIVACY") ||
+                    normalizeHeader(key)
+                        .includes("DATA RIVACY")
+                ) {
+                    return false;
+                }
+
+                return true;
+
+            })
+            .map(function(key) {
+
+                return [
+                    key,
+                    raw[key]
+                ];
+
+            });
+
+    /*
+     * The remaining questions are still actual employee
+     * responses. We do not rename the question itself.
+     *
+     * Split into up to three sections so the current
+     * 14-section LNA remains represented without
+     * inventing answers.
+     */
+
+        if (!html.trim()) {
+
+        html = `
             <div class="empty-state">
+                No LNA responses available.
+            </div>
+        `;
+    }
 
-                No LNA details available.
+    container.innerHTML = html;
+}
+
+
+/* ==========================================================
+   LNA SECTION RENDERER
+========================================================== */
+
+function renderLNAQuestionSection(title, rows) {
+
+    const validRows =
+        (rows || []).filter(function(row) {
+
+            return (
+                row &&
+                row.length >= 2 &&
+                hasValue(row[1])
+            );
+
+        });
+
+    if (!validRows.length) {
+        return "";
+    }
+
+    return `
+        <div class="lna-readonly-section">
+
+            <div class="lna-readonly-section-header">
+
+                <div>
+                    <div class="lna-readonly-section-title">
+                        ${escapeHTML(title)}
+                    </div>
+                </div>
+
+                <span class="lna-readonly-badge">
+                    READ-ONLY
+                </span>
 
             </div>
 
-        `;
+            <div class="lna-question-list">
 
-        return;
-
-    }
-
-
-    container.innerHTML =
-        availableSections
-            .map(
-                function (section) {
+                ${validRows.map(function(row) {
 
                     return `
+                        <div class="lna-question-row">
 
-                        <div
-                            class="lna-detail-section"
-                        >
-
-                            <div
-                                class="lna-detail-title"
-                            >
-                                ${escapeHTML(
-                                    section.title
-                                )}
+                            <div class="lna-question">
+                                ${escapeHTML(row[0])}
                             </div>
 
-                            <div
-                                class="lna-detail-value"
-                            >
-                                ${formatLNAValue(
-                                    section.value
-                                )}
+                            <div class="lna-answer">
+                                ${formatLNAValue(row[1])}
                             </div>
 
                         </div>
-
                     `;
 
-                }
-            )
-            .join("");
+                }).join("")}
 
+            </div>
+
+        </div>
+    `;
+}
+
+
+/* ==========================================================
+   TECHNICAL COMPETENCY SECTION
+========================================================== */
+
+function renderTechnicalRowsSection(title, rows) {
+
+    if (!rows.length) {
+        return "";
+    }
+
+    return `
+        <div class="lna-readonly-section">
+
+            <div class="lna-readonly-section-header">
+
+                <div>
+                    <div class="lna-readonly-section-title">
+                        ${escapeHTML(title)}
+                    </div>
+
+                    <div class="lna-readonly-section-subtitle">
+                        Employee-submitted competency ratings
+                    </div>
+                </div>
+
+                <span class="lna-readonly-badge">
+                    READ-ONLY
+                </span>
+
+            </div>
+
+            <div class="lna-question-list">
+
+                ${rows.map(function(row) {
+
+                    return `
+                        <div class="lna-question-row">
+
+                            <div class="lna-question">
+                                ${escapeHTML(row[0])}
+                            </div>
+
+                            <div class="lna-answer">
+                                ${getCompetencyRatingBadge(row[1])}
+                            </div>
+
+                        </div>
+                    `;
+
+                }).join("")}
+
+            </div>
+
+        </div>
+    `;
+}
+
+
+/* ==========================================================
+   COMPETENCY GAP ANALYSIS
+========================================================== */
+
+function renderCompetencyGapAnalysis(record) {
+
+    const container =
+        document.getElementById("lnaDetails");
+
+    if (!container) {
+        return;
+    }
+
+    const raw =
+        record?.raw || {};
+
+    const rows = [];
+
+    LNA_COMPETENCY_FIELDS.forEach(function(field) {
+
+        const value =
+            getRawFieldValue(raw, field);
+
+        if (hasValue(value)) {
+
+            rows.push({
+                competency: field,
+                employee: value
+            });
+        }
+    });
+
+
+    Object.keys(raw).forEach(function(key) {
+
+        const value = raw[key];
+
+        if (
+            !hasValue(value) ||
+            !isCompetencyRating(value) ||
+            isMetadataKey(key)
+        ) {
+            return;
+        }
+
+        if (
+            LNA_COMPETENCY_FIELDS.some(function(field) {
+
+                return normalizeHeader(field) ===
+                    normalizeHeader(key);
+
+            })
+        ) {
+            return;
+        }
+
+        rows.push({
+            competency: key,
+            employee: value
+        });
+    });
+
+
+    const summary = [
+
+        [
+            "Development Priority",
+            firstAvailable(
+                record.developmentPriority,
+                getRawFieldValue(
+                    raw,
+                    "Which competencies do you consider your top development priorities?"
+                )
+            )
+        ],
+
+        [
+            "Current Competency / Development Need",
+            firstAvailable(
+                record.currentCompetencies,
+                getRawFieldValue(
+                    raw,
+                    "Which competency or competencies do you most urgently need to develop"
+                )
+            )
+        ],
+
+        [
+            "Future Competency Need",
+            firstAvailable(
+                record.futureNeeds,
+                getRawFieldValue(
+                    raw,
+                    "What competencies or areas of knowledge do you anticipate needing in the next 1–3 years"
+                )
+            )
+        ],
+
+        [
+            "Emerging Skills / Technologies",
+            firstAvailable(
+                record.emergingSkills,
+                getRawFieldValue(
+                    raw,
+                    "What emerging skills, technologies, tools, or practices do you think will become important"
+                )
+            )
+        ],
+
+        [
+            "Functional Area",
+            firstAvailable(
+                record.functionalArea,
+                getRawFieldValue(
+                    raw,
+                    "Select your functional area."
+                )
+            )
+        ],
+
+        [
+            "Proposed Learning Intervention",
+            firstAvailable(
+                record.proposedLearning,
+                getRawFieldValue(
+                    raw,
+                    "What specific learning, training, seminar, workshop, certification"
+                )
+            )
+        ]
+
+    ].filter(function(row) {
+
+        return hasValue(row[1]);
+
+    });
+
+
+    let html = `
+        <div class="gap-analysis-header">
+
+            <div>
+                <div class="gap-analysis-title">
+                    Competency Gap Analysis
+                </div>
+
+                <div class="gap-analysis-subtitle">
+                    Employee-submitted competency information
+                    for Supervisor Assessment and validation.
+                </div>
+            </div>
+
+            <span class="lna-readonly-badge">
+                FOR VALIDATION
+            </span>
+
+        </div>
+    `;
+
+
+    summary.forEach(function(row) {
+
+        html += `
+            <div class="gap-analysis-card">
+
+                <div class="gap-analysis-label">
+                    ${escapeHTML(row[0])}
+                </div>
+
+                <div class="gap-analysis-value">
+                    ${formatLNAValue(row[1])}
+                </div>
+
+            </div>
+        `;
+
+    });
+
+
+    if (rows.length) {
+
+        html += `
+            <div class="gap-analysis-table-section">
+
+                <div class="gap-analysis-section-title">
+                    Employee Competency Ratings
+                </div>
+
+                <div class="gap-analysis-table-wrap">
+
+                    <table class="gap-analysis-table">
+
+                        <thead>
+                            <tr>
+                                <th>Competency</th>
+                                <th>Employee Self-Rating</th>
+                                <th>Supervisor Rating</th>
+                                <th>Required</th>
+                                <th>Gap / Priority</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            ${rows.map(function(row) {
+
+                                return `
+                                    <tr>
+
+                                        <td>
+                                            <strong>
+                                                ${escapeHTML(row.competency)}
+                                            </strong>
+                                        </td>
+
+                                        <td>
+                                            ${getCompetencyRatingBadge(
+                                                row.employee
+                                            )}
+                                        </td>
+
+                                        <td>
+                                            <span class="pending-rating">
+                                                To be assessed
+                                            </span>
+                                        </td>
+
+                                        <td>
+                                            Master Matrix
+                                        </td>
+
+                                        <td>
+                                            ${getGapPriorityBadge(
+                                                row.employee
+                                            )}
+                                        </td>
+
+                                    </tr>
+                                `;
+
+                            }).join("")}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+        `;
+    }
+
+
+    html += `
+        <div class="gap-analysis-note">
+
+            <strong>
+                Supervisor Action
+            </strong>
+
+            <span>
+                Complete the Supervisor Assessment and
+                competency ratings before making the
+                final LNA validation decision.
+            </span>
+
+        </div>
+    `;
+
+
+    container.innerHTML = html;
 }
 
 
@@ -922,7 +2200,8 @@ function renderLNASections(
 ========================================================== */
 
 function renderSupervisorActions(
-    record
+    record,
+    showDecisionButtons
 ) {
 
     const container =
@@ -930,115 +2209,143 @@ function renderSupervisorActions(
             "supervisorLNAActions"
         );
 
-
     if (!container) {
+        return;
+    }
+
+
+    if (!showDecisionButtons) {
+
+        container.innerHTML = `
+            <div class="supervisor-readonly-panel">
+
+                <div class="supervisor-readonly-icon">
+                    👁
+                </div>
+
+                <div class="supervisor-readonly-content">
+
+                    <strong>
+                        Read-Only Personnel LNA
+                    </strong>
+
+                    <span>
+                        This is the employee's submitted LNA.
+                        No editing is permitted in this view.
+                    </span>
+
+                </div>
+
+            </div>
+        `;
 
         return;
-
     }
 
 
     const status =
-        normalizeStatus(
-            record.status
-        );
+        normalizeStatus(record.status);
 
 
-    /* ======================================================
-       FOR COMPLETION
-       ------------------------------------------------------
-       Employee still needs to complete LNA.
-       Supervisor does not validate yet.
-    ====================================================== */
-
-    if (
-        status ===
-        "for completion"
-    ) {
+    if (status === "for completion") {
 
         container.innerHTML = `
+            <div class="supervisor-readonly-panel warning">
 
-            <div class="alert alert-warning">
+                <div class="supervisor-readonly-icon">
+                    ⚠
+                </div>
 
-                <strong>For Completion</strong>
+                <div class="supervisor-readonly-content">
 
-                <div>
-                    The employee has not yet completed
-                    the required LNA information.
+                    <strong>
+                        LNA For Completion
+                    </strong>
+
+                    <span>
+                        The employee has not completed the
+                        required LNA information.
+                    </span>
+
                 </div>
 
             </div>
-
         `;
 
         return;
-
     }
 
 
-    /* ======================================================
-       VALIDATED
-    ====================================================== */
-
     if (
-        status ===
-            "validated" ||
-        status ===
-            "approved"
+        status === "validated" ||
+        status === "approved"
     ) {
 
         container.innerHTML = `
+            <div class="supervisor-readonly-panel success">
 
-            <div class="alert alert-success">
+                <div class="supervisor-readonly-icon">
+                    ✓
+                </div>
 
-                <strong>LNA Validated</strong>
+                <div class="supervisor-readonly-content">
 
-                <div>
-                    This LNA has already been validated
-                    by the supervisor.
+                    <strong>
+                        LNA Validated
+                    </strong>
+
+                    <span>
+                        This LNA has already been validated
+                        by the supervisor.
+                    </span>
+
                 </div>
 
             </div>
-
         `;
 
         return;
-
     }
 
-
-    /* ======================================================
-       FOR REVIEW / FOR REVISION
-    ====================================================== */
 
     container.innerHTML = `
+        <div class="supervisor-review-panel">
 
-        <div class="supervisor-lna-actions">
+            <div class="supervisor-review-heading">
 
-            <button
-                type="button"
-                class="btn btn-success"
-                onclick="supervisorValidateLNA('${escapeAttribute(
-                    record.employeeID
-                )}')"
-            >
-                Validate LNA
-            </button>
+                <strong>
+                    Supervisor Decision
+                </strong>
 
-            <button
-                type="button"
-                class="btn btn-warning"
-                onclick="supervisorReturnLNA('${escapeAttribute(
-                    record.employeeID
-                )}')"
-            >
-                Return for Revision
-            </button>
+                <span>
+                    Review the competency information and
+                    complete the required Supervisor Assessment.
+                </span>
+
+            </div>
+
+            <div class="supervisor-lna-actions">
+
+                <button
+                    type="button"
+                    class="btn btn-success supervisor-action-btn"
+                    onclick="supervisorValidateLNA('${escapeAttribute(record.employeeID)}')"
+                >
+                    ✓ Validate LNA
+                </button>
+
+                <button
+                    type="button"
+                    class="btn btn-warning supervisor-action-btn"
+                    onclick="supervisorReturnLNA('${escapeAttribute(record.employeeID)}')"
+                >
+                    ↩ Return for Completion / Revision
+                </button>
+
+            </div>
 
         </div>
-
     `;
-
 }
 
 
@@ -1046,91 +2353,62 @@ function renderSupervisorActions(
    VALIDATE LNA
 ========================================================== */
 
-async function supervisorValidateLNA(
-    employeeID
-) {
+async function supervisorValidateLNA(employeeID) {
 
     if (!employeeID) {
-
         return;
-
     }
 
-
-    const confirmed =
-        window.confirm(
+    if (
+        !window.confirm(
             "Are you sure you want to validate this LNA?"
-        );
-
-
-    if (!confirmed) {
-
+        )
+    ) {
         return;
-
     }
-
 
     try {
 
-        showSupervisorLoading(
-            true
-        );
-
+        showSupervisorLoading(true);
 
         const response =
             await API.post({
-
-                action:
-                    "supervisorValidateLNA",
-
-                employeeID:
-                    employeeID
-
+                action: "supervisorValidateLNA",
+                employeeID: employeeID
             });
-
-
-        console.log(
-            "Validate LNA response:",
-            response
-        );
-
 
         if (
             !response ||
             response.success !== true
         ) {
-
             throw new Error(
-                response &&
-                response.message
-                    ? response.message
-                    : "Unable to validate LNA."
+                response?.message ||
+                "Unable to validate LNA."
             );
-
         }
-
 
         showSupervisorMessage(
             "LNA successfully validated.",
             "success"
         );
 
-
         await loadSupervisorPersonnel();
 
+        if (
+            SUPERVISOR.currentView ===
+            "validation"
+        ) {
+            renderValidationView();
+        }
 
-        await openLNA(
-            employeeID
-        );
-
+        await openLNA(employeeID);
 
     } catch (error) {
 
         console.error(
-            "supervisorValidateLNA error:",
+            "supervisorValidateLNA:",
             error
         );
-
 
         showSupervisorMessage(
             error.message ||
@@ -1138,142 +2416,95 @@ async function supervisorValidateLNA(
             "error"
         );
 
-
     } finally {
 
-        showSupervisorLoading(
-            false
-        );
-
+        showSupervisorLoading(false);
     }
-
 }
 
 
 /* ==========================================================
-   RETURN LNA FOR REVISION
+   RETURN LNA
 ========================================================== */
 
-async function supervisorReturnLNA(
-    employeeID
-) {
+async function supervisorReturnLNA(employeeID) {
 
     if (!employeeID) {
-
         return;
-
     }
-
 
     const reason =
         window.prompt(
-            "Please enter the reason for returning this LNA for revision:"
+            "Please provide the reason for returning this LNA for completion/revision:"
         );
 
-
-    if (
-        reason === null
-    ) {
-
+    if (reason === null) {
         return;
-
     }
 
+    if (!String(reason).trim()) {
 
-    if (
-        !reason.trim()
-    ) {
-
-        showSupervisorMessage(
-            "Revision reason is required.",
-            "error"
+        alert(
+            "Revision reason is required."
         );
 
         return;
-
     }
-
 
     try {
 
-        showSupervisorLoading(
-            true
-        );
-
+        showSupervisorLoading(true);
 
         const response =
             await API.post({
-
-                action:
-                    "supervisorReturnLNA",
-
-                employeeID:
-                    employeeID,
-
-                reason:
-                    reason.trim()
-
+                action: "supervisorReturnLNA",
+                employeeID: employeeID,
+                reason: String(reason).trim()
             });
-
-
-        console.log(
-            "Return LNA response:",
-            response
-        );
-
 
         if (
             !response ||
             response.success !== true
         ) {
-
             throw new Error(
-                response &&
-                response.message
-                    ? response.message
-                    : "Unable to return LNA for revision."
+                response?.message ||
+                "Unable to return LNA."
             );
-
         }
 
-
         showSupervisorMessage(
-            "LNA returned for revision.",
+            "LNA returned for completion/revision.",
             "success"
         );
 
-
         await loadSupervisorPersonnel();
 
+        if (
+            SUPERVISOR.currentView ===
+            "validation"
+        ) {
+            renderValidationView();
+        }
 
-        await openLNA(
-            employeeID
-        );
-
+        await openLNA(employeeID);
 
     } catch (error) {
 
         console.error(
-            "supervisorReturnLNA error:",
+            "supervisorReturnLNA:",
             error
         );
 
-
         showSupervisorMessage(
             error.message ||
-            "Unable to return LNA for revision.",
+            "Unable to return LNA.",
             "error"
         );
 
-
     } finally {
 
-        showSupervisorLoading(
-            false
-        );
-
+        showSupervisorLoading(false);
     }
-
 }
 
 
@@ -1281,727 +2512,923 @@ async function supervisorReturnLNA(
    TRAINING HISTORY
 ========================================================== */
 
-async function loadSupervisorTrainingHistory(
-    employeeID
-) {
+async function loadSupervisorTrainingHistory(employeeID) {
 
     const container =
         document.getElementById(
             "trainingHistory"
         );
 
-
     if (!container) {
-
         return;
-
     }
-
 
     try {
 
-        container.innerHTML =
-            `<div>Loading training history...</div>`;
-
-
         const response =
             await API.post({
-
-                action:
-                    "getTrainingRecords",
-
-                employeeID:
-                    employeeID
-
+                action: "getTrainingRecords",
+                employeeID: employeeID
             });
-
 
         if (
             !response ||
             response.success !== true
         ) {
-
             throw new Error(
-                response &&
-                response.message
-                    ? response.message
-                    : "Unable to load training history."
+                response?.message ||
+                "Unable to load training history."
             );
-
         }
 
-
         const records =
-            Array.isArray(
-                response.records
-            )
+            Array.isArray(response.records)
                 ? response.records
                 : [];
 
-
-        if (
-            records.length === 0
-        ) {
+        if (!records.length) {
 
             container.innerHTML = `
-
                 <div class="empty-state">
-
                     No training records found.
-
                 </div>
-
             `;
 
             return;
-
         }
 
-
         container.innerHTML = `
+            <div class="training-history-table-wrap">
 
-            <div class="table-responsive">
-
-                <table class="table">
+                <table class="data-table">
 
                     <thead>
-
                         <tr>
-
                             <th>Training</th>
-
                             <th>Start Date</th>
-
                             <th>End Date</th>
-
                             <th>Hours</th>
-
                         </tr>
-
                     </thead>
 
                     <tbody>
 
-                        ${records
-                            .map(
-                                function (record) {
+                        ${records.map(function(record) {
 
-                                    return `
+                            return `
+                                <tr>
 
-                                        <tr>
+                                    <td>
+                                        ${escapeHTML(
+                                            record.trainingTitle ||
+                                            record.title ||
+                                            record.TRAINING_TITLE ||
+                                            "-"
+                                        )}
+                                    </td>
 
-                                            <td>
-                                                ${escapeHTML(
-                                                    record.trainingTitle ||
-                                                    record.title ||
-                                                    "-"
-                                                )}
-                                            </td>
+                                    <td>
+                                        ${formatDate(
+                                            record.startDate ||
+                                            record.START_DATE
+                                        )}
+                                    </td>
 
-                                            <td>
-                                                ${formatDate(
-                                                    record.startDate
-                                                )}
-                                            </td>
+                                    <td>
+                                        ${formatDate(
+                                            record.endDate ||
+                                            record.END_DATE
+                                        )}
+                                    </td>
 
-                                            <td>
-                                                ${formatDate(
-                                                    record.endDate
-                                                )}
-                                            </td>
+                                    <td>
+                                        ${formatNumber(
+                                            record.totalHours ||
+                                            record.hours ||
+                                            record.TOTAL_HOURS ||
+                                            0
+                                        )}
+                                    </td>
 
-                                            <td>
-                                                ${escapeHTML(
-                                                    record.totalHours ||
-                                                    "-"
-                                                )}
-                                            </td>
+                                </tr>
+                            `;
 
-                                        </tr>
-
-                                    `;
-
-                                }
-                            )
-                            .join("")}
+                        }).join("")}
 
                     </tbody>
 
                 </table>
 
             </div>
-
         `;
-
 
     } catch (error) {
 
         console.error(
-            "loadSupervisorTrainingHistory error:",
+            "loadSupervisorTrainingHistory:",
             error
         );
 
-
         container.innerHTML = `
-
             <div class="empty-state">
 
                 Unable to load training history.
 
+                <br>
+
+                <small>
+                    ${escapeHTML(
+                        error.message ||
+                        "Please try again."
+                    )}
+                </small>
+
             </div>
-
         `;
-
     }
-
 }
 
 
 /* ==========================================================
-   SHOW LNA SECTION
+   EMPTY LNA
 ========================================================== */
 
-function showLNASection() {
+function showLNAEmptyState(employeeID) {
 
-    const section =
-        document.getElementById(
-            "lnaSection"
-        );
+    setHTML(
+        "lnaDetails",
+        `
+            <div class="empty-state">
 
+                No completed LNA submission was found
+                for Employee ID
 
-    if (section) {
+                <strong>
+                    ${escapeHTML(employeeID)}
+                </strong>.
 
-        section.style.display =
-            "";
+                <br><br>
 
-        section.scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-        });
+                The employee still needs to complete
+                and submit the LNA.
 
-    }
+            </div>
+        `
+    );
 
+    setHTML(
+        "supervisorLNAActions",
+        `
+            <div class="supervisor-lna-action-panel">
+
+                <div class="supervisor-readonly-notice">
+
+                    <strong>
+                        For Completion
+                    </strong>
+
+                    <span>
+                        No LNA submission is currently available
+                        for supervisor validation.
+                    </span>
+
+                </div>
+
+            </div>
+        `
+    );
 }
 
 
 /* ==========================================================
-   SHOW EMPTY LNA
+   VALIDATION LIST
 ========================================================== */
 
-function showLNAEmptyState(
-    employeeID
-) {
+function renderValidationView() {
 
     const container =
         document.getElementById(
-            "lnaDetails"
+            "validationPersonnelContainer"
         );
 
-
-    if (container) {
-
-        container.innerHTML = `
-
-            <div class="empty-state">
-
-                No LNA submission found for Employee ID
-                ${escapeHTML(employeeID)}.
-
-            </div>
-
-        `;
-
+    if (!container) {
+        return;
     }
 
+    const records =
+        SUPERVISOR.personnel.filter(function(employee) {
 
-    setText(
-        "lnaEmployeeID",
-        employeeID
-    );
+            const status =
+                normalizeStatus(
+                    employee.lnaStatus
+                );
+
+            return (
+                status === "for review" ||
+                status === "for revision"
+            );
+        });
+
+    if (!records.length) {
+
+        container.innerHTML = `
+            <div class="empty-state">
+                No personnel LNA submissions are
+                currently awaiting validation.
+            </div>
+        `;
+
+        return;
+    }
+
+    container.innerHTML = `
+        <table class="data-table">
+
+            <thead>
+                <tr>
+                    <th>Employee ID</th>
+                    <th>Employee</th>
+                    <th>Position</th>
+                    <th>LNA Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                ${records.map(function(employee) {
+
+                    return `
+                        <tr>
+
+                            <td>
+                                ${escapeHTML(
+                                    employee.employeeID || "-"
+                                )}
+                            </td>
+
+                            <td>
+                                ${escapeHTML(
+                                    employee.name || "-"
+                                )}
+                            </td>
+
+                            <td>
+                                ${escapeHTML(
+                                    employee.position || "-"
+                                )}
+                            </td>
+
+                            <td>
+                                ${getStatusBadge(
+                                    employee.lnaStatus
+                                )}
+                            </td>
+
+                            <td>
+
+                                <button
+                                    type="button"
+                                    class="btn btn-sm btn-primary"
+                                    onclick="openValidationReview('${escapeAttribute(employee.employeeID)}')"
+                                >
+                                    Review LNA
+                                </button>
+
+                            </td>
+
+                        </tr>
+                    `;
+
+                }).join("")}
+
+            </tbody>
+
+        </table>
+    `;
+}
 
 
-    setHTML(
-        "lnaStatus",
-        getStatusBadge(
-            "No LNA"
-        )
-    );
+async function openValidationReview(employeeID) {
 
+    if (!employeeID) {
+        return;
+    }
 
-    showLNASection();
+    SUPERVISOR.currentView =
+        "validation";
 
+    await openLNA(employeeID);
 }
 
 
 /* ==========================================================
-   FIND PERSONNEL
+   INTERVENTIONS
 ========================================================== */
 
-function findPersonnel(
-    employeeID
-) {
+function renderInterventionsView() {
 
-    return SUPERVISOR.personnel.find(
-        employee =>
-            String(
-                employee.employeeID
-            ) ===
-            String(
-                employeeID
-            )
-    );
-
-}
-
-
-/* ==========================================================
-   STATUS BADGE
-========================================================== */
-
-function getStatusBadge(
-    status
-) {
-
-    const normalized =
-        normalizeStatus(
-            status
+    const container =
+        document.getElementById(
+            "interventionsContent"
         );
 
+    if (!container) {
+        return;
+    }
+
+    container.innerHTML = `
+        <div class="empty-state">
+
+            <h3>
+                Learning Interventions
+            </h3>
+
+            <p>
+                Validated competency gaps and recommended
+                learning interventions will appear here.
+            </p>
+
+        </div>
+    `;
+}
+
+
+/* ==========================================================
+   OWN EMPLOYEE SUMMARY
+========================================================== */
+
+async function loadOwnEmployeeSummary() {
+
+    try {
+
+        const trainingResponse =
+            await API.post({
+                action: "getTrainingRecords",
+                employeeID: SUPERVISOR.employeeID
+            });
+
+        const records =
+            trainingResponse?.success === true &&
+            Array.isArray(trainingResponse.records)
+                ? trainingResponse.records
+                : [];
+
+        const totalHours =
+            records.reduce(function(total, record) {
+
+                return total +
+                    Number(
+                        record.totalHours ||
+                        record.hours ||
+                        record.TOTAL_HOURS ||
+                        0
+                    );
+
+            }, 0);
+
+        setText(
+            "myTrainingCount",
+            records.length
+        );
+
+        setText(
+            "myLearningHours",
+            formatNumber(totalHours)
+        );
+
+        const certificateCount =
+            records.filter(function(record) {
+
+                return hasValue(
+                    record.certificate ||
+                    record.certificateProof ||
+                    record.certificateFile ||
+                    record.CERTIFICATE ||
+                    record.CERTIFICATE_PROOF ||
+                    record["CERTIFICATE / PROOF OF TRAINING"]
+                );
+
+            }).length;
+
+        setText(
+            "myCertificateCount",
+            certificateCount
+        );
+
+
+        const lnaResponse =
+            await API.post({
+                action: "getLNAByEmployeeID",
+                employeeID: SUPERVISOR.employeeID
+            });
+
+        setHTML(
+            "myLNAStatus",
+            getStatusBadge(
+                lnaResponse?.success === true &&
+                lnaResponse?.submitted === true &&
+                lnaResponse?.record
+                    ? lnaResponse.record.status
+                    : "Not Submitted"
+            )
+        );
+
+    } catch (error) {
+
+        console.warn(
+            "loadOwnEmployeeSummary:",
+            error
+        );
+
+        setText("myTrainingCount", "0");
+        setText("myLearningHours", "0");
+        setText("myCertificateCount", "0");
+
+        setHTML(
+            "myLNAStatus",
+            getStatusBadge("Unavailable")
+        );
+    }
+}
+
+
+/* ==========================================================
+   HELPERS
+========================================================== */
+
+function findPersonnel(employeeID) {
+
+    return SUPERVISOR.personnel.find(
+        function(employee) {
+
+            return String(employee.employeeID) ===
+                String(employeeID);
+
+        }
+    );
+}
+
+
+function findRawKey(raw, target) {
+
+    if (!raw || typeof raw !== "object") {
+        return "";
+    }
+
+    const targetNormalized =
+        normalizeHeader(target);
+
+    const keys =
+        Object.keys(raw);
+
+    const exact =
+        keys.find(function(key) {
+
+            return normalizeHeader(key) ===
+                targetNormalized;
+
+        });
+
+    if (exact) {
+        return exact;
+    }
+
+    const partial =
+        keys.find(function(key) {
+
+            const current =
+                normalizeHeader(key);
+
+            return (
+                current.includes(targetNormalized) ||
+                targetNormalized.includes(current)
+            );
+
+        });
+
+    return partial || "";
+}
+
+
+function getRawFieldValue(raw, target) {
+
+    const key =
+        findRawKey(raw, target);
+
+    return key
+        ? raw[key]
+        : "";
+}
+
+
+function firstAvailable() {
+
+    for (
+        let i = 0;
+        i < arguments.length;
+        i++
+    ) {
+
+        if (hasValue(arguments[i])) {
+            return arguments[i];
+        }
+    }
+
+    return "";
+}
+
+
+function isMetadataKey(key) {
+
+    const normalized =
+        normalizeHeader(key);
+
+    return [
+        "TIMESTAMP",
+        "EMAIL ADDRESS",
+        "EMPLOYEE ID",
+        "NAME",
+        "POSITION",
+        "PLACE OF ASSIGNMENT"
+    ].includes(normalized);
+}
+
+
+function isCompetencyRating(value) {
+
+    return /^\s*[1-5]\s*-\s*(Awareness|Developing|Proficient|Advanced|Expert)\s*$/i
+        .test(String(value || ""));
+}
+
+
+function getCompetencyRatingBadge(value) {
+
+    if (!hasValue(value)) {
+        return "-";
+    }
+
+    const rating =
+        getRatingNumber(value);
+
+    let className =
+        "competency-rating-badge";
+
+    if (rating === 1) {
+        className += " rating-awareness";
+    } else if (rating === 2) {
+        className += " rating-developing";
+    } else if (rating === 3) {
+        className += " rating-proficient";
+    } else if (rating === 4) {
+        className += " rating-advanced";
+    } else if (rating === 5) {
+        className += " rating-expert";
+    }
+
+    return `
+        <span class="${className}">
+            ${escapeHTML(value)}
+        </span>
+    `;
+}
+
+
+function getRatingNumber(value) {
+
+    if (!hasValue(value)) {
+        return null;
+    }
+
+    const match =
+        String(value).match(
+            /^\s*([1-5])\s*-/
+        );
+
+    return match
+        ? Number(match[1])
+        : null;
+}
+
+
+function getGapPriorityBadge(value) {
+
+    const rating =
+        getRatingNumber(value);
+
+    if (rating === null) {
+
+        return `
+            <span class="gap-priority priority-review">
+                Review
+            </span>
+        `;
+    }
+
+    if (rating <= 2) {
+
+        return `
+            <span class="gap-priority priority-high">
+                High Priority
+            </span>
+        `;
+    }
+
+    if (rating === 3) {
+
+        return `
+            <span class="gap-priority priority-development">
+                Development
+            </span>
+        `;
+    }
+
+    return `
+        <span class="gap-priority priority-monitor">
+            Monitor
+        </span>
+    `;
+}
+
+
+function splitIntoThreeParts(rows) {
+
+    if (!rows.length) {
+        return [[], [], []];
+    }
+
+    const size =
+        Math.ceil(rows.length / 3);
+
+    return [
+        rows.slice(0, size),
+        rows.slice(size, size * 2),
+        rows.slice(size * 2)
+    ];
+}
+
+
+function normalizeHeader(value) {
+
+    return String(value || "")
+        .trim()
+        .replace(/\s+/g, " ")
+        .replace(/[\u2013\u2014]/g, "-")
+        .toUpperCase();
+}
+
+
+function normalizeStatus(status) {
+
+    return String(status || "")
+        .trim()
+        .toLowerCase();
+}
+
+
+function getStatusBadge(status) {
+
+    const normalized =
+        normalizeStatus(status);
 
     let className =
         "status-badge";
 
+    if (normalized === "for completion") {
 
-    switch (normalized) {
+        className +=
+            " status-warning";
 
-        case "for completion":
+    } else if (normalized === "for review") {
 
-            className +=
-                " status-warning";
+        className +=
+            " status-info";
 
-            break;
+    } else if (normalized === "for revision") {
 
+        className +=
+            " status-danger";
 
-        case "for review":
+    } else if (
+        normalized === "validated" ||
+        normalized === "approved"
+    ) {
 
-            className +=
-                " status-info";
+        className +=
+            " status-success";
 
-            break;
+    } else {
 
-
-        case "for revision":
-
-            className +=
-                " status-danger";
-
-            break;
-
-
-        case "validated":
-
-            className +=
-                " status-success";
-
-            break;
-
-
-        case "approved":
-
-            className +=
-                " status-success";
-
-            break;
-
-
-        case "no lna":
-
-            className +=
-                " status-muted";
-
-            break;
-
-
-        default:
-
-            className +=
-                " status-muted";
-
-            break;
-
+        className +=
+            " status-muted";
     }
 
-
     return `
-
         <span class="${className}">
-
-            ${escapeHTML(
-                status ||
-                "No LNA"
-            )}
-
+            ${escapeHTML(status || "No LNA")}
         </span>
-
     `;
-
 }
 
 
-/* ==========================================================
-   NORMALIZE STATUS
-========================================================== */
-
-function normalizeStatus(
-    status
-) {
-
-    return String(
-        status || ""
-    )
-    .trim()
-    .toLowerCase();
-
-}
-
-
-/* ==========================================================
-   FORMAT LNA VALUE
-========================================================== */
-
-function formatLNAValue(
-    value
-) {
+function formatLNAValue(value) {
 
     if (
         value === null ||
         value === undefined ||
         value === ""
     ) {
-
         return "-";
-
     }
 
-
-    if (
-        Array.isArray(
-            value
-        )
-    ) {
+    if (Array.isArray(value)) {
 
         return value
-            .map(
-                item =>
-                    escapeHTML(
-                        String(
-                            item
-                        )
-                    )
-            )
-            .join(", ");
+            .map(function(item) {
 
+                return escapeHTML(
+                    String(item)
+                );
+
+            })
+            .join(", ");
     }
 
+    if (typeof value === "object") {
+
+        try {
+
+            return escapeHTML(
+                JSON.stringify(value)
+            );
+
+        } catch (error) {
+
+            return "-";
+        }
+    }
 
     return escapeHTML(
-        String(
-            value
-        )
-    )
-    .replace(
+        String(value)
+    ).replace(
         /\r?\n/g,
         "<br>"
     );
-
 }
 
 
-/* ==========================================================
-   DATE FORMAT
-========================================================== */
+function formatDate(value) {
 
-function formatDate(
-    value
-) {
-
-    if (
-        !value
-    ) {
-
+    if (!value) {
         return "-";
-
     }
-
 
     const date =
-        new Date(
-            value
-        );
+        new Date(value);
 
-
-    if (
-        Number.isNaN(
-            date.getTime()
-        )
-    ) {
+    if (Number.isNaN(date.getTime())) {
 
         return escapeHTML(
-            String(
-                value
-            )
+            String(value)
         );
-
     }
-
 
     return date.toLocaleDateString(
         "en-PH",
         {
-            year:
-                "numeric",
-
-            month:
-                "short",
-
-            day:
-                "numeric"
+            year: "numeric",
+            month: "short",
+            day: "numeric"
         }
     );
-
 }
 
 
-/* ==========================================================
-   VALUE CHECK
-========================================================== */
+function formatNumber(value) {
 
-function hasValue(
-    value
-) {
+    const number =
+        Number(value);
+
+    if (Number.isNaN(number)) {
+        return "0";
+    }
+
+    return number.toLocaleString(
+        "en-PH",
+        {
+            maximumFractionDigits: 2
+        }
+    );
+}
+
+
+function hasValue(value) {
 
     if (
         value === null ||
         value === undefined
     ) {
-
         return false;
-
     }
 
-
-    if (
-        Array.isArray(
-            value
-        )
-    ) {
-
+    if (Array.isArray(value)) {
         return value.length > 0;
-
     }
 
-
-    return String(
-        value
-    ).trim() !== "";
-
+    return String(value).trim() !== "";
 }
 
 
-/* ==========================================================
-   TEXT HELPER
-========================================================== */
-
-function setText(
-    id,
-    value
-) {
+function setText(id, value) {
 
     const element =
-        document.getElementById(
-            id
-        );
-
+        document.getElementById(id);
 
     if (!element) {
-
         return;
-
     }
-
 
     element.textContent =
         value === null ||
         value === undefined
             ? ""
-            : String(
-                value
-            );
-
+            : String(value);
 }
 
 
-/* ==========================================================
-   HTML HELPER
-========================================================== */
-
-function setHTML(
-    id,
-    value
-) {
+function setHTML(id, value) {
 
     const element =
-        document.getElementById(
-            id
-        );
-
+        document.getElementById(id);
 
     if (!element) {
-
         return;
-
     }
-
 
     element.innerHTML =
         value || "";
+}
 
+
+function escapeHTML(value) {
+
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+function escapeAttribute(value) {
+
+    return String(value ?? "")
+        .replace(/\\/g, "\\\\")
+        .replace(/'/g, "\\'");
 }
 
 
 /* ==========================================================
-   ESCAPE HTML
+   LOADING / MESSAGE
 ========================================================== */
 
-function escapeHTML(
-    value
-) {
-
-    return String(
-        value ?? ""
-    )
-    .replace(
-        /&/g,
-        "&amp;"
-    )
-    .replace(
-        /</g,
-        "&lt;"
-    )
-    .replace(
-        />/g,
-        "&gt;"
-    )
-    .replace(
-        /"/g,
-        "&quot;"
-    )
-    .replace(
-        /'/g,
-        "&#039;"
-    );
-
-}
-
-
-/* ==========================================================
-   ESCAPE ATTRIBUTE
-========================================================== */
-
-function escapeAttribute(
-    value
-) {
-
-    return String(
-        value ?? ""
-    )
-    .replace(
-        /\\/g,
-        "\\\\"
-    )
-    .replace(
-        /'/g,
-        "\\'"
-    );
-
-}
-
-
-/* ==========================================================
-   LOADING
-========================================================== */
-
-function showSupervisorLoading(
-    visible
-) {
+function showSupervisorLoading(visible) {
 
     const element =
         document.getElementById(
             "supervisorLoading"
         );
 
-
     if (!element) {
-
         return;
-
     }
 
-
     element.style.display =
-        visible
-            ? ""
-            : "none";
-
+        visible ? "" : "none";
 }
 
 
-/* ==========================================================
-   MESSAGE
-========================================================== */
-
-function showSupervisorMessage(
-    message,
-    type
-) {
+function showSupervisorMessage(message, type) {
 
     const element =
         document.getElementById(
             "supervisorMessage"
         );
 
-
     if (!element) {
 
-        /*
-         * Fallback for existing pages
-         * without the message container.
-         */
-
-        if (
-            type === "error"
-        ) {
-
-            console.error(
-                message
-            );
-
+        if (type === "error") {
+            console.error(message);
         } else {
-
-            console.log(
-                message
-            );
-
+            console.log(message);
         }
 
         return;
-
     }
-
 
     element.textContent =
         message || "";
-
 
     element.className =
         "supervisor-message " +
@@ -2011,27 +3438,18 @@ function showSupervisorMessage(
                 : "success"
         );
 
-
     element.style.display =
-        message
-            ? ""
-            : "none";
-
+        message ? "" : "none";
 
     if (message) {
 
-        setTimeout(
-            function () {
+        setTimeout(function() {
 
-                element.style.display =
-                    "none";
+            element.style.display =
+                "none";
 
-            },
-            5000
-        );
-
+        }, 5000);
     }
-
 }
 
 
@@ -2044,46 +3462,53 @@ function logoutSupervisor() {
     try {
 
         if (
-            typeof Session.logout ===
-            "function"
+            typeof Session !== "undefined" &&
+            typeof Session.clear === "function"
         ) {
-
-            Session.logout();
-
+            Session.clear();
         }
 
     } catch (error) {
 
         console.warn(
-            "Session logout error:",
+            "Session clear error:",
             error
         );
-
     }
-
 
     try {
-
-        localStorage.removeItem(
-            CONFIG.SESSION.STORAGE_KEY
-        );
-
-    } catch (error) {
-
-        console.warn(
-            "Unable to clear session:",
-            error
-        );
-
-    }
-
-
-    localStorage.removeItem(
-        "ldimsUser"
-    );
-
+        localStorage.removeItem("ldimsUser");
+    } catch (error) {}
 
     window.location.href =
         "../index.html";
-
 }
+
+
+/* ==========================================================
+   GLOBAL FUNCTIONS
+========================================================== */
+
+window.openLNA =
+    openLNA;
+
+window.openValidationReview =
+    openValidationReview;
+
+window.openLNAModal =
+    openLNAModal;
+
+window.closeLNAModal =
+    closeLNAModal;
+
+window.supervisorValidateLNA =
+    supervisorValidateLNA;
+
+window.supervisorReturnLNA =
+    supervisorReturnLNA;
+
+window.logoutSupervisor =
+    logoutSupervisor;
+
+window.navigateToView =
+    navigateToView;

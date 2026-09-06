@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta name="viewport"
@@ -16,6 +17,121 @@
     <link
         rel="stylesheet"
         href="../assets/css/style.css">
+
+    <style>
+
+        .lna-action-group {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .lna-action-group .btn {
+            white-space: nowrap;
+        }
+
+        .lna-readonly-section {
+            border: 1px solid #e4dfea;
+            border-radius: 10px;
+            margin-bottom: 14px;
+            overflow: hidden;
+            background: #fff;
+        }
+
+        .lna-readonly-section-title {
+            background: #f7f3fa;
+            border-bottom: 1px solid #e4dfea;
+            padding: 10px 14px;
+            font-weight: 700;
+            color: #4a148c;
+        }
+
+        .lna-question-row {
+            display: grid;
+            grid-template-columns: 38% 62%;
+            border-bottom: 1px solid #eeeeee;
+        }
+
+        .lna-question-row:last-child {
+            border-bottom: 0;
+        }
+
+        .lna-question {
+            padding: 10px 14px;
+            font-weight: 600;
+            color: #555;
+            background: #fafafa;
+        }
+
+        .lna-answer {
+            padding: 10px 14px;
+            color: #222;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .lna-answer.empty {
+            color: #999;
+            font-style: italic;
+        }
+
+        .lna-employee-card {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 18px;
+            background: #fff;
+        }
+
+        .lna-employee-label {
+            font-size: 11px;
+            color: #777;
+            text-transform: uppercase;
+            letter-spacing: .3px;
+        }
+
+        .lna-employee-value {
+            font-weight: 600;
+        }
+
+        .lna-status {
+            font-weight: 600;
+        }
+
+        .modal-xl {
+            max-width: 1180px;
+        }
+
+        @media print {
+
+            body * {
+                visibility: hidden !important;
+            }
+
+            #lnaPrintArea,
+            #lnaPrintArea * {
+                visibility: visible !important;
+            }
+
+            #lnaPrintArea {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+
+            .lna-print-hide {
+                display: none !important;
+            }
+
+            .lna-readonly-section {
+                break-inside: avoid;
+            }
+
+        }
+
+    </style>
+
 </head>
 
 
@@ -34,7 +150,9 @@
 
     <div>
 
-        <span class="me-4">🔔</span>
+        <span class="me-4">
+            🔔
+        </span>
 
         <strong id="headerRole">
             LDD Personnel
@@ -67,7 +185,8 @@
         </li>
 
         <li>
-            <a href="lna-monitoring.html">
+            <a href="lna-monitoring.html"
+               class="active">
                 📋 LNA Monitoring
             </a>
         </li>
@@ -227,8 +346,6 @@
         <div class="row g-2 mb-3">
 
 
-            <!-- SEARCH -->
-
             <div class="col-md-5">
 
                 <div class="input-group">
@@ -248,8 +365,6 @@
             </div>
 
 
-
-            <!-- SORT -->
 
             <div class="col-md-4">
 
@@ -286,8 +401,6 @@
             </div>
 
 
-
-            <!-- EXPORT -->
 
             <div class="col-md-3">
 
@@ -344,6 +457,10 @@
                             Submission Date
                         </th>
 
+                        <th>
+                            Action
+                        </th>
+
                     </tr>
 
                 </thead>
@@ -354,7 +471,7 @@
                     <tr>
 
                         <td
-                            colspan="6"
+                            colspan="7"
                             class="text-center text-muted">
 
                             Loading LNA records...
@@ -377,23 +494,132 @@
 
 
 <!-- ==========================================================
-     FOOTER
+     LNA VIEW MODAL
 ========================================================== -->
 
-<footer class="footer">
+<div
+    class="modal fade"
+    id="lnaViewModal"
+    tabindex="-1"
+    aria-hidden="true">
 
-    © 2026 National Bureau of Investigation
+    <div
+        class="modal-dialog modal-xl modal-dialog-scrollable">
 
-    <br>
+        <div class="modal-content">
 
-    Learning & Development Division
 
-</footer>
+            <!-- HEADER -->
+
+            <div class="modal-header">
+
+                <div>
+
+                    <h5
+                        class="modal-title fw-bold"
+                        id="lnaModalTitle">
+
+                        Personnel Learning Needs Analysis
+
+                    </h5>
+
+                    <div
+                        class="small text-muted"
+                        id="lnaModalSubtitle">
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+
+
+            <!-- BODY -->
+
+            <div
+                class="modal-body"
+                id="lnaPrintArea">
+
+                <div
+                    id="lnaModalLoading"
+                    class="text-center py-5">
+
+                    <div
+                        class="spinner-border"
+                        role="status">
+                    </div>
+
+                    <div class="text-muted mt-2">
+                        Loading LNA...
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="lnaModalContent"
+                    class="d-none">
+
+                </div>
+
+            </div>
+
+
+
+            <!-- FOOTER -->
+
+            <div
+                class="modal-footer lna-print-hide">
+
+                <button
+                    type="button"
+                    id="savePdfButton"
+                    class="btn btn-primary">
+
+                    💾 Save as PDF
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal">
+
+                    Close
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
 
 
 
 <!-- ==========================================================
-     JAVASCRIPT
+     BOOTSTRAP
+========================================================== -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
+
+<!-- ==========================================================
+     LDIMS CORE
 ========================================================== -->
 
 <script src="../assets/js/config.js"></script>
@@ -405,12 +631,19 @@
 <script src="../assets/js/utils.js"></script>
 
 
+
 <script>
 
 "use strict";
 
 
+/* ==========================================================
+   STATE
+========================================================== */
+
 let lnaResults = [];
+
+let currentLNARecord = null;
 
 
 
@@ -644,7 +877,7 @@ async function loadLNAMonitoring() {
 
         tableBody.innerHTML = `
             <tr>
-                <td colspan="6"
+                <td colspan="7"
                     class="text-center text-danger">
                     Unable to load LNA monitoring data.
                 </td>
@@ -684,7 +917,7 @@ function renderLNATable(results) {
 
         tableBody.innerHTML = `
             <tr>
-                <td colspan="6"
+                <td colspan="7"
                     class="text-center text-muted">
                     No matching employee records found.
                 </td>
@@ -713,32 +946,10 @@ function renderLNATable(results) {
                 "-";
 
 
-            const lastName =
-                employee.lastName ||
-                employee.LastName ||
-                "";
-
-
-            const firstName =
-                employee.firstName ||
-                employee.FirstName ||
-                "";
-
-
-            const middleName =
-                employee.middleName ||
-                employee.MiddleName ||
-                "";
-
-
             const fullName =
-                [
-                    lastName,
-                    firstName,
-                    middleName
-                ]
-                .filter(Boolean)
-                .join(", ") ||
+                getEmployeeName(
+                    employee
+                ) ||
                 "-";
 
 
@@ -770,20 +981,18 @@ function renderLNATable(results) {
                     : "";
 
 
-            const statusHTML =
+            const status =
                 submitted
+                    ? getLNAStatus(
+                        lna.record?.status
+                    )
+                    : "Pending";
 
-                    ? `
-                        <span class="badge bg-success">
-                            Submitted
-                        </span>
-                      `
 
-                    : `
-                        <span class="badge bg-warning text-dark">
-                            Pending
-                        </span>
-                      `;
+            const statusHTML =
+                getStatusBadge(
+                    status
+                );
 
 
             const dateText =
@@ -824,6 +1033,39 @@ function renderLNATable(results) {
                     ${escapeHTML(dateText)}
                 </td>
 
+                <td>
+
+                    ${
+                        submitted
+
+                            ? `
+
+                                <div class="lna-action-group">
+
+                                    <button
+                                        type="button"
+                                        class="btn btn-sm btn-outline-primary"
+                                        onclick="viewLNA('${escapeJS(employeeID)}')">
+
+                                        👁 View
+
+                                    </button>
+
+                         </div>
+
+                              `
+
+                            : `
+
+                                <span class="text-muted small">
+                                    No LNA submitted
+                                </span>
+
+                              `
+                    }
+
+                </td>
+
             `;
 
 
@@ -837,11 +1079,898 @@ function renderLNATable(results) {
 
 
 /* ==========================================================
+   LNA STATUS
+========================================================== */
+
+function getLNAStatus(status) {
+
+    const value =
+        String(
+            status ||
+            ""
+        )
+        .trim();
+
+
+    if (!value) {
+
+        return "Submitted";
+
+    }
+
+
+    return value;
+
+}
+
+
+
+function getStatusBadge(status) {
+
+    const normalized =
+        String(
+            status ||
+            ""
+        )
+        .trim()
+        .toLowerCase();
+
+
+    if (
+        normalized === "for revision" ||
+        normalized === "revision" ||
+        normalized === "for completion"
+    ) {
+
+        return `
+            <span class="badge bg-danger">
+                ${escapeHTML(status)}
+            </span>
+        `;
+
+    }
+
+
+    if (
+        normalized === "validated" ||
+        normalized === "approved"
+    ) {
+
+        return `
+            <span class="badge bg-success">
+                ${escapeHTML(status)}
+            </span>
+        `;
+
+    }
+
+
+    if (
+        normalized === "for review"
+    ) {
+
+        return `
+            <span class="badge bg-warning text-dark">
+                ${escapeHTML(status)}
+            </span>
+        `;
+
+    }
+
+
+    return `
+        <span class="badge bg-success">
+            ${escapeHTML(status || "Submitted")}
+        </span>
+    `;
+
+}
+
+
+
+/* ==========================================================
+   VIEW LNA
+========================================================== */
+
+async function viewLNA(
+    employeeID
+) {
+
+    const modalElement =
+        document.getElementById(
+            "lnaViewModal"
+        );
+
+
+    const loading =
+        document.getElementById(
+            "lnaModalLoading"
+        );
+
+
+    const content =
+        document.getElementById(
+            "lnaModalContent"
+        );
+
+
+    const subtitle =
+        document.getElementById(
+            "lnaModalSubtitle"
+        );
+
+
+    currentLNARecord = null;
+
+
+    loading.classList.remove(
+        "d-none"
+    );
+
+
+    content.classList.add(
+        "d-none"
+    );
+
+
+    content.innerHTML = "";
+
+
+    subtitle.textContent =
+        "Loading employee LNA...";
+
+
+    const modal =
+        bootstrap.Modal.getOrCreateInstance(
+            modalElement
+        );
+
+
+    modal.show();
+
+
+    try {
+
+        const response =
+            await API.post({
+
+                action:
+                    "getLNAByEmployeeID",
+
+                employeeID:
+                    String(
+                        employeeID
+                    ).trim()
+
+            });
+
+
+        console.log(
+            "LDD View LNA Response:",
+            response
+        );
+
+
+        if (
+            !response ||
+            response.success !== true ||
+            response.submitted !== true ||
+            !response.record
+        ) {
+
+            throw new Error(
+                response?.message ||
+                "No submitted LNA found for this employee."
+            );
+
+        }
+
+
+        currentLNARecord =
+            response.record;
+
+
+        const employee =
+            findEmployee(
+                employeeID
+            );
+
+
+        renderLNADetail(
+            employee,
+            response.record
+        );
+
+
+        loading.classList.add(
+            "d-none"
+        );
+
+
+        content.classList.remove(
+            "d-none"
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "View LNA Error:",
+            error
+        );
+
+
+        loading.classList.add(
+            "d-none"
+        );
+
+
+        content.classList.remove(
+            "d-none"
+        );
+
+
+        content.innerHTML = `
+
+            <div class="alert alert-danger">
+
+                <strong>
+                    Unable to load LNA.
+                </strong>
+
+                <div class="mt-1">
+                    ${escapeHTML(
+                        error.message ||
+                        "Unknown error."
+                    )}
+                </div>
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+
+/* ==========================================================
+   RENDER LNA DETAIL
+========================================================== */
+
+function renderLNADetail(
+    employee,
+    record
+) {
+
+    const content =
+        document.getElementById(
+            "lnaModalContent"
+        );
+
+
+    const name =
+        employee
+            ? getEmployeeName(employee)
+            : (
+                record.name ||
+                "-"
+            );
+
+
+    const employeeID =
+        employee
+            ? (
+                employee.employeeID ||
+                employee.EmployeeID ||
+                "-"
+              )
+            : (
+                record.employeeID ||
+                "-"
+              );
+
+
+    const position =
+        employee
+            ? (
+                employee.position ||
+                employee.Position ||
+                "-"
+              )
+            : (
+                record.position ||
+                "-"
+              );
+
+
+    const assignment =
+        employee
+            ? (
+                employee.placeOfAssignment ||
+                employee.PlaceOfAssignment ||
+                employee.assignment ||
+                "-"
+              )
+            : (
+                record.placeOfAssignment ||
+                "-"
+              );
+
+
+    const status =
+        record.status ||
+        "Submitted";
+
+
+    const timestamp =
+        record.timestamp ||
+        "";
+
+
+    document.getElementById(
+        "lnaModalSubtitle"
+    ).textContent =
+        `${name} • Employee ID ${employeeID}`;
+
+
+    const sections = [];
+
+
+    /* ------------------------------------------------------
+       EMPLOYEE INFORMATION
+    ------------------------------------------------------ */
+
+    sections.push({
+
+        title:
+            "Employee Information",
+
+        rows: [
+
+            [
+                "Employee ID",
+                employeeID
+            ],
+
+            [
+                "Name",
+                name
+            ],
+
+            [
+                "Position",
+                position
+            ],
+
+            [
+                "Place of Assignment",
+                assignment
+            ],
+
+            [
+                "LNA Status",
+                status
+            ],
+
+            [
+                "Submission Date",
+                timestamp
+                    ? formatDate(timestamp)
+                    : "-"
+            ]
+
+        ]
+
+    });
+
+
+
+    /* ------------------------------------------------------
+       CURRENT LNA ANSWERS
+    ------------------------------------------------------ */
+
+    const answerFields = [
+
+        [
+            "Functional Area",
+            "functionalArea"
+        ],
+
+        [
+            "Development Priority",
+            "developmentPriority"
+        ],
+
+        [
+            "Current Competencies",
+            "currentCompetencies"
+        ],
+
+        [
+            "Future Competency Need",
+            "futureNeeds"
+        ],
+
+        [
+            "Emerging Skills",
+            "emergingSkills"
+        ],
+
+        [
+            "Proposed Learning / Training",
+            "proposedLearning"
+        ],
+
+        [
+            "Learning Method",
+            "learningMethod"
+        ],
+
+        [
+            "Current Responsibilities",
+            "currentResponsibilities"
+        ],
+
+        [
+            "Technical Responsibility",
+            "technicalResponsibility"
+        ],
+
+        [
+            "Duty Changes",
+            "dutyChanges"
+        ],
+
+        [
+            "Participation Barriers",
+            "participationBarriers"
+        ],
+
+        [
+            "Other Barriers",
+            "otherBarriers"
+        ],
+
+        [
+            "Expected Application",
+            "expectedApplication"
+        ],
+
+        [
+            "Expected Improvement",
+            "expectedImprovement"
+        ],
+
+        [
+            "Organizational Support",
+            "organizationalSupport"
+        ],
+
+        [
+            "Knowledge to Share",
+            "knowledgeToShare"
+        ],
+
+        [
+            "Willing to Facilitate",
+            "willingToFacilitate"
+        ],
+
+        [
+            "Facilitation Topics",
+            "facilitationTopics"
+        ],
+
+        [
+            "Recommended Programs",
+            "recommendedPrograms"
+        ],
+
+        [
+            "Organization Comments",
+            "organizationComments"
+        ],
+
+        [
+            "Needs Comments",
+            "needsComments"
+        ],
+
+        [
+            "Revision Reason",
+            "revisionReason"
+        ],
+
+        [
+            "Completion Reason",
+            "completionReason"
+        ]
+
+    ];
+
+
+    const rows = [];
+
+
+    answerFields.forEach(
+        field => {
+
+            const label =
+                field[0];
+
+
+            const key =
+                field[1];
+
+
+            const value =
+                record[key];
+
+
+            if (
+                value !== undefined &&
+                value !== null &&
+                String(value).trim() !== ""
+            ) {
+
+                rows.push([
+                    label,
+                    value
+                ]);
+
+            }
+
+        }
+    );
+
+
+    sections.push({
+
+        title:
+            "Learning Needs Assessment",
+
+        rows:
+            rows
+
+    });
+
+
+
+    /* ------------------------------------------------------
+       RAW DATA FALLBACK
+    ------------------------------------------------------ */
+
+    /*
+     * The backend's mapped record is used first.
+     * Any additional answer fields returned by the backend
+     * are also displayed without modifying the source LNA.
+     */
+
+    const knownKeys =
+        new Set([
+
+            "rowNumber",
+            "timestamp",
+            "email",
+            "employeeID",
+            "name",
+            "position",
+            "placeOfAssignment",
+            "status",
+            "revisionReason",
+            "completionReason",
+            "developmentPriority",
+            "currentCompetencies",
+            "futureNeeds",
+            "emergingSkills",
+            "proposedLearning",
+            "learningMethod",
+            "currentResponsibilities",
+            "technicalResponsibility",
+            "dutyChanges",
+            "functionalArea",
+            "participationBarriers",
+            "otherBarriers",
+            "expectedApplication",
+            "expectedImprovement",
+            "organizationalSupport",
+            "knowledgeToShare",
+            "willingToFacilitate",
+            "facilitationTopics",
+            "recommendedPrograms",
+            "organizationComments",
+            "needsComments",
+            "raw"
+
+        ]);
+
+
+    const additionalRows = [];
+
+
+    Object.keys(record)
+        .forEach(
+            key => {
+
+                if (
+                    knownKeys.has(key)
+                ) {
+
+                    return;
+
+                }
+
+
+                const value =
+                    record[key];
+
+
+                if (
+                    value === null ||
+                    value === undefined ||
+                    String(value).trim() === ""
+                ) {
+
+                    return;
+
+                }
+
+
+                additionalRows.push([
+
+                    prettifyFieldName(
+                        key
+                    ),
+
+                    value
+
+                ]);
+
+            }
+        );
+
+
+    if (
+        additionalRows.length
+    ) {
+
+        sections.push({
+
+            title:
+                "Additional LNA Information",
+
+            rows:
+                additionalRows
+
+        });
+
+    }
+
+
+
+    /* ------------------------------------------------------
+       BUILD HTML
+    ------------------------------------------------------ */
+
+    let html = "";
+
+
+    sections.forEach(
+        section => {
+
+            if (
+                !section.rows ||
+                !section.rows.length
+            ) {
+
+                return;
+
+            }
+
+
+            html += `
+
+                <section
+                    class="lna-readonly-section">
+
+                    <div
+                        class="lna-readonly-section-title">
+
+                        ${escapeHTML(
+                            section.title
+                        )}
+
+                    </div>
+
+                    ${section.rows
+                        .map(
+                            row => {
+
+                                const value =
+                                    row[1];
+
+
+                                const empty =
+                                    value === null ||
+                                    value === undefined ||
+                                    String(
+                                        value
+                                    ).trim() === "";
+
+
+                                return `
+
+                                    <div
+                                        class="lna-question-row">
+
+                                        <div
+                                            class="lna-question">
+
+                                            ${escapeHTML(
+                                                row[0]
+                                            )}
+
+                                        </div>
+
+                                        <div
+                                            class="lna-answer ${
+                                                empty
+                                                    ? "empty"
+                                                    : ""
+                                            }">
+
+                                            ${
+                                                empty
+                                                    ? "No response"
+                                                    : escapeHTML(
+                                                        value
+                                                      )
+                                            }
+
+                                        </div>
+
+                                    </div>
+
+                                `;
+
+                            }
+                        )
+                        .join("")}
+
+                </section>
+
+            `;
+
+        }
+    );
+
+
+    if (!html) {
+
+        html = `
+
+            <div class="alert alert-info">
+
+                No LNA response data is available.
+
+            </div>
+
+        `;
+
+    }
+
+
+    content.innerHTML =
+        html;
+
+}
+
+
+
+/* ==========================================================
+   FIND EMPLOYEE
+========================================================== */
+
+function findEmployee(
+    employeeID
+) {
+
+    const target =
+        String(
+            employeeID ||
+            ""
+        ).trim();
+
+
+    const item =
+        lnaResults.find(
+            entry => {
+
+                const employee =
+                    entry.employee;
+
+
+                const id =
+                    employee.employeeID ||
+                    employee.EmployeeID ||
+                    "";
+
+
+                return String(
+                    id
+                ).trim() === target;
+
+            }
+        );
+
+
+    return item
+        ? item.employee
+        : null;
+
+}
+
+
+
+/* ==========================================================
+   PRINT LNA
+========================================================== */
+
+function printLNA(
+    employeeID
+) {
+
+    viewLNA(
+        employeeID
+    )
+    .then(
+        () => {
+
+            setTimeout(
+                function () {
+
+                    window.print();
+
+                },
+                700
+            );
+
+        }
+    );
+
+}
+
+
+
+/* ==========================================================
+   SAVE PDF BUTTON
+========================================================== */
+
+document
+    .getElementById(
+        "savePdfButton"
+    )
+    ?.addEventListener(
+        "click",
+        function () {
+
+            window.print();
+
+        }
+    );
+
+
+
+/* ==========================================================
    SEARCH
 ========================================================== */
 
 document
-    .getElementById("searchInput")
+    .getElementById(
+        "searchInput"
+    )
     ?.addEventListener(
         "input",
         function () {
@@ -935,7 +2064,9 @@ document
 ========================================================== */
 
 document
-    .getElementById("sortSelect")
+    .getElementById(
+        "sortSelect"
+    )
     ?.addEventListener(
         "change",
         function () {
@@ -1042,14 +2173,14 @@ document
                     ) {
 
                         valueA =
-                            a.lna?.submitted
-                                ? "Submitted"
-                                : "Pending";
+                            getLNAStatus(
+                                a.lna?.record?.status
+                            );
 
                         valueB =
-                            b.lna?.submitted
-                                ? "Submitted"
-                                : "Pending";
+                            getLNAStatus(
+                                b.lna?.record?.status
+                            );
 
                     }
 
@@ -1098,7 +2229,9 @@ document
 ========================================================== */
 
 document
-    .getElementById("exportButton")
+    .getElementById(
+        "exportButton"
+    )
     ?.addEventListener(
         "click",
         exportLNA
@@ -1122,12 +2255,14 @@ function exportLNA() {
 
 
     rows.push([
+
         "Employee ID",
         "Employee",
         "Position",
         "Place of Assignment",
         "LNA Status",
         "Submission Date"
+
     ]);
 
 
@@ -1169,7 +2304,9 @@ function exportLNA() {
 
             const status =
                 lna?.submitted === true
-                    ? "Submitted"
+                    ? getLNAStatus(
+                        lna.record?.status
+                    )
                     : "Pending";
 
 
@@ -1180,14 +2317,21 @@ function exportLNA() {
 
 
             rows.push([
+
                 employeeID,
+
                 name,
+
                 position,
+
                 assignment,
+
                 status,
+
                 timestamp
                     ? formatDate(timestamp)
                     : ""
+
             ]);
 
         }
@@ -1202,7 +2346,10 @@ function exportLNA() {
                         .map(
                             value =>
                                 `"${String(value)
-                                    .replace(/"/g, '""')}"`
+                                    .replace(
+                                        /"/g,
+                                        '""'
+                                    )}"`
                         )
                         .join(",")
             )
@@ -1226,7 +2373,9 @@ function exportLNA() {
 
 
     const link =
-        document.createElement("a");
+        document.createElement(
+            "a"
+        );
 
 
     link.href =
@@ -1262,7 +2411,9 @@ function exportLNA() {
    HELPERS
 ========================================================== */
 
-function getEmployeeName(employee) {
+function getEmployeeName(
+    employee
+) {
 
     const lastName =
         employee.lastName ||
@@ -1283,9 +2434,13 @@ function getEmployeeName(employee) {
 
 
     return [
+
         lastName,
+
         firstName,
+
         middleName
+
     ]
     .filter(Boolean)
     .join(", ");
@@ -1293,7 +2448,40 @@ function getEmployeeName(employee) {
 }
 
 
-function formatDate(value) {
+
+function prettifyFieldName(
+    value
+) {
+
+    return String(
+        value || ""
+    )
+    .replace(
+        /([a-z])([A-Z])/g,
+        "$1 $2"
+    )
+    .replace(
+        /[_-]+/g,
+        " "
+    )
+    .replace(
+        /\s+/g,
+        " "
+    )
+    .trim()
+    .replace(
+        /\b\w/g,
+        character =>
+            character.toUpperCase()
+    );
+
+}
+
+
+
+function formatDate(
+    value
+) {
 
     try {
 
@@ -1332,14 +2520,66 @@ function formatDate(value) {
 }
 
 
-function escapeHTML(value) {
 
-    return String(value || "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+function escapeHTML(
+    value
+) {
+
+    return String(
+        value ?? ""
+    )
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+    .replace(
+        /</g,
+        "&lt;"
+    )
+    .replace(
+        />/g,
+        "&gt;"
+    )
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
+}
+
+
+
+function escapeJS(
+    value
+) {
+
+    return String(
+        value ?? ""
+    )
+    .replace(
+        /\\/g,
+        "\\\\"
+    )
+    .replace(
+        /'/g,
+        "\\'"
+    )
+    .replace(
+        /"/g,
+        '\\"'
+    )
+    .replace(
+        /\r/g,
+        "\\r"
+    )
+    .replace(
+        /\n/g,
+        "\\n"
+    );
 
 }
 
@@ -1350,7 +2590,9 @@ function escapeHTML(value) {
 ========================================================== */
 
 document
-    .getElementById("logoutLink")
+    .getElementById(
+        "logoutLink"
+    )
     ?.addEventListener(
         "click",
         function (event) {

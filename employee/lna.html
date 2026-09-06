@@ -330,6 +330,246 @@
 
             </div>
 
+            <!-- ==================================================
+     FUNCTIONAL ASSIGNMENT & COMPETENCY PROFILE
+=================================================== -->
+
+<div
+    id="competencyContextCard"
+    class="card shadow-sm mb-4">
+
+    <div class="card-header">
+
+        <h5 class="mb-0">
+            <i class="bi bi-diagram-3 me-2"></i>
+            Functional Assignment & Applicable Competencies
+        </h5>
+
+    </div>
+
+    <div class="card-body">
+
+        <!-- Loading -->
+
+        <div
+            id="competencyContextLoading"
+            class="text-muted">
+
+            <div
+                class="spinner-border spinner-border-sm text-primary me-2"
+                role="status">
+            </div>
+
+            Loading your functional assignment...
+
+        </div>
+
+
+        <!-- Assignment -->
+
+        <div
+            id="functionalAssignmentSection"
+            class="d-none">
+
+            <div class="row g-3 mb-4">
+
+                <div class="col-md-6">
+
+                    <label class="form-label fw-semibold">
+                        Service / Office
+                    </label>
+
+                    <div
+                        id="lnaServiceOffice"
+                        class="form-control bg-light">
+                        —
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <label class="form-label fw-semibold">
+                        Division / Unit
+                    </label>
+
+                    <div
+                        id="lnaDivisionUnit"
+                        class="form-control bg-light">
+                        —
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <label class="form-label fw-semibold">
+                        Section / Specialization
+                    </label>
+
+                    <div
+                        id="lnaSectionSpecialization"
+                        class="form-control bg-light">
+                        —
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <label class="form-label fw-semibold">
+                        Functional Area
+                    </label>
+
+                    <div
+                        id="lnaFunctionalArea"
+                        class="form-control bg-light">
+                        —
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <label class="form-label fw-semibold">
+                        Functional Role
+                    </label>
+
+                    <div
+                        id="lnaFunctionalRole"
+                        class="form-control bg-light">
+                        —
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <label class="form-label fw-semibold">
+                        Assignment Status
+                    </label>
+
+                    <div
+                        class="form-control bg-light">
+
+                        <span
+                            id="lnaAssignmentStatus"
+                            class="badge bg-secondary">
+                            Checking...
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Competency section -->
+
+        <div
+            id="applicableCompetenciesSection"
+            class="d-none">
+
+            <div
+                class="border-top pt-4">
+
+                <div
+                    class="d-flex justify-content-between align-items-center mb-3">
+
+                    <div>
+
+                        <h6 class="mb-1">
+                            <i class="bi bi-award me-2"></i>
+                            Applicable Technical Competencies
+                        </h6>
+
+                        <small class="text-muted">
+                            Competencies applicable to your validated
+                            functional assignment.
+                        </small>
+
+                    </div>
+
+
+                    <span
+                        id="competencyCount"
+                        class="badge bg-primary">
+                        0
+                    </span>
+
+                </div>
+
+
+                <div
+                    id="competencyList"
+                    class="list-group">
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Validation notice -->
+
+        <div
+            id="competencyValidationNotice"
+            class="alert alert-warning d-none mb-0">
+
+            <i class="bi bi-exclamation-triangle me-2"></i>
+
+            <strong>Functional Assignment Pending Validation</strong>
+
+            <div
+                id="competencyValidationMessage"
+                class="mt-1">
+                Your applicable technical competencies will appear once
+                your functional assignment and competency mapping have
+                been validated by the Learning & Development Division.
+            </div>
+
+        </div>
+
+
+        <!-- Empty -->
+
+        <div
+            id="competencyEmptyNotice"
+            class="alert alert-info d-none mb-0">
+
+            <i class="bi bi-info-circle me-2"></i>
+
+            No validated technical competencies are currently mapped
+            to your functional assignment.
+
+        </div>
+
+
+        <!-- Error -->
+
+        <div
+            id="competencyErrorNotice"
+            class="alert alert-danger d-none mb-0">
+
+            <i class="bi bi-x-circle me-2"></i>
+
+            <span id="competencyErrorMessage">
+                Unable to retrieve competency information.
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
 
             <!-- ==================================================
                  WORKFLOW MESSAGE

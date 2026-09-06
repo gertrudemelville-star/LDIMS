@@ -7,13 +7,29 @@
     box-sizing: border-box;
 }
 
+
+html {
+    scroll-behavior: smooth;
+}
+
+
 body {
     margin: 0;
-    font-family: "Segoe UI", Arial, sans-serif;
+    font-family: "Bookman Old Style", Bookman, Georgia, serif;
     background: #f5f6fa;
     color: #2d2633;
     font-size: 14px;
 }
+
+
+body.modal-open {
+    overflow: hidden;
+}
+
+
+/* ==========================================================
+   APP SHELL
+========================================================== */
 
 .app-shell {
     min-height: 100vh;
@@ -28,119 +44,223 @@ body {
 .sidebar {
     width: 250px;
     min-height: 100vh;
+
     background: linear-gradient(
         180deg,
         #4a148c 0%,
         #5e2596 45%,
         #452078 100%
     );
+
     color: #fff;
+
     display: flex;
     flex-direction: column;
+
     position: fixed;
+
     left: 0;
     top: 0;
     bottom: 0;
-    box-shadow: 4px 0 18px rgba(0,0,0,.12);
+
+    box-shadow:
+        4px 0 18px rgba(0,0,0,.12);
+
     z-index: 100;
 }
 
+
 .sidebar-brand {
-    height: 92px;
-    padding: 20px 22px;
+    height: 82px;
+
+    padding: 16px 18px;
+
     display: flex;
     align-items: center;
-    gap: 12px;
-    border-bottom: 1px solid rgba(255,255,255,.12);
+
+    gap: 11px;
+
+    border-bottom:
+        1px solid rgba(255,255,255,.12);
 }
 
+
 .brand-mark {
-    width: 42px;
-    height: 42px;
-    border-radius: 10px;
+    width: 40px;
+    height: 40px;
+
+    flex: 0 0 40px;
+
+    border-radius: 9px;
+
     background: #fff;
+
     color: #4a148c;
+
     display: flex;
     align-items: center;
     justify-content: center;
+
     font-weight: 800;
-    font-size: 12px;
+    font-size: 11px;
 }
+
 
 .brand-title {
     font-size: 18px;
     font-weight: 700;
+
     letter-spacing: .3px;
 }
 
+
 .brand-subtitle {
-    font-size: 10px;
+    font-size: 9px;
+
     opacity: .72;
+
     margin-top: 2px;
-}
 
-.sidebar-nav {
-    padding: 18px 12px;
-}
-
-.nav-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 14px;
-    margin-bottom: 5px;
-    border-radius: 8px;
-    color: rgba(255,255,255,.82);
-    text-decoration: none;
-    font-size: 13px;
-    font-weight: 500;
-    transition: .2s ease;
-}
-
-.nav-item span {
-    width: 20px;
-    text-align: center;
-}
-
-.nav-item:hover {
-    background: rgba(255,255,255,.10);
-    color: #fff;
-}
-
-.nav-item.active {
-    background: rgba(255,255,255,.17);
-    color: #fff;
-    box-shadow: inset 3px 0 0 #fff;
-}
-
-.sidebar-footer {
-    margin-top: auto;
-    padding: 18px 20px;
-    border-top: 1px solid rgba(255,255,255,.12);
-}
-
-.sidebar-footer-label {
-    font-size: 11px;
-    font-weight: 600;
-    opacity: .85;
-}
-
-.sidebar-footer-agency {
-    font-size: 10px;
-    opacity: .58;
-    margin-top: 5px;
+    white-space: nowrap;
 }
 
 
 /* ==========================================================
-   MAIN
+   SIDEBAR NAVIGATION
+========================================================== */
+
+.sidebar-nav {
+    padding: 14px 10px;
+}
+
+
+.nav-item {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 10px 12px;
+
+    margin-bottom: 3px;
+
+    border-radius: 8px;
+
+    color:
+        rgba(255,255,255,.84);
+
+    text-decoration: none;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    transition:
+        background .18s ease,
+        color .18s ease,
+        transform .18s ease;
+}
+
+
+.nav-item span {
+    width: 18px;
+
+    min-width: 18px;
+
+    text-align: center;
+
+    font-size: 11px;
+}
+
+
+.nav-item:hover {
+    background:
+        rgba(255,255,255,.10);
+
+    color: #fff;
+}
+
+
+.nav-item.active {
+    background:
+        rgba(255,255,255,.18);
+
+    color: #fff;
+
+    box-shadow:
+        inset 3px 0 0 #fff;
+}
+
+
+.sidebar-section-label {
+    margin: 11px 4px 6px;
+
+    color: rgba(255,255,255,.78);
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    letter-spacing: .5px;
+}
+
+
+.sidebar-divider {
+    height: 1px;
+
+    margin: 12px 4px;
+
+    background:
+        rgba(255,255,255,.13);
+}
+
+
+/* ==========================================================
+   SIDEBAR FOOTER
+========================================================== */
+
+.sidebar-footer {
+    margin-top: auto;
+
+    padding: 16px 16px;
+
+    border-top:
+        1px solid rgba(255,255,255,.12);
+}
+
+
+.sidebar-footer-label {
+    font-size: 10px;
+
+    font-weight: 600;
+
+    opacity: .86;
+}
+
+
+.sidebar-footer-agency {
+    font-size: 9px;
+
+    opacity: .58;
+
+    margin-top: 4px;
+}
+
+
+/* ==========================================================
+   MAIN CONTENT
 ========================================================== */
 
 .main-content {
     margin-left: 250px;
-    width: calc(100% - 250px);
+
+    width:
+        calc(100% - 250px);
+
     min-height: 100vh;
-    padding: 22px 28px 30px;
+
+    padding:
+        18px 24px 28px;
 }
 
 
@@ -149,62 +269,103 @@ body {
 ========================================================== */
 
 .topbar {
-    min-height: 70px;
+    min-height: 64px;
+
     background: #fff;
-    border-radius: 12px;
-    padding: 14px 20px;
+
+    border-radius: 11px;
+
+    padding:
+        12px 18px;
+
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 3px 15px rgba(30,20,40,.07);
-    margin-bottom: 22px;
+
+    justify-content:
+        space-between;
+
+    align-items:
+        center;
+
+    box-shadow:
+        0 3px 15px
+        rgba(30,20,40,.07);
+
+    margin-bottom: 18px;
 }
+
 
 .page-eyebrow {
     color: #7b1fa2;
-    font-size: 11px;
+
+    font-size: 9px;
+
     font-weight: 700;
-    letter-spacing: .7px;
+
+    letter-spacing: .6px;
 }
 
+
 .page-title {
-    margin: 3px 0 0;
+    margin: 2px 0 0;
+
     color: #35205b;
-    font-size: 25px;
+
+    font-size: 22px;
+
     font-weight: 700;
 }
+
 
 .topbar-user {
     display: flex;
+
     align-items: center;
-    gap: 10px;
+
+    gap: 9px;
 }
 
+
 .user-avatar {
-    width: 38px;
-    height: 38px;
+    width: 36px;
+    height: 36px;
+
     border-radius: 50%;
+
     background: #6a1b9a;
+
     color: #fff;
+
     display: flex;
+
     align-items: center;
+
     justify-content: center;
+
     font-weight: 700;
+
+    font-size: 12px;
 }
+
 
 .user-info {
     display: flex;
+
     flex-direction: column;
 }
 
+
 .user-info strong {
-    font-size: 12px;
+    font-size: 11px;
+
     color: #31253b;
 }
 
+
 .user-info span {
-    font-size: 10px;
+    font-size: 9px;
+
     color: #8b8292;
+
     margin-top: 2px;
 }
 
@@ -219,28 +380,92 @@ body {
         #6a1b9a,
         #8e24aa
     );
+
     color: #fff;
-    border-radius: 12px;
-    padding: 22px 24px;
-    margin-bottom: 22px;
-    box-shadow: 0 7px 18px rgba(106,27,154,.20);
+
+    border-radius: 11px;
+
+    padding:
+        18px 20px;
+
+    margin-bottom: 18px;
+
+    box-shadow:
+        0 7px 18px
+        rgba(106,27,154,.20);
 }
+
 
 .dashboard-welcome .section-label {
-    color: rgba(255,255,255,.78);
+    color:
+        rgba(255,255,255,.78);
 }
 
+
 .dashboard-welcome h2 {
-    margin: 5px 0 5px;
-    font-size: 21px;
+    margin: 4px 0 4px;
+
+    font-size: 20px;
 }
+
 
 .dashboard-welcome p {
     margin: 0;
-    font-size: 12px;
-    line-height: 1.5;
-    max-width: 720px;
-    color: rgba(255,255,255,.86);
+
+    font-size: 11px;
+
+    line-height: 1.45;
+
+    max-width: 760px;
+
+    color:
+        rgba(255,255,255,.88);
+}
+
+
+/* ==========================================================
+   DASHBOARD SECTIONS
+========================================================== */
+
+.supervisor-view {
+    width: 100%;
+}
+
+
+.dashboard-section {
+    margin-bottom: 18px;
+}
+
+
+.section-heading {
+    display: flex;
+
+    align-items: flex-start;
+
+    justify-content:
+        space-between;
+
+    gap: 15px;
+
+    margin-bottom: 10px;
+}
+
+
+.section-heading h2 {
+    margin: 3px 0 2px;
+
+    color: #402264;
+
+    font-size: 18px;
+}
+
+
+.section-heading p {
+    margin: 0;
+
+    color: #918997;
+
+    font-size: 10px;
 }
 
 
@@ -250,10 +475,39 @@ body {
 
 .section-label {
     display: block;
-    font-size: 10px;
+
+    font-size: 8px;
+
     font-weight: 700;
-    letter-spacing: .6px;
+
+    letter-spacing: .55px;
+
     color: #7b1fa2;
+}
+
+
+/* ==========================================================
+   ROLE BADGE
+========================================================== */
+
+.role-badge {
+    display: inline-flex;
+
+    align-items: center;
+
+    padding: 6px 9px;
+
+    border-radius: 20px;
+
+    background: #f5eafa;
+
+    color: #6a1b9a;
+
+    font-size: 8px;
+
+    font-weight: 700;
+
+    white-space: nowrap;
 }
 
 
@@ -261,40 +515,95 @@ body {
    SUMMARY CARDS
 ========================================================== */
 
-.summary-grid {
+.employee-summary-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-    margin-bottom: 24px;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 12px;
 }
+
+
+.supervisor-summary-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 12px;
+}
+
 
 .summary-card {
     background: #fff;
-    border-radius: 11px;
-    padding: 18px 20px;
-    min-height: 112px;
-    box-shadow: 0 3px 14px rgba(30,20,40,.07);
-    border-left: 3px solid #7b1fa2;
+
+    border-radius: 10px;
+
+    padding: 14px 15px;
+
+    min-height: 104px;
+
+    box-shadow:
+        0 3px 14px
+        rgba(30,20,40,.07);
+
+    border-left:
+        3px solid #7b1fa2;
+
+    transition:
+        transform .18s ease,
+        box-shadow .18s ease;
 }
+
+
+.summary-card:hover {
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 7px 18px
+        rgba(30,20,40,.10);
+}
+
 
 .summary-card-label {
     color: #766d7d;
-    font-size: 10px;
-    font-weight: 600;
+
+    font-size: 8px;
+
+    font-weight: 700;
+
     letter-spacing: .4px;
 }
 
+
 .summary-card-value {
     color: #6a1b9a;
-    font-size: 28px;
+
+    font-size: 25px;
+
     line-height: 1;
+
     font-weight: 750;
-    margin: 11px 0 7px;
+
+    margin: 10px 0 6px;
 }
+
+
+.summary-card-status {
+    margin-top: 9px;
+
+    min-height: 22px;
+}
+
 
 .summary-card-description {
     color: #99909e;
-    font-size: 10px;
+
+    font-size: 8px;
+
+    line-height: 1.3;
 }
 
 
@@ -304,29 +613,49 @@ body {
 
 .content-card {
     background: #fff;
-    border-radius: 12px;
-    margin-bottom: 22px;
-    box-shadow: 0 3px 15px rgba(30,20,40,.07);
+
+    border-radius: 11px;
+
+    margin-bottom: 18px;
+
+    box-shadow:
+        0 3px 15px
+        rgba(30,20,40,.07);
+
     overflow: hidden;
 }
 
+
 .content-card-header {
-    padding: 20px 22px 15px;
+    padding:
+        17px 19px 13px;
+
     display: flex;
-    justify-content: space-between;
+
+    justify-content:
+        space-between;
+
     align-items: center;
-    border-bottom: 1px solid #eeeaf1;
+
+    border-bottom:
+        1px solid #eeeaf1;
 }
+
 
 .content-card-header h2 {
     color: #402264;
+
     font-size: 18px;
-    margin: 4px 0;
+
+    margin: 3px 0;
 }
+
 
 .content-card-header p {
     color: #918997;
-    font-size: 11px;
+
+    font-size: 10px;
+
     margin: 0;
 }
 
@@ -337,22 +666,35 @@ body {
 
 .assignment-badge {
     background: #f6eff9;
-    border: 1px solid #eadcf0;
+
+    border:
+        1px solid #eadcf0;
+
     border-radius: 8px;
-    padding: 9px 14px;
+
+    padding:
+        8px 12px;
+
     text-align: right;
 }
 
+
 .assignment-badge span {
     display: block;
-    font-size: 9px;
+
+    font-size: 8px;
+
     color: #918997;
 }
 
+
 .assignment-badge strong {
     display: block;
+
     color: #6a1b9a;
-    font-size: 12px;
+
+    font-size: 11px;
+
     margin-top: 2px;
 }
 
@@ -363,43 +705,73 @@ body {
 
 .table-container {
     width: 100%;
+
     overflow-x: auto;
 }
 
+
 .data-table {
     width: 100%;
-    border-collapse: collapse;
+
+    border-collapse:
+        collapse;
 }
+
 
 .data-table th {
     background: #faf8fc;
+
     color: #756b7e;
-    font-size: 9px;
+
+    font-size: 8px;
+
     font-weight: 700;
+
     letter-spacing: .4px;
-    text-transform: uppercase;
-    padding: 12px 16px;
+
+    text-transform:
+        uppercase;
+
+    padding:
+        10px 14px;
+
     text-align: left;
-    border-bottom: 1px solid #ebe6ef;
-    white-space: nowrap;
+
+    border-bottom:
+        1px solid #ebe6ef;
+
+    white-space:
+        nowrap;
 }
 
+
 .data-table td {
-    padding: 13px 16px;
-    font-size: 11px;
+    padding:
+        11px 14px;
+
+    font-size: 10px;
+
     color: #403746;
-    border-bottom: 1px solid #f0edf2;
-    vertical-align: middle;
+
+    border-bottom:
+        1px solid #f0edf2;
+
+    vertical-align:
+        middle;
 }
+
 
 .data-table tbody tr:hover {
     background: #fbf8fd;
 }
 
+
 .data-table td:first-child {
     color: #6a1b9a;
+
     font-weight: 700;
 }
+
 
 .data-table td:nth-child(2) {
     font-weight: 600;
@@ -412,41 +784,150 @@ body {
 
 .status-badge {
     display: inline-flex;
+
     align-items: center;
-    padding: 4px 9px;
-    border-radius: 20px;
+
+    justify-content: center;
+
+    padding:
+        4px 8px;
+
+    border-radius:
+        20px;
+
     background: #fff4df;
+
     color: #9a6400;
-    font-size: 9px;
+
+    font-size: 8px;
+
     font-weight: 700;
+
+    white-space: nowrap;
+}
+
+
+.status-info {
+    background: #eaf4ff;
+
+    color: #1769aa;
+}
+
+
+.status-warning {
+    background: #fff4df;
+
+    color: #9a6400;
+}
+
+
+.status-danger {
+    background: #fdeaea;
+
+    color: #b3261e;
+}
+
+
+.status-success {
+    background: #e8f6ed;
+
+    color: #1e7a45;
+}
+
+
+.status-muted {
+    background: #f0edf2;
+
+    color: #756b7e;
 }
 
 
 /* ==========================================================
-   ACTION BUTTON
+   BUTTONS
 ========================================================== */
 
-.data-table a,
-.data-table button {
+.btn {
     display: inline-flex;
+
     align-items: center;
+
     justify-content: center;
+
     border: 0;
+
     border-radius: 6px;
-    padding: 6px 10px;
-    background: #6a1b9a;
-    color: #fff;
-    font-size: 10px;
-    font-weight: 600;
-    text-decoration: none;
+
+    padding:
+        7px 11px;
+
+    font-family:
+        inherit;
+
+    font-size: 9px;
+
+    font-weight: 700;
+
     cursor: pointer;
-    transition: .2s ease;
+
+    text-decoration: none;
+
+    transition:
+        background .18s ease,
+        transform .18s ease;
 }
 
-.data-table a:hover,
-.data-table button:hover {
+
+.btn:hover {
+    transform:
+        translateY(-1px);
+}
+
+
+.btn-primary {
+    background: #6a1b9a;
+
+    color: #fff;
+}
+
+
+.btn-primary:hover {
     background: #4a148c;
-    transform: translateY(-1px);
+}
+
+
+.btn-success {
+    background: #2e7d32;
+
+    color: #fff;
+}
+
+
+.btn-success:hover {
+    background: #1b5e20;
+}
+
+
+.btn-warning {
+    background: #ed9b19;
+
+    color: #fff;
+}
+
+
+.btn-warning:hover {
+    background: #c77e08;
+}
+
+
+.btn-secondary {
+    background: #ece8ef;
+
+    color: #4d4353;
+}
+
+
+.btn-secondary:hover {
+    background: #ddd7e1;
 }
 
 
@@ -456,38 +937,652 @@ body {
 
 .loading-state {
     text-align: center;
-    padding: 40px !important;
-    color: #99909e !important;
+
+    padding:
+        35px !important;
+
+    color:
+        #99909e !important;
 }
 
+
+.empty-state {
+    padding:
+        25px 15px;
+
+    text-align: center;
+
+    color: #99909e;
+
+    font-size: 10px;
+}
+
+
 .empty-state-panel {
-    padding: 42px 20px;
+    padding:
+        42px 20px;
+
     text-align: center;
 }
+
 
 .empty-state-icon {
     width: 48px;
     height: 48px;
+
     border-radius: 50%;
-    margin: 0 auto 12px;
+
+    margin:
+        0 auto 12px;
+
     background: #f4eafa;
+
     color: #7b1fa2;
+
     display: flex;
+
     align-items: center;
+
     justify-content: center;
+
     font-size: 20px;
 }
 
+
 .empty-state-panel h3 {
     color: #4b4053;
+
     font-size: 14px;
-    margin: 0 0 5px;
+
+    margin:
+        0 0 5px;
 }
+
 
 .empty-state-panel p {
     color: #98909e;
+
     font-size: 11px;
+
     margin: 0;
+}
+
+
+/* ==========================================================
+   EMPLOYEE MODULE FRAME
+   ----------------------------------------------------------
+   IMPORTANT:
+   Employee modules are displayed inside the existing
+   Supervisor shell. The Supervisor sidebar remains visible.
+========================================================== */
+
+.employee-module-frame {
+    width: 100%;
+
+    min-height:
+        calc(100vh - 130px);
+
+    background: #fff;
+
+    border-radius: 11px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 3px 15px
+        rgba(30,20,40,.07);
+}
+
+
+.employee-module-frame iframe {
+    display: block;
+
+    width: 100%;
+
+    height:
+        calc(100vh - 130px);
+
+    min-height: 650px;
+
+    border: 0;
+
+    margin: 0;
+
+    padding: 0;
+
+    background: #f5f6fa;
+}
+
+
+/*
+ * The employee page loaded inside the iframe may contain
+ * its own shell. The Supervisor JS hides that internal
+ * sidebar after the frame loads.
+ */
+
+
+/* ==========================================================
+   LNA MODAL
+========================================================== */
+
+.lna-modal {
+    position: fixed;
+
+    inset: 0;
+
+    display: none;
+
+    z-index: 1000;
+}
+
+
+.lna-modal.is-open {
+    display: block;
+}
+
+
+.lna-modal-backdrop {
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        rgba(28,18,38,.62);
+
+    backdrop-filter:
+        blur(2px);
+}
+
+
+.lna-modal-dialog {
+    position: relative;
+
+    width:
+        min(940px, calc(100vw - 40px));
+
+    max-height:
+        calc(100vh - 40px);
+
+    margin:
+        20px auto;
+
+    background: #fff;
+
+    border-radius: 13px;
+
+    overflow: hidden;
+
+    display: flex;
+
+    flex-direction: column;
+
+    box-shadow:
+        0 20px 60px
+        rgba(0,0,0,.25);
+
+    animation:
+        lnaModalIn .18s ease;
+}
+
+
+@keyframes lnaModalIn {
+
+    from {
+        opacity: 0;
+        transform:
+            translateY(8px) scale(.99);
+    }
+
+    to {
+        opacity: 1;
+        transform:
+            translateY(0) scale(1);
+    }
+
+}
+
+
+.lna-modal-header {
+    padding:
+        16px 20px;
+
+    display: flex;
+
+    justify-content:
+        space-between;
+
+    align-items: center;
+
+    border-bottom:
+        1px solid #eeeaf1;
+
+    flex: 0 0 auto;
+}
+
+
+.lna-modal-header h2 {
+    margin:
+        3px 0 0;
+
+    color: #35205b;
+
+    font-size: 20px;
+}
+
+
+.lna-modal-close {
+    width: 34px;
+    height: 34px;
+
+    border: 0;
+
+    border-radius: 50%;
+
+    background: #f2edf4;
+
+    color: #4d4353;
+
+    font-family:
+        Arial, sans-serif;
+
+    font-size: 23px;
+
+    line-height: 1;
+
+    cursor: pointer;
+}
+
+
+.lna-modal-close:hover {
+    background: #e5dce9;
+
+    color: #6a1b9a;
+}
+
+
+/* ==========================================================
+   LNA MODAL META
+========================================================== */
+
+.lna-modal-meta {
+    padding:
+        12px 20px;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(5, minmax(0, 1fr));
+
+    gap: 10px;
+
+    background: #faf8fc;
+
+    border-bottom:
+        1px solid #eeeaf1;
+}
+
+
+.lna-modal-meta > div {
+    min-width: 0;
+}
+
+
+.lna-modal-meta span {
+    display: block;
+
+    color: #918997;
+
+    font-size: 7px;
+
+    font-weight: 700;
+
+    letter-spacing: .4px;
+}
+
+
+.lna-modal-meta strong {
+    display: block;
+
+    margin-top: 3px;
+
+    color: #3f3546;
+
+    font-size: 9px;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+}
+
+
+/* ==========================================================
+   LNA MODAL BODY
+========================================================== */
+
+.lna-modal-body {
+    flex: 1 1 auto;
+
+    overflow-y: auto;
+
+    padding:
+        18px 20px;
+}
+
+
+.lna-modal-section-heading {
+    margin-bottom: 10px;
+}
+
+
+.lna-modal-section-heading h3 {
+    margin:
+        3px 0 0;
+
+    color: #402264;
+
+    font-size: 16px;
+}
+
+
+.lna-detail-section {
+    padding:
+        11px 13px;
+
+    margin-bottom: 8px;
+
+    background: #fbf9fc;
+
+    border:
+        1px solid #eee8f2;
+
+    border-radius: 8px;
+}
+
+
+.lna-detail-title {
+    color: #6a1b9a;
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+    margin-bottom: 5px;
+}
+
+
+.lna-detail-value {
+    color: #443a49;
+
+    font-size: 10px;
+
+    line-height: 1.5;
+
+    word-break: break-word;
+}
+
+
+/* ==========================================================
+   LNA TRAINING
+========================================================== */
+
+.lna-modal-training {
+    margin-top: 20px;
+
+    padding-top: 18px;
+
+    border-top:
+        1px solid #eeeaf1;
+}
+
+
+.lna-modal-training .table-responsive {
+    width: 100%;
+
+    overflow-x: auto;
+}
+
+
+.lna-modal-training table {
+    width: 100%;
+
+    border-collapse:
+        collapse;
+}
+
+
+.lna-modal-training th {
+    background: #faf8fc;
+
+    color: #756b7e;
+
+    font-size: 8px;
+
+    padding: 9px;
+
+    text-align: left;
+
+    border-bottom:
+        1px solid #ebe6ef;
+}
+
+
+.lna-modal-training td {
+    padding: 9px;
+
+    color: #443a49;
+
+    font-size: 9px;
+
+    border-bottom:
+        1px solid #f0edf2;
+}
+
+
+/* ==========================================================
+   SUPERVISOR LNA ACTIONS
+========================================================== */
+
+.supervisor-lna-actions {
+    display: flex;
+
+    gap: 8px;
+
+    margin-top: 18px;
+
+    padding-top: 16px;
+
+    border-top:
+        1px solid #eeeaf1;
+}
+
+
+.alert {
+    padding:
+        11px 13px;
+
+    border-radius: 8px;
+
+    font-size: 9px;
+
+    line-height: 1.5;
+}
+
+
+.alert strong {
+    display: block;
+
+    margin-bottom: 3px;
+}
+
+
+.alert-warning {
+    background: #fff7e8;
+
+    border:
+        1px solid #f3dfb5;
+
+    color: #855d00;
+}
+
+
+.alert-success {
+    background: #eaf7ee;
+
+    border:
+        1px solid #cce8d5;
+
+    color: #21663b;
+}
+
+
+/* ==========================================================
+   MODAL FOOTER
+========================================================== */
+
+.lna-modal-footer {
+    padding:
+        12px 20px;
+
+    display: flex;
+
+    justify-content:
+        flex-end;
+
+    border-top:
+        1px solid #eeeaf1;
+
+    background: #fff;
+
+    flex: 0 0 auto;
+}
+
+
+/* ==========================================================
+   LOADING OVERLAY
+========================================================== */
+
+.supervisor-loading {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 1200;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background:
+        rgba(35,20,45,.20);
+
+    backdrop-filter:
+        blur(1px);
+}
+
+
+.supervisor-loading-box {
+    min-width: 150px;
+
+    padding:
+        18px 20px;
+
+    border-radius: 10px;
+
+    background: #fff;
+
+    color: #4a3c50;
+
+    font-size: 11px;
+
+    text-align: center;
+
+    box-shadow:
+        0 10px 35px
+        rgba(0,0,0,.18);
+}
+
+
+.supervisor-spinner {
+    width: 24px;
+    height: 24px;
+
+    margin:
+        0 auto 9px;
+
+    border:
+        3px solid #eadcf0;
+
+    border-top-color:
+        #6a1b9a;
+
+    border-radius: 50%;
+
+    animation:
+        supervisorSpin .7s linear infinite;
+}
+
+
+@keyframes supervisorSpin {
+
+    to {
+        transform:
+            rotate(360deg);
+    }
+
+}
+
+
+/* ==========================================================
+   MESSAGE
+========================================================== */
+
+.supervisor-message {
+    position: fixed;
+
+    right: 22px;
+
+    bottom: 22px;
+
+    z-index: 1300;
+
+    max-width: 360px;
+
+    padding:
+        11px 14px;
+
+    border-radius: 8px;
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+    box-shadow:
+        0 8px 25px
+        rgba(0,0,0,.15);
+}
+
+
+.supervisor-message.success {
+    background: #e8f6ed;
+
+    color: #21663b;
+
+    border:
+        1px solid #cce8d5;
+}
+
+
+.supervisor-message.error {
+    background: #fdeaea;
+
+    color: #9e2b25;
+
+    border:
+        1px solid #f0caca;
 }
 
 
@@ -496,10 +1591,15 @@ body {
 ========================================================== */
 
 .page-footer {
-    padding: 8px 2px;
+    padding:
+        8px 2px;
+
     color: #aaa2ad;
-    font-size: 10px;
+
+    font-size: 9px;
+
     display: flex;
+
     gap: 7px;
 }
 
@@ -508,23 +1608,57 @@ body {
    RESPONSIVE
 ========================================================== */
 
+@media (max-width: 1100px) {
+
+    .employee-summary-grid,
+    .supervisor-summary-grid {
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+    }
+
+
+    .lna-modal-meta {
+
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+
+    }
+
+}
+
+
 @media (max-width: 900px) {
 
     .sidebar {
         width: 210px;
     }
 
+
     .main-content {
+
         margin-left: 210px;
-        width: calc(100% - 210px);
-        padding: 18px;
+
+        width:
+            calc(100% - 210px);
+
+        padding:
+            16px;
+
     }
 
-    .summary-grid {
-        grid-template-columns: 1fr;
+
+    .employee-summary-grid,
+    .supervisor-summary-grid {
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
     }
 
 }
+
 
 @media (max-width: 650px) {
 
@@ -532,69 +1666,1124 @@ body {
         width: 64px;
     }
 
+
     .sidebar-brand {
+
         justify-content: center;
+
         padding: 12px;
+
     }
+
 
     .brand-title,
     .brand-subtitle,
     .sidebar-footer,
-    .nav-item:not(.active)::after {
+    .sidebar-section-label {
+
         display: none;
+
     }
+
 
     .nav-item {
+
         justify-content: center;
-        padding: 12px 5px;
+
+        padding:
+            11px 5px;
+
     }
+
+
+    .nav-item span {
+
+        width: 20px;
+
+    }
+
 
     .main-content {
+
         margin-left: 64px;
-        width: calc(100% - 64px);
+
+        width:
+            calc(100% - 64px);
+
         padding: 12px;
+
     }
+
 
     .topbar {
-        padding: 12px;
+
+        padding: 11px;
+
     }
 
+
+    .page-title {
+
+        font-size: 19px;
+
+    }
+
+
+    .user-info {
+
+        display: none;
+
+    }
+
+
+    .dashboard-welcome {
+
+        padding:
+            16px;
+
+    }
+
+
+    .dashboard-welcome h2 {
+
+        font-size: 17px;
+
+    }
+
+
+    .employee-summary-grid,
+    .supervisor-summary-grid {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+    .section-heading {
+
+        flex-direction: column;
+
+    }
+
+
     .content-card-header {
-        align-items: flex-start;
+
+        align-items:
+            flex-start;
+
         gap: 10px;
+
+        flex-direction:
+            column;
+
+    }
+
+
+    .assignment-badge {
+
+        text-align: left;
+
+    }
+
+
+    .lna-modal-dialog {
+
+        width:
+            calc(100vw - 20px);
+
+        max-height:
+            calc(100vh - 20px);
+
+        margin:
+            10px auto;
+
+    }
+
+
+    .lna-modal-meta {
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+    }
+
+
+    .lna-modal-header,
+    .lna-modal-body,
+    .lna-modal-footer {
+
+        padding-left: 14px;
+
+        padding-right: 14px;
+
+    }
+
+
+    .supervisor-lna-actions {
+
+        flex-direction:
+            column;
+
+    }
+
+
+    .supervisor-lna-actions .btn {
+
+        width: 100%;
+
+    }
+
+}
+
+/* ==========================================================
+   FINAL COMPACT DASHBOARD TUNING
+========================================================== */
+
+.employee-summary-grid,
+.supervisor-summary-grid {
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 10px;
+}
+
+
+.summary-card {
+    min-height: 92px;
+
+    padding:
+        11px 13px;
+}
+
+
+.summary-card-value {
+    font-size: 20px;
+
+    margin:
+        7px 0 4px;
+}
+
+
+.summary-card-description {
+    font-size: 7px;
+}
+
+
+.summary-card-label {
+    font-size: 7px;
+}
+
+
+/* ==========================================================
+   EMPLOYEE MODULE
+========================================================== */
+
+.employee-module-frame {
+    width: 100%;
+
+    height:
+        calc(100vh - 115px);
+
+    min-height: 620px;
+
+    overflow: hidden;
+
+    background: #fff;
+}
+
+
+.employee-module-frame iframe {
+    width: 100%;
+
+    height: 100%;
+
+    min-height: 620px;
+
+    display: block;
+
+    border: 0;
+
+    overflow: auto;
+}
+
+
+/* ==========================================================
+   PREVENT DOUBLE SHELL EFFECT
+========================================================== */
+
+.employee-module-frame {
+    border-radius: 10px;
+
+    box-shadow:
+        0 3px 14px
+        rgba(30,20,40,.07);
+}
+
+
+@media (max-width: 1100px) {
+
+    .employee-summary-grid,
+    .supervisor-summary-grid {
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+    }
+
+}
+
+
+@media (max-width: 650px) {
+
+    .employee-summary-grid,
+    .supervisor-summary-grid {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+}
+
+/* ==========================================================
+   SUPERVISOR VALIDATION - READABLE VIEW
+========================================================== */
+
+#view-validation .content-card-header h2,
+#view-interventions .content-card-header h2,
+#view-personnel .content-card-header h2 {
+    font-size: 20px;
+}
+
+#view-validation .content-card-header p,
+#view-interventions .content-card-header p,
+#view-personnel .content-card-header p {
+    font-size: 12px;
+}
+
+
+#view-validation .data-table th,
+#view-interventions .data-table th,
+#view-personnel .data-table th {
+    font-size: 10px;
+    padding: 12px 14px;
+}
+
+
+#view-validation .data-table td,
+#view-interventions .data-table td,
+#view-personnel .data-table td {
+    font-size: 12px;
+    padding: 13px 14px;
+}
+
+
+/* ==========================================================
+   LNA MODAL - MORE READABLE
+========================================================== */
+
+.lna-modal-dialog {
+    width:
+        min(1050px, calc(100vw - 40px));
+}
+
+
+.lna-modal-header h2 {
+    font-size: 22px;
+}
+
+
+.lna-modal-meta {
+    padding: 14px 22px;
+
+    gap: 14px;
+}
+
+
+.lna-modal-meta span {
+    font-size: 9px;
+}
+
+
+.lna-modal-meta strong {
+    font-size: 11px;
+}
+
+
+.lna-modal-body {
+    padding:
+        22px 24px;
+}
+
+
+.lna-modal-section-heading h3 {
+    font-size: 18px;
+}
+
+
+.lna-detail-section {
+    padding:
+        14px 16px;
+
+    margin-bottom: 10px;
+}
+
+
+.lna-detail-title {
+    font-size: 11px;
+
+    margin-bottom: 7px;
+}
+
+
+.lna-detail-value {
+    font-size: 12px;
+
+    line-height: 1.6;
+}
+
+
+.lna-modal-training th {
+    font-size: 10px;
+
+    padding: 11px;
+}
+
+
+.lna-modal-training td {
+    font-size: 11px;
+
+    padding: 11px;
+}
+
+
+/* ==========================================================
+   SUPERVISOR ACTION BUTTONS
+========================================================== */
+
+.supervisor-lna-actions {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    padding:
+        18px 0 4px;
+
+    margin-top: 20px;
+
+    border-top:
+        1px solid #eeeaf1;
+}
+
+
+.supervisor-lna-actions .btn {
+    min-width: 150px;
+
+    padding:
+        10px 16px;
+
+    font-size: 11px;
+}
+
+
+/* ==========================================================
+   READ-ONLY INDICATOR
+========================================================== */
+
+.lna-readonly-notice {
+    margin-bottom: 16px;
+
+    padding:
+        10px 13px;
+
+    border-radius: 8px;
+
+    background: #f4eff8;
+
+    border:
+        1px solid #e5d9eb;
+
+    color: #62496e;
+
+    font-size: 10px;
+
+    line-height: 1.5;
+}
+
+
+.lna-readonly-notice strong {
+    color: #4a148c;
+}
+
+
+/* ==========================================================
+   VALIDATION EMPTY STATE
+========================================================== */
+
+#validationPersonnelContainer .empty-state {
+    font-size: 12px;
+
+    padding: 45px 20px;
+}
+
+
+/* ==========================================================
+   MOBILE
+========================================================== */
+
+@media (max-width: 650px) {
+
+    .lna-modal-dialog {
+        width:
+            calc(100vw - 16px);
+
+        max-height:
+            calc(100vh - 16px);
+
+        margin:
+            8px auto;
+    }
+
+
+    .lna-modal-body {
+        padding:
+            16px;
+    }
+
+
+    .lna-detail-value {
+        font-size: 11px;
+    }
+
+
+    .supervisor-lna-actions {
         flex-direction: column;
     }
 
-    .assignment-badge {
-        text-align: left;
+
+    .supervisor-lna-actions .btn {
+        width: 100%;
     }
 
 }
 
-/* Typography refinement only */
-body,
-button,
-input,
-select,
-textarea,
-table,
-th,
-td {
-    font-family: "Bookman Old Style", Bookman, Georgia, serif;
-}
+/* ==========================================================
+   FINAL SUPERVISOR UI ADJUSTMENTS
+========================================================== */
 
-body {
+
+/* ==========================================================
+   DASHBOARD TYPOGRAPHY
+   ----------------------------------------------------------
+   Make dashboard readable without making cards huge.
+========================================================== */
+
+.view-dashboard {
     font-size: 14px;
 }
 
-h1 {
-    font-size: 28px;
+.view-dashboard .section-label,
+.view-dashboard .eyebrow,
+.view-dashboard .card-label {
+    font-size: 11px;
 }
 
-h2 {
-    font-size: 21px;
+.view-dashboard h1,
+.view-dashboard h2,
+.view-dashboard h3 {
+    font-size: 18px;
 }
 
-h3 {
-    font-size: 17px;
+.view-dashboard .welcome-title {
+    font-size: 23px;
+}
+
+.view-dashboard .summary-card .card-value,
+.view-dashboard .summary-card .value,
+.view-dashboard .summary-value {
+    font-size: 20px !important;
+    line-height: 1.1;
+}
+
+.view-dashboard .summary-card .card-label,
+.view-dashboard .summary-card .label {
+    font-size: 11px !important;
+}
+
+.view-dashboard .summary-card small,
+.view-dashboard .summary-card .card-description,
+.view-dashboard .summary-card .description {
+    font-size: 9px !important;
+}
+
+
+/* ==========================================================
+   COMPACT SUMMARY CARDS
+   ----------------------------------------------------------
+   Smaller / more square instead of long rectangles.
+========================================================== */
+
+.employee-summary-grid,
+.supervisor-summary-grid {
+    gap: 10px !important;
+}
+
+.employee-summary-grid .summary-card,
+.supervisor-summary-grid .summary-card {
+    min-height: 88px !important;
+    height: 88px !important;
+    padding: 13px 14px !important;
+    border-radius: 9px !important;
+}
+
+.employee-summary-grid .summary-card .value,
+.supervisor-summary-grid .summary-card .value,
+.employee-summary-grid .summary-card .card-value,
+.supervisor-summary-grid .summary-card .card-value {
+    font-size: 19px !important;
+    margin: 4px 0 !important;
+}
+
+.employee-summary-grid .summary-card .label,
+.supervisor-summary-grid .summary-card .label,
+.employee-summary-grid .summary-card .card-label,
+.supervisor-summary-grid .summary-card .card-label {
+    font-size: 10px !important;
+}
+
+
+/* ==========================================================
+   MY PROFILE / EMPLOYEE MODULE FRAME
+   ---------------------------------------------------------- */
+
+.employee-module-frame {
+    padding: 0 !important;
+}
+
+.employee-module-frame iframe {
+    width: 100% !important;
+    min-height: 820px !important;
+    border: 0 !important;
+}
+
+
+/* ==========================================================
+   FOR VALIDATION
+   ----------------------------------------------------------
+   Larger and easier to read.
+========================================================== */
+
+#view-validation {
+    font-size: 14px;
+}
+
+#view-validation h1,
+#view-validation h2,
+#view-validation h3 {
+    font-size: 20px;
+}
+
+#validationPersonnelContainer {
+    font-size: 13px;
+}
+
+#validationPersonnelContainer .data-table {
+    font-size: 13px;
+}
+
+#validationPersonnelContainer .data-table th {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 11px 10px;
+}
+
+#validationPersonnelContainer .data-table td {
+    font-size: 13px;
+    padding: 11px 10px;
+}
+
+#validationPersonnelContainer .btn {
+    font-size: 12px;
+    padding: 7px 12px;
+}
+
+
+/* ==========================================================
+   LNA MODAL
+   ----------------------------------------------------------
+   Increase readability substantially.
+========================================================== */
+
+#lnaModal {
+    font-size: 14px;
+}
+
+#lnaModal .lna-modal-container,
+#lnaModal .lna-modal-content {
+    font-size: 14px;
+}
+
+#lnaModal .lna-modal-title,
+#lnaModal .modal-title {
+    font-size: 21px !important;
+}
+
+#lnaModal .lna-section-title {
+    font-size: 16px !important;
+    font-weight: 700;
+}
+
+#lnaModal .lna-section-subtitle {
+    font-size: 12px !important;
+}
+
+#lnaModal .lna-detail-section {
+    padding: 12px 14px !important;
+    margin-bottom: 9px !important;
+}
+
+#lnaModal .lna-detail-title {
+    font-size: 12px !important;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+#lnaModal .lna-detail-value {
+    font-size: 14px !important;
+    line-height: 1.55 !important;
+}
+
+#lnaModal .data-table {
+    font-size: 13px !important;
+}
+
+#lnaModal .data-table th {
+    font-size: 11px !important;
+    padding: 9px 10px !important;
+}
+
+#lnaModal .data-table td {
+    font-size: 13px !important;
+    padding: 9px 10px !important;
+}
+
+
+/* ==========================================================
+   COMPETENCY TABLE
+========================================================== */
+
+#lnaModal .lna-competency-section {
+    margin-bottom: 16px;
+}
+
+#lnaModal .lna-competency-table td:first-child {
+    font-weight: 600;
+}
+
+#lnaModal .competency-rating {
+    font-size: 11px !important;
+    padding: 4px 8px !important;
+}
+
+
+/* ==========================================================
+   READ-ONLY PERSONNEL NOTICE
+========================================================== */
+
+.supervisor-readonly-panel {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+
+    margin-top: 14px;
+    padding: 13px 15px;
+
+    border: 1px solid #ddd5e7;
+    border-radius: 8px;
+
+    background: #faf8fc;
+}
+
+.supervisor-readonly-panel.warning {
+    background: #fff9e8;
+    border-color: #f0d58a;
+}
+
+.supervisor-readonly-panel.success {
+    background: #f0faf3;
+    border-color: #b8dfc4;
+}
+
+.supervisor-readonly-icon {
+    flex: 0 0 auto;
+
+    width: 28px;
+    height: 28px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #eee5f7;
+
+    font-size: 14px;
+}
+
+.supervisor-readonly-content {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.supervisor-readonly-content strong {
+    font-size: 13px;
+}
+
+.supervisor-readonly-content span {
+    font-size: 12px;
+}
+
+
+/* ==========================================================
+   SUPERVISOR REVIEW / DECISION PANEL
+========================================================== */
+
+.supervisor-review-panel {
+    margin-top: 14px;
+    padding: 14px 15px;
+
+    border-top: 1px solid #e5ddeb;
+
+    background: #fbf9fd;
+}
+
+.supervisor-review-heading {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+
+    margin-bottom: 12px;
+}
+
+.supervisor-review-heading strong {
+    font-size: 14px;
+}
+
+.supervisor-review-heading span {
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+
+/* ==========================================================
+   ACTION BUTTONS
+========================================================== */
+
+.supervisor-lna-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.supervisor-action-btn {
+    font-size: 12px !important;
+    padding: 8px 14px !important;
+    min-height: 34px;
+}
+
+
+/* ==========================================================
+   TRAINING HISTORY IN MODAL
+========================================================== */
+
+#lnaModal #trainingHistory {
+    font-size: 13px;
+}
+
+#lnaModal #trainingHistory .table {
+    font-size: 12px;
+}
+
+#lnaModal #trainingHistory th {
+    font-size: 10px;
+}
+
+#lnaModal #trainingHistory td {
+    font-size: 12px;
+}
+
+
+/* ==========================================================
+   MODAL EMPTY STATE
+========================================================== */
+
+#lnaModal .empty-state {
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+
+/* ==========================================================
+   PERSONNEL TABLE
+========================================================== */
+
+#view-personnel .data-table {
+    font-size: 13px;
+}
+
+#view-personnel .data-table th {
+    font-size: 11px;
+}
+
+#view-personnel .data-table td {
+    font-size: 13px;
+}
+
+#view-personnel .btn {
+    font-size: 12px;
+}
+
+
+/* ==========================================================
+   INTERVENTIONS
+========================================================== */
+
+#view-interventions .data-table {
+    font-size: 13px;
+}
+
+#view-interventions .data-table th {
+    font-size: 11px;
+}
+
+#view-interventions .data-table td {
+    font-size: 13px;
+}
+
+
+/* ==========================================================
+   MOBILE
+========================================================== */
+
+@media (max-width: 900px) {
+
+    .employee-summary-grid,
+    .supervisor-summary-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr)) !important;
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .employee-summary-grid,
+    .supervisor-summary-grid {
+        grid-template-columns:
+            1fr !important;
+    }
+
+
+    .supervisor-lna-actions {
+        flex-direction: column;
+    }
+
+
+    .supervisor-action-btn {
+        width: 100%;
+    }
+
+}
+
+/* ==========================================================
+   FINAL FONT + CARD SIZE
+========================================================== */
+
+/* Dashboard itself */
+
+#view-dashboard {
+    font-size: 14px !important;
+}
+
+#view-dashboard h1 {
+    font-size: 26px !important;
+}
+
+#view-dashboard h2 {
+    font-size: 21px !important;
+}
+
+#view-dashboard h3 {
+    font-size: 18px !important;
+}
+
+#view-dashboard p {
+    font-size: 13px !important;
+}
+
+#view-dashboard .summary-card {
+    min-height: 96px !important;
+    height: 96px !important;
+    padding: 14px 16px !important;
+}
+
+#view-dashboard .summary-card .card-value,
+#view-dashboard .summary-card .value,
+#view-dashboard .summary-card .summary-value {
+    font-size: 22px !important;
+    line-height: 1.1 !important;
+}
+
+#view-dashboard .summary-card .card-label,
+#view-dashboard .summary-card .label,
+#view-dashboard .summary-card .summary-label {
+    font-size: 11px !important;
+}
+
+#view-dashboard .summary-card small {
+    font-size: 10px !important;
+}
+
+
+/* ==========================================================
+   LNA READ-ONLY QUESTIONNAIRE
+========================================================== */
+
+#lnaModal .lna-readonly-section {
+    margin-bottom: 16px;
+    border: 1px solid #e2d9ea;
+    border-radius: 8px;
+    background: #ffffff;
+    overflow: hidden;
+}
+
+#lnaModal .lna-readonly-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+
+    padding: 13px 15px;
+
+    background: #faf7fc;
+    border-bottom: 1px solid #e2d9ea;
+}
+
+#lnaModal .lna-readonly-section-title {
+    font-size: 16px !important;
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+#lnaModal .lna-readonly-section-subtitle {
+    margin-top: 3px;
+    font-size: 12px !important;
+}
+
+#lnaModal .lna-readonly-badge {
+    flex-shrink: 0;
+
+    padding: 4px 8px;
+
+    border-radius: 10px;
+
+    background: #eee5f7;
+    color: #6a1b9a;
+
+    font-size: 9px !important;
+    font-weight: 700;
+}
+
+#lnaModal .lna-question-list {
+    width: 100%;
+}
+
+#lnaModal .lna-question-row {
+    padding: 13px 15px;
+
+    border-bottom: 1px solid #eee9f2;
+}
+
+#lnaModal .lna-question-row:last-child {
+    border-bottom: 0;
+}
+
+#lnaModal .lna-question {
+    margin-bottom: 6px;
+
+    font-size: 12px !important;
+    font-weight: 700;
+
+    line-height: 1.45;
+}
+
+#lnaModal .lna-answer {
+    font-size: 14px !important;
+    line-height: 1.6;
+
+    color: #29232e;
+}
+
+
+/* ==========================================================
+   COMPETENCY TABLE
+========================================================== */
+
+#lnaModal .lna-competency-section {
+    margin-bottom: 16px;
+}
+
+#lnaModal .lna-competency-table th {
+    font-size: 11px !important;
+}
+
+#lnaModal .lna-competency-table td {
+    font-size: 13px !important;
+}
+
+
+/* ==========================================================
+   PERSONNEL VIEW
+========================================================== */
+
+#view-personnel {
+    font-size: 14px !important;
+}
+
+#view-personnel .data-table {
+    font-size: 13px !important;
+}
+
+#view-personnel .data-table th {
+    font-size: 11px !important;
+}
+
+#view-personnel .data-table td {
+    font-size: 13px !important;
+}
+
+
+/* ==========================================================
+   FOR VALIDATION
+========================================================== */
+
+#view-validation {
+    font-size: 14px !important;
+}
+
+#view-validation .data-table td {
+    font-size: 13px !important;
+}
+
+#view-validation .data-table th {
+    font-size: 11px !important;
 }
