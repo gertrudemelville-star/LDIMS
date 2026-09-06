@@ -110,9 +110,18 @@ body{
 
     color:white;
 
-    overflow:auto;
+    overflow-y:auto;
+
+    overflow-x:hidden;
+
+    z-index:1000;
 
 }
+
+
+/* ==========================================================
+   SIDEBAR LIST
+========================================================== */
 
 .sidebar ul{
 
@@ -120,13 +129,25 @@ body{
 
     padding:20px;
 
+    margin:0;
+
 }
+
+
+/* ==========================================================
+   SIDEBAR ITEMS
+========================================================== */
 
 .sidebar li{
 
     margin-bottom:10px;
 
 }
+
+
+/* ==========================================================
+   SIDEBAR LINKS
+========================================================== */
 
 .sidebar a{
 
@@ -140,13 +161,58 @@ body{
 
     border-radius:8px;
 
-    transition:.3s;
+    transition:
+        background .2s ease,
+        color .2s ease;
 
 }
+
+
+/* ==========================================================
+   SIDEBAR HOVER
+========================================================== */
 
 .sidebar a:hover{
 
     background:rgba(255,255,255,.15);
+
+}
+
+
+/* ==========================================================
+   ACTIVE SIDEBAR LINK
+========================================================== */
+
+.sidebar a.active{
+
+    background:rgba(255,255,255,.20);
+
+    font-weight:600;
+
+}
+
+
+/* ==========================================================
+   SIDEBAR SCROLLBAR
+========================================================== */
+
+.sidebar::-webkit-scrollbar{
+
+    width:6px;
+
+}
+
+.sidebar::-webkit-scrollbar-thumb{
+
+    background:rgba(255,255,255,.25);
+
+    border-radius:10px;
+
+}
+
+.sidebar::-webkit-scrollbar-track{
+
+    background:transparent;
 
 }
 
@@ -1636,6 +1702,661 @@ body:has(.login-brand){
 
         width:100%;
 
+    }
+
+}
+
+/* ==========================================================
+   LOCKED / FUTURE SIDEBAR ITEMS
+   Reports and Notifications are not yet functional.
+   They remain visible but cannot be opened.
+========================================================== */
+
+.sidebar a[href*="reports.html"],
+.sidebar-menu a[href*="reports.html"],
+.sidebar a[href*="notifications.html"],
+.sidebar-menu a[href*="notifications.html"]{
+
+    opacity:0.55;
+
+    cursor:not-allowed;
+
+    pointer-events:none;
+
+}
+
+.sidebar a[href*="reports.html"]:hover,
+.sidebar-menu a[href*="reports.html"]:hover,
+.sidebar a[href*="notifications.html"]:hover,
+.sidebar-menu a[href*="notifications.html"]:hover{
+
+    background:transparent;
+
+}
+
+/* ==========================================================
+   LDD DASHBOARD - MODERN COMPACT UI
+========================================================== */
+
+.ldd-dashboard-page{
+    font-family:"Segoe UI", Arial, sans-serif;
+    background:#F5F6FA;
+}
+
+
+/* ==========================================================
+   HEADER
+========================================================== */
+
+.ldd-header{
+    height:70px;
+    padding:0 28px;
+}
+
+.ldd-header .header-title{
+    font-size:0;
+}
+
+.ldd-header .header-title::after{
+    content:"";
+}
+
+.ldd-header-user{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-size:13px;
+    color:#2C2C2C;
+}
+
+.ldd-header-user i.bi-chevron-down{
+    font-size:11px;
+    color:#777;
+}
+
+.ldd-notification{
+    color:#F2A900;
+    font-size:15px;
+    margin-right:8px;
+}
+
+
+/* ==========================================================
+   SIDEBAR
+========================================================== */
+
+.ldd-sidebar{
+    width:260px;
+    top:0;
+    height:100vh;
+    padding:0;
+    background:linear-gradient(
+        180deg,
+        #4B1F82 0%,
+        #35135F 100%
+    );
+    overflow:hidden;
+}
+
+
+.ldd-sidebar ul{
+    padding:18px 14px 0;
+}
+
+
+.ldd-sidebar li{
+    margin-bottom:5px;
+}
+
+
+.ldd-sidebar a{
+    min-height:44px;
+    padding:10px 16px;
+    display:flex;
+    align-items:center;
+    gap:16px;
+    border-radius:8px;
+    font-size:13px;
+    line-height:1.25;
+}
+
+
+.ldd-sidebar a i{
+    width:18px;
+    min-width:18px;
+    text-align:center;
+    font-size:17px;
+}
+
+
+.ldd-sidebar a.active{
+    background:rgba(255,255,255,.14);
+}
+
+
+.ldd-sidebar a:hover{
+    background:rgba(255,255,255,.10);
+}
+
+
+.ldd-sidebar-brand{
+    height:86px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:12px 22px;
+    color:#fff;
+}
+
+
+.ldd-sidebar-brand img{
+    width:45px;
+    height:55px;
+    object-fit:contain;
+}
+
+
+.ldd-brand-name{
+    font-size:20px;
+    font-weight:700;
+    line-height:1;
+}
+
+
+.ldd-brand-agency{
+    font-size:13px;
+    margin-top:5px;
+    opacity:.9;
+}
+
+
+.ldd-sidebar-footer{
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:0;
+}
+
+
+.ldd-sidebar-footer > a{
+    margin:0 14px 14px;
+}
+
+
+.ldd-system-info{
+    border-top:1px solid rgba(255,255,255,.18);
+    padding:20px 28px 24px;
+    color:rgba(255,255,255,.65);
+    font-size:11px;
+    line-height:1.5;
+}
+
+
+/* ==========================================================
+   CONTENT
+========================================================== */
+
+.ldd-content{
+    margin-left:260px;
+    margin-top:70px;
+    padding:30px 28px 24px;
+    min-height:calc(100vh - 70px);
+}
+
+
+.ldd-page-heading{
+    margin-bottom:22px;
+}
+
+
+.ldd-page-heading h1{
+    margin:0;
+    font-size:29px;
+    line-height:1.15;
+    font-weight:700;
+    color:#182536;
+}
+
+
+.ldd-page-heading p{
+    margin:6px 0 0;
+    font-size:15px;
+    color:#68768A;
+}
+
+
+/* ==========================================================
+   KPI CARDS
+========================================================== */
+
+.ldd-kpi-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:18px;
+    margin-bottom:18px;
+}
+
+
+.ldd-kpi-card{
+    min-height:118px;
+    background:#fff;
+    border:1px solid #EEF0F5;
+    border-radius:11px;
+    box-shadow:0 4px 16px rgba(38,45,65,.06);
+    display:flex;
+    align-items:center;
+    gap:18px;
+    padding:20px 22px;
+}
+
+
+.ldd-kpi-icon{
+    width:62px;
+    height:62px;
+    min-width:62px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:25px;
+}
+
+
+.ldd-kpi-icon.employees{
+    background:#F0E7FA;
+    color:#7024A5;
+}
+
+
+.ldd-kpi-icon.lna{
+    background:#E3F6EF;
+    color:#0FA878;
+}
+
+
+.ldd-kpi-icon.training{
+    background:#E5EEFC;
+    color:#1768D8;
+}
+
+
+.ldd-kpi-icon.hours{
+    background:#FFF2D9;
+    color:#E9A000;
+}
+
+
+.ldd-kpi-data{
+    min-width:0;
+}
+
+
+.ldd-kpi-data strong{
+    display:block;
+    color:#6A1B9A;
+    font-size:31px;
+    line-height:1;
+    font-weight:700;
+    margin-bottom:8px;
+}
+
+
+.ldd-kpi-data span{
+    display:block;
+    color:#55657A;
+    font-size:14px;
+    white-space:nowrap;
+}
+
+
+/* ==========================================================
+   PANELS
+========================================================== */
+
+.ldd-panel{
+    background:#fff;
+    border:1px solid #EEF0F5;
+    border-radius:11px;
+    box-shadow:0 4px 16px rgba(38,45,65,.06);
+    padding:20px 22px;
+    margin-bottom:18px;
+}
+
+
+.ldd-panel-title{
+    display:flex;
+    align-items:center;
+    gap:11px;
+}
+
+
+.ldd-panel-title > i{
+    color:#6A1B9A;
+    font-size:23px;
+}
+
+
+.ldd-panel-title h2{
+    margin:0;
+    color:#5E1891;
+    font-size:21px;
+    line-height:1;
+    font-weight:700;
+}
+
+
+/* ==========================================================
+   MONITORING
+========================================================== */
+
+.ldd-monitoring-panel{
+    padding-bottom:20px;
+}
+
+
+.ldd-monitoring-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:14px;
+    margin-top:18px;
+}
+
+
+.ldd-monitoring-tile{
+    min-height:55px;
+    background:linear-gradient(
+        90deg,
+        #7224A8,
+        #66209A
+    );
+    border-radius:6px;
+    color:#fff !important;
+    text-decoration:none;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:0 20px;
+    font-size:14px;
+    font-weight:600;
+    transition:.2s ease;
+}
+
+
+.ldd-monitoring-tile:hover{
+    transform:translateY(-1px);
+    box-shadow:0 5px 12px rgba(106,27,154,.18);
+}
+
+
+.ldd-monitoring-tile > i:first-child{
+    font-size:19px;
+}
+
+
+.ldd-monitoring-tile .arrow{
+    margin-left:auto;
+    font-size:14px;
+}
+
+
+/* ==========================================================
+   SECTION HEADINGS
+========================================================== */
+
+.ldd-section-heading{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:20px;
+    margin-bottom:16px;
+}
+
+
+.ldd-section-heading p{
+    margin:7px 0 0;
+    color:#718096;
+    font-size:13px;
+}
+
+
+.ldd-count-badge{
+    min-width:27px;
+    height:27px;
+    padding:0 8px;
+    border-radius:6px;
+    background:#F9B900;
+    color:#222;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:12px;
+    font-weight:700;
+}
+
+
+/* ==========================================================
+   APPROVAL TABLE
+========================================================== */
+
+.ldd-table-wrap{
+    width:100%;
+    border:1px solid #E8ECF2;
+    border-radius:8px;
+    overflow:hidden;
+}
+
+
+.ldd-approval-table{
+    width:100%;
+    border-collapse:collapse;
+    margin:0;
+    table-layout:fixed;
+}
+
+
+.ldd-approval-table th{
+    background:#F3F5F8;
+    color:#263344;
+    font-size:12px;
+    font-weight:700;
+    padding:12px 14px;
+    text-align:left;
+    border-bottom:1px solid #E3E7ED;
+}
+
+
+.ldd-approval-table td{
+    padding:12px 14px;
+    font-size:12px;
+    border-bottom:1px solid #E8ECF2;
+}
+
+
+.ldd-approval-table th:nth-child(1){
+    width:17%;
+}
+
+.ldd-approval-table th:nth-child(2){
+    width:17%;
+}
+
+.ldd-approval-table th:nth-child(3){
+    width:23%;
+}
+
+.ldd-approval-table th:nth-child(4){
+    width:23%;
+}
+
+.ldd-approval-table th:nth-child(5){
+    width:10%;
+}
+
+.ldd-approval-table th:nth-child(6){
+    width:10%;
+}
+
+
+/* ==========================================================
+   EMPTY STATES
+========================================================== */
+
+.ldd-empty-row td{
+    padding:0 !important;
+}
+
+
+.ldd-empty-state{
+    min-height:145px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    gap:5px;
+    color:#5E6C7F;
+}
+
+
+.ldd-empty-icon{
+    width:48px;
+    height:48px;
+    margin-bottom:6px;
+    border-radius:50%;
+    background:#F0EEFA;
+    color:#6A1B9A;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:22px;
+}
+
+
+.ldd-empty-state strong{
+    color:#334155;
+    font-size:14px;
+    font-weight:700;
+}
+
+
+.ldd-empty-state span{
+    color:#718096;
+    font-size:12px;
+}
+
+
+/* ==========================================================
+   RECENT ACTIVITY
+========================================================== */
+
+.ldd-activity-empty{
+    border:1px solid #E8ECF2;
+    border-radius:8px;
+    min-height:145px;
+}
+
+
+.ldd-activity-empty .ldd-empty-state{
+    min-height:145px;
+}
+
+
+.ldd-view-all-btn{
+    border:0;
+    background:#F6F0FC;
+    color:#67209A;
+    border-radius:7px;
+    padding:10px 15px;
+    font-size:12px;
+    font-weight:600;
+}
+
+
+.ldd-view-all-btn i{
+    margin-left:6px;
+}
+
+
+/* ==========================================================
+   LOCKED ITEMS
+========================================================== */
+
+.ldd-locked-link{
+    opacity:.48 !important;
+    cursor:not-allowed !important;
+    pointer-events:none !important;
+}
+
+
+.ldd-locked-tile{
+    opacity:.95;
+}
+
+
+/* ==========================================================
+   FOOTER
+========================================================== */
+
+.ldd-footer{
+    display:none;
+}
+
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media(max-width:1200px){
+
+    .ldd-kpi-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+}
+
+
+@media(max-width:900px){
+
+    .ldd-monitoring-grid{
+        grid-template-columns:1fr;
+    }
+
+}
+
+
+@media(max-width:768px){
+
+    .ldd-sidebar{
+        width:210px;
+    }
+
+    .ldd-content{
+        margin-left:210px;
+        padding:22px 18px;
+    }
+
+    .ldd-kpi-grid{
+        grid-template-columns:1fr;
+    }
+
+}
+
+
+@media(max-width:600px){
+
+    .ldd-sidebar{
+        position:relative;
+        width:100%;
+        height:auto;
+    }
+
+    .ldd-sidebar-footer{
+        position:relative;
+    }
+
+    .ldd-content{
+        margin-left:0;
+        margin-top:0;
     }
 
 }

@@ -5,316 +5,574 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>LDD Dashboard | LDIMS</title>
 
-    <!-- Bootstrap -->
     <link
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
         rel="stylesheet">
 
-    <!-- Global CSS -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+        rel="stylesheet">
+
     <link
         rel="stylesheet"
         href="../assets/css/style.css">
 
 </head>
 
-
-<body>
+<body class="ldd-dashboard-page">
 
 
 <!-- ==========================================================
      HEADER
 ========================================================== -->
 
-<header class="header">
+<header class="header ldd-header">
 
     <div class="header-title">
         LDIMS
     </div>
 
-    <div>
+    <div class="ldd-header-user">
 
-        <span class="me-4">🔔</span>
+        <span class="ldd-notification">
+            <i class="bi bi-bell-fill"></i>
+        </span>
 
         <strong id="headerRole">
             LDD Personnel
         </strong>
+
+        <i class="bi bi-chevron-down"></i>
 
     </div>
 
 </header>
 
 
-
 <!-- ==========================================================
      SIDEBAR
 ========================================================== -->
 
-<aside class="sidebar">
+<aside class="sidebar ldd-sidebar">
+
+    <div class="ldd-sidebar-brand">
+
+        <img
+            src="../assets/images/Logo.png"
+            alt="NBI Logo">
+
+        <div>
+            <div class="ldd-brand-name">
+                LDIMS
+            </div>
+
+            <div class="ldd-brand-agency">
+                NBI
+            </div>
+        </div>
+
+    </div>
+
 
     <ul>
 
         <li>
-            <a href="dashboard.html">
-                🏠 Dashboard
+            <a
+                href="dashboard.html"
+                class="active">
+
+                <i class="bi bi-house-door-fill"></i>
+
+                <span>Dashboard</span>
+
             </a>
         </li>
+
 
         <li>
             <a href="employees.html">
-                👥 Employees
+
+                <i class="bi bi-people-fill"></i>
+
+                <span>Employees</span>
+
             </a>
         </li>
+
 
         <li>
             <a href="lna-monitoring.html">
-                📋 LNA Monitoring
+
+                <i class="bi bi-file-earmark-text-fill"></i>
+
+                <span>LNA Monitoring</span>
+
             </a>
         </li>
+
 
         <li>
             <a href="training-monitoring.html">
-                🎓 Training Monitoring
+
+                <i class="bi bi-mortarboard-fill"></i>
+
+                <span>Training Monitoring</span>
+
             </a>
         </li>
+
 
         <li>
             <a href="learning-interventions.html">
-                📚 Learning Interventions
+
+                <i class="bi bi-stack"></i>
+
+                <span>
+                    Learning<br>
+                    Interventions
+                </span>
+
             </a>
         </li>
 
+
         <li>
-            <a href="reports.html">
-                📊 Reports
+            <a
+                href="reports.html"
+                class="ldd-locked-link">
+
+                <i class="bi bi-bar-chart-fill"></i>
+
+                <span>Reports</span>
+
             </a>
         </li>
 
-        <li>
-            <a href="notifications.html">
-                🔔 Notifications
-            </a>
-        </li>
 
         <li>
-            <a href="#"
-               id="logoutLink">
-                🚪 Logout
+            <a
+                href="notifications.html"
+                class="ldd-locked-link">
+
+                <i class="bi bi-bell-fill"></i>
+
+                <span>Notifications</span>
+
             </a>
         </li>
 
     </ul>
 
-</aside>
 
+    <div class="ldd-sidebar-footer">
+
+        <a
+            href="#"
+            id="logoutLink">
+
+            <i class="bi bi-box-arrow-right"></i>
+
+            <span>Logout</span>
+
+        </a>
+
+        <div class="ldd-system-info">
+
+            <div>
+                Learning & Development
+            </div>
+
+            <div>
+                Information Management System
+            </div>
+
+            <br>
+
+            <div>
+                © 2026 NBI
+            </div>
+
+            <div>
+                All rights reserved.
+            </div>
+
+        </div>
+
+    </div>
+
+</aside>
 
 
 <!-- ==========================================================
      MAIN CONTENT
 ========================================================== -->
 
-<main class="content">
+<main class="content ldd-content">
 
 
     <!-- PAGE HEADER -->
 
-    <div class="mb-4">
+    <section class="ldd-page-heading">
 
-        <h2 class="mb-1">
+        <h1>
             L&D Dashboard
-        </h2>
+        </h1>
 
-        <p class="text-muted mb-0">
+        <p>
             Learning & Development Division
         </p>
 
-    </div>
-
+    </section>
 
 
     <!-- ======================================================
-         STAT CARDS
+         KPI CARDS
     ======================================================= -->
 
-    <div class="row g-4">
+    <section class="ldd-kpi-grid">
 
 
-        <!-- Total Employees -->
+        <div class="ldd-kpi-card">
 
-        <div class="col-lg-3 col-md-6">
+            <div class="ldd-kpi-icon employees">
+                <i class="bi bi-people-fill"></i>
+            </div>
 
-            <div class="card stat-card">
+            <div class="ldd-kpi-data">
 
-                <h2 id="totalEmployees">
+                <strong id="totalEmployees">
                     0
-                </h2>
+                </strong>
 
-                <p>
+                <span>
                     Total Employees
-                </p>
+                </span>
 
             </div>
 
         </div>
 
 
+        <div class="ldd-kpi-card">
 
-        <!-- LNA Completed -->
+            <div class="ldd-kpi-icon lna">
+                <i class="bi bi-file-earmark-text-fill"></i>
+            </div>
 
-        <div class="col-lg-3 col-md-6">
+            <div class="ldd-kpi-data">
 
-            <div class="card stat-card">
+                <strong id="lnaCompleted">
+                    —
+                </strong>
 
-                <h2 id="lnaCompleted">
-                    0
-                </h2>
-
-                <p>
+                <span>
                     LNA Completed
-                </p>
+                </span>
 
             </div>
 
         </div>
 
 
+        <div class="ldd-kpi-card">
 
-        <!-- Training Records -->
+            <div class="ldd-kpi-icon training">
+                <i class="bi bi-mortarboard-fill"></i>
+            </div>
 
-        <div class="col-lg-3 col-md-6">
+            <div class="ldd-kpi-data">
 
-            <div class="card stat-card">
-
-                <h2 id="totalTrainings">
+                <strong id="totalTrainings">
                     0
-                </h2>
+                </strong>
 
-                <p>
+                <span>
                     Training Records
-                </p>
+                </span>
 
             </div>
 
         </div>
 
 
+        <div class="ldd-kpi-card">
 
-        <!-- Learning Hours -->
+            <div class="ldd-kpi-icon hours">
+                <i class="bi bi-clock-fill"></i>
+            </div>
 
-        <div class="col-lg-3 col-md-6">
+            <div class="ldd-kpi-data">
 
-            <div class="card stat-card">
-
-                <h2 id="totalLearningHours">
+                <strong id="totalLearningHours">
                     0
-                </h2>
+                </strong>
+
+                <span>
+                    Learning Hours
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ======================================================
+         L&D MONITORING
+    ======================================================= -->
+
+    <section class="ldd-panel ldd-monitoring-panel">
+
+        <div class="ldd-panel-title">
+
+            <i class="bi bi-bar-chart-fill"></i>
+
+            <h2>
+                L&D Monitoring
+            </h2>
+
+        </div>
+
+
+        <div class="ldd-monitoring-grid">
+
+
+            <a
+                href="lna-monitoring.html"
+                class="ldd-monitoring-tile">
+
+                <i class="bi bi-file-earmark-text-fill"></i>
+
+                <span>
+                    LNA Monitoring
+                </span>
+
+                <i class="bi bi-chevron-right arrow"></i>
+
+            </a>
+
+
+            <a
+                href="training-monitoring.html"
+                class="ldd-monitoring-tile">
+
+                <i class="bi bi-mortarboard-fill"></i>
+
+                <span>
+                    Training Monitoring
+                </span>
+
+                <i class="bi bi-chevron-right arrow"></i>
+
+            </a>
+
+
+            <a
+                href="reports.html"
+                class="ldd-monitoring-tile ldd-locked-tile">
+
+                <i class="bi bi-bar-chart-fill"></i>
+
+                <span>
+                    Reports
+                </span>
+
+                <i class="bi bi-chevron-right arrow"></i>
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- ======================================================
+         NEW USER APPROVAL
+         Visible only to authorized LDD roles.
+    ======================================================= -->
+
+    <section
+        id="newUserApprovalSection"
+        class="ldd-panel ldd-approval-panel"
+        hidden>
+
+        <div class="ldd-section-heading">
+
+            <div>
+
+                <div class="ldd-panel-title">
+
+                    <i class="bi bi-people-fill"></i>
+
+                    <h2>
+                        New User Approval
+                    </h2>
+
+                </div>
 
                 <p>
-                    Learning Hours
+                    Review and activate new employee registrations.
                 </p>
 
             </div>
 
+
+            <span
+                id="pendingNewUsers"
+                class="ldd-count-badge">
+
+                0
+
+            </span>
+
         </div>
 
-    </div>
 
+        <div class="ldd-table-wrap">
+
+            <table class="ldd-approval-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Employee
+                        </th>
+
+                        <th>
+                            Position
+                        </th>
+
+                        <th>
+                            Place of Assignment
+                        </th>
+
+                        <th>
+                            Email
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                        <th>
+                            Action
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="pendingNewUsersTableBody">
+
+                    <tr class="ldd-empty-row">
+
+                        <td colspan="6">
+
+                            <div class="ldd-empty-state">
+
+                                <div class="ldd-empty-icon">
+                                    <i class="bi bi-file-earmark-text"></i>
+                                </div>
+
+                                <strong>
+                                    No pending registrations.
+                                </strong>
+
+                                <span>
+                                    All employee registrations have been processed.
+                                </span>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
 
 
     <!-- ======================================================
-         QUICK ACTIONS
+         RECENT ACTIVITY
     ======================================================= -->
 
-    <div class="card mt-4 p-4">
+    <section class="ldd-panel ldd-activity-panel">
 
-        <h4 class="card-title mb-3">
-            L&D Monitoring
-        </h4>
+        <div class="ldd-section-heading">
 
+            <div>
 
-        <div class="row g-3">
+                <div class="ldd-panel-title">
 
+                    <i class="bi bi-clock-history"></i>
 
-            <div class="col-md-4">
+                    <h2>
+                        Recent L&D Activity
+                    </h2>
 
-                <a
-                    href="lna-monitoring.html"
-                    class="btn btn-primary w-100">
-
-                    📋 LNA Monitoring
-
-                </a>
+                </div>
 
             </div>
 
+            <button
+                type="button"
+                class="ldd-view-all-btn">
 
-            <div class="col-md-4">
+                View All
 
-                <a
-                    href="training-monitoring.html"
-                    class="btn btn-primary w-100">
+                <i class="bi bi-chevron-right"></i>
 
-                    🎓 Training Monitoring
+            </button>
 
-                </a>
-
-            </div>
+        </div>
 
 
-            <div class="col-md-4">
+        <div
+            id="recentActivities"
+            class="ldd-activity-empty">
 
-                <a
-                    href="reports.html"
-                    class="btn btn-primary w-100">
+            <div class="ldd-empty-state">
 
-                    📊 Reports
+                <div class="ldd-empty-icon">
+                    <i class="bi bi-file-earmark-text"></i>
+                </div>
 
-                </a>
+                <strong>
+                    No recent activity.
+                </strong>
+
+                <span>
+                    Activity records will appear here once available.
+                </span>
 
             </div>
 
         </div>
 
-    </div>
-
-
-
-    <!-- ======================================================
-         RECENT L&D ACTIVITY
-    ======================================================= -->
-
-    <div class="card mt-4 p-4">
-
-        <h4 class="card-title mb-3">
-            Recent L&D Activity
-        </h4>
-
-        <hr>
-
-        <div id="recentActivities">
-
-            <p class="text-muted mb-0">
-                Loading recent activities...
-            </p>
-
-        </div>
-
-    </div>
+    </section>
 
 
 </main>
-
 
 
 <!-- ==========================================================
      FOOTER
 ========================================================== -->
 
-<footer class="footer">
+<footer class="footer ldd-footer">
 
     © 2026 National Bureau of Investigation
 
@@ -323,7 +581,6 @@
     Learning & Development Division
 
 </footer>
-
 
 
 <!-- ==========================================================
