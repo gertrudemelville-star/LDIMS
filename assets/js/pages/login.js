@@ -156,22 +156,19 @@ function getDashboardByRole(
     ====================================================== */
 
     if (
-        normalizedRole ===
-            "LDD PERSONNEL" ||
+    normalizedRole === "LDD PERSONNEL" ||
+    normalizedRole === "LDD" ||
+    normalizedRole === "L&D OFFICER" ||
+    normalizedRole === "L&D PERSONNEL" ||
+    normalizedRole === "LDD ASST CHIEF" ||
+    normalizedRole === "LDD ASSISTANT CHIEF" ||
+    normalizedRole === "LDD CHIEF" ||
+    normalizedRole === "LDD SUPERVISOR"
+) {
 
-        normalizedRole ===
-            "LDD" ||
+    return "ldd/dashboard.html";
 
-        normalizedRole ===
-            "L&D OFFICER" ||
-
-        normalizedRole ===
-            "L&D PERSONNEL"
-    ) {
-
-        return "ldd/dashboard.html";
-
-    }
+}
 
 
     /* ======================================================
