@@ -358,26 +358,146 @@ async function loadLDDDashboard() {
             )
         ) {
 
-            await loadPendingRegistrations(
-                currentUser
+  /* ==========================================================
+   LOAD PENDING NEW USER REGISTRATIONS
+========================================================== */
+
+async function loadPendingRegistrations() {
+
+    const currentUser =
+        typeof Session !== "undefined" &&
+        typeof Session.get === "function"
+            ? Session.get()
+            : null;
+
+
+    if (
+        !currentUser ||
+        !canApproveNewUsers(currentUser)
+    ) {
+
+        return;
+
+    }
+
+
+    const countElement =
+        document.getElementById(
+            "pendingNewUsers"
+        );
+
+
+    const tableBody =
+        document.getElementById(
+            "pendingNewUsersTableBody"
+        );
+
+
+    try {
+
+        if (countElement) {
+
+            countElement.textContent =
+                "…";
+
+        }
+
+
+        const response =
+            await API.getPendingRegistrations(
+                currentUser.employeeID
             );
 
-        } else {
 
-            console.log(
-                "Current user is not authorized for New User Approval."
+        console.log(
+            "LDD New User Registrations:",
+            response
+        );
+
+
+        if (
+            !response ||
+            response.success !== true
+        ) {
+
+            throw new Error(
+                response?.message ||
+                "Unable to load pending registrations."
             );
 
         }
 
+
+        pendingNewUsers =
+            response.registrations ||
+            response.data ||
+            [];
+
+
+        if (
+            !Array.isArray(
+                pendingNewUsers
+            )
+        ) {
+
+            pendingNewUsers = [];
+
+        }
+
+
+        if (countElement) {
+
+            countElement.textContent =
+                pendingNewUsers.length;
+
+        }
+
+
+        renderPendingNewUsers();
+
+
     } catch (error) {
 
         console.error(
-            "New User Approval loading failed:",
+            "New User Registration loading failed:",
             error
         );
 
+
+        pendingNewUsers = [];
+
+
+        if (countElement) {
+
+            countElement.textContent =
+                "0";
+
+        }
+
+
+        if (tableBody) {
+
+            tableBody.innerHTML = `
+
+                <tr>
+
+                    <td
+                        colspan="7"
+                        class="text-center text-danger py-4">
+
+                        Unable to load pending registrations.
+
+                    </td>
+
+                </tr>
+
+            `;
+
+        }
+
     }
+
+}
 
 
     /* ======================================================
