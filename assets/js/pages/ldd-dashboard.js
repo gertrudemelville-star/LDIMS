@@ -149,12 +149,12 @@ document.addEventListener(
 
 async function loadLDDDashboard() {
 
+    /* ======================================================
+       TOTAL EMPLOYEES
+       Failure here must NOT stop the rest of dashboard.
+    ====================================================== */
+
     try {
-
-
-        /* ======================================================
-           TOTAL EMPLOYEES
-        ====================================================== */
 
         const employeesResponse =
             await API.getEmployees();
@@ -192,10 +192,22 @@ async function loadLDDDashboard() {
 
         }
 
+    } catch (error) {
 
-        /* ======================================================
-           TRAINING RECORDS
-        ====================================================== */
+        console.error(
+            "Unable to load LDD employees:",
+            error
+        );
+
+    }
+
+
+    /* ======================================================
+       TRAINING RECORDS
+       Failure here must NOT stop New User Approval.
+    ====================================================== */
+
+    try {
 
         let trainingResponse;
 
@@ -262,9 +274,12 @@ async function loadLDDDashboard() {
                         );
 
 
-                    if (!isNaN(hours)) {
+                    if (
+                        !isNaN(hours)
+                    ) {
 
-                        totalHours += hours;
+                        totalHours +=
+                            hours;
 
                     }
 
@@ -287,40 +302,42 @@ async function loadLDDDashboard() {
 
         }
 
+    } catch (error) {
 
-        /* ======================================================
-           LNA
-           
-           Backend LNA dashboard count is not yet connected.
-           Keep the clean empty-state value.
-        ====================================================== */
+        console.error(
+            "Unable to load LDD training records:",
+            error
+        );
 
-        const lnaCompleted =
-            document.getElementById(
-                "lnaCompleted"
-            );
+    }
 
 
-        if (lnaCompleted) {
+    /* ======================================================
+       LNA
+    ====================================================== */
 
-            lnaCompleted.textContent =
-                "—";
+    const lnaCompleted =
+        document.getElementById(
+            "lnaCompleted"
+        );
 
-        }
+
+    if (lnaCompleted) {
+
+        lnaCompleted.textContent =
+            "—";
+
+    }
 
 
-        /* ======================================================
-           NEW USER APPROVAL
+    /* ======================================================
+       NEW USER APPROVAL
 
-           IMPORTANT:
-           Do NOT call getPendingEmployees() here.
+       This MUST run independently from Employees
+       and Training APIs.
+    ====================================================== */
 
-           Existing employees must NOT automatically become
-           pending registrations.
-
-           Actual registration approval will be connected once
-           the dedicated registration-request backend is ready.
-        ====================================================== */
+    try {
 
         const currentUser =
             typeof Session !== "undefined" &&
@@ -329,30 +346,45 @@ async function loadLDDDashboard() {
                 : null;
 
 
+        console.log(
+            "LDD CURRENT USER:",
+            currentUser
+        );
+
+
         if (
-            canApproveNewUsers(currentUser)
+            canApproveNewUsers(
+                currentUser
+            )
         ) {
 
-            renderNoPendingRegistrations();
+            await loadPendingRegistrations(
+                currentUser
+            );
+
+        } else {
+
+            console.log(
+                "Current user is not authorized for New User Approval."
+            );
 
         }
-
-
-        /* ======================================================
-           RECENT ACTIVITY
-        ====================================================== */
-
-        renderNoRecentActivity();
-
 
     } catch (error) {
 
         console.error(
-            "Unable to load LDD dashboard:",
+            "New User Approval loading failed:",
             error
         );
 
     }
+
+
+    /* ======================================================
+       RECENT ACTIVITY
+    ====================================================== */
+
+    renderNoRecentActivity();
 
 }
 

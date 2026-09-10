@@ -16,7 +16,18 @@ const API = {
        POST REQUEST
     ====================================================== */
 
-    async post(data = {}) {
+ async post(data = {}) {
+
+    const maxAttempts = 2;
+
+    let lastError = null;
+
+
+    for (
+        let attempt = 1;
+        attempt <= maxAttempts;
+        attempt++
+    ) {
 
         try {
 
@@ -36,14 +47,46 @@ const API = {
             );
 
 
+            /*
+             * Always create a fresh Apps Script request URL.
+             */
+
+            const requestUrl =
+                CONFIG.API.BASE_URL +
+                "?_=" +
+                Date.now() +
+                "_" +
+                attempt;
+
+
+            console.log(
+                "LDIMS API REQUEST:",
+                {
+                    action: data.action,
+                    attempt: attempt
+                }
+            );
+
+
             const response =
                 await fetch(
-                    CONFIG.API.BASE_URL,
+                    requestUrl,
                     {
                         method: "POST",
-                        body: formData
+
+                        body: formData,
+
+                        redirect: "follow",
+
+                        cache: "no-store"
                     }
                 );
+
+
+            console.log(
+                "LDIMS API HTTP STATUS:",
+                response.status
+            );
 
 
             if (!response.ok) {
@@ -71,17 +114,51 @@ const API = {
 
         } catch (error) {
 
+            lastError =
+                error;
+
+
             console.error(
                 "LDIMS API POST ERROR:",
-                error
+                {
+                    action: data.action,
+                    attempt: attempt,
+                    error: error
+                }
             );
 
 
-            throw error;
+            /*
+             * Retry once for transient Apps Script
+             * redirect / 404 errors.
+             */
+
+            if (
+                attempt <
+                    maxAttempts
+            ) {
+
+                await new Promise(
+                    resolve =>
+                        setTimeout(
+                            resolve,
+                            1000
+                        )
+                );
+
+
+                continue;
+
+            }
 
         }
 
-    },
+    }
+
+
+    throw lastError;
+
+},
 
 
     /* ======================================================
@@ -328,7 +405,83 @@ const API = {
 
         });
 
-    }
+    },
 
+
+    /* ======================================================
+       NEW USER REGISTRATION
+       GET PENDING REGISTRATIONS
+    ====================================================== */
+
+    async getPendingRegistrations(
+        approverID
+    ) {
+
+        return await this.post({
+
+            action:
+                "getPendingRegistrations",
+
+            approverID:
+                approverID
+
+        });
+
+    },
+
+
+    /* ======================================================
+       NEW USER REGISTRATION
+       APPROVE & ACTIVATE
+    ====================================================== */
+
+    async approveRegistration(
+        employeeID,
+        approverID
+    ) {
+
+        return await this.post({
+
+            action:
+                "approveRegistration",
+
+            employeeID:
+                employeeID,
+
+            approverID:
+                approverID
+
+        });
+
+    },
+
+
+    /* ======================================================
+       CHANGE PASSWORD
+    ====================================================== */
+
+    async changePassword(
+        employeeID,
+        currentPassword,
+        newPassword
+    ) {
+
+        return await this.post({
+
+            action:
+                "changePassword",
+
+            employeeID:
+                employeeID,
+
+            currentPassword:
+                currentPassword,
+
+            newPassword:
+                newPassword
+
+        });
+
+    }
 
 };
