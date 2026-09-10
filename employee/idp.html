@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>My Individual Development Plan | LDIMS</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+
+    <link
+        rel="stylesheet"
+        href="../assets/css/style.css">
+
+    <style>
+
+        .idp-page {
+            font-family: "Bookman Old Style", Bookman, serif;
+        }
+
+        .idp-section-title {
+            color: #4A148C;
+            font-weight: 700;
+        }
+
+        .idp-readonly {
+            background: #f5f6fa;
+        }
+
+        .idp-lna-box {
+            border-left: 4px solid #6A1B9A;
+            background: #faf7fc;
+        }
+
+        .action-plan-table th {
+            background: #4A148C;
+            color: #fff;
+            font-size: 12px;
+        }
+
+        .action-plan-table td {
+            vertical-align: top;
+        }
+
+        .quarter-box {
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 12px;
+            background: #fff;
+        }
+
+        .status-badge {
+            font-size: 12px;
+            padding: 6px 10px;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+    </style>
+
+</head>
+
+<body class="idp-page">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+
+        <div class="topbar-brand">
+            LDIMS
+        </div>
+
+        <div class="topbar-right">
+
+            <span class="notification-icon">
+                <i class="bi bi-bell"></i>
+            </span>
+
+            <span id="headerRole">
+                Employee
+            </span>
+
+        </div>
+
+    </header>
+
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="sidebar-menu">
+
+            <a href="dashboard.html"
+               class="sidebar-link">
+
+                <i class="bi bi-speedometer2"></i>
+                <span>Dashboard</span>
+
+            </a>
+
+
+            <a href="profile.html"
+               class="sidebar-link">
+
+                <i class="bi bi-person"></i>
+                <span>My Profile</span>
+
+            </a>
+
+
+            <a href="lna.html"
+               class="sidebar-link">
+
+                <i class="bi bi-clipboard2-check"></i>
+                <span>Learning Needs Assessment</span>
+
+            </a>
+
+
+            <a href="idp.html"
+               class="sidebar-link active">
+
+                <i class="bi bi-person-workspace"></i>
+                <span>My IDP</span>
+
+            </a>
+
+
+            <a href="training-records.html"
+               class="sidebar-link">
+
+                <i class="bi bi-mortarboard"></i>
+                <span>Training Records</span>
+
+            </a>
+
+
+            <a href="certificates.html"
+               class="sidebar-link">
+
+                <i class="bi bi-folder-check"></i>
+                <span>Certificates</span>
+
+            </a>
+
+
+            <a href="learning-history.html"
+               class="sidebar-link">
+
+                <i class="bi bi-book"></i>
+                <span>Learning History</span>
+
+            </a>
+
+
+            <a href="notifications.html"
+               class="sidebar-link">
+
+                <i class="bi bi-bell"></i>
+                <span>Notifications</span>
+
+            </a>
+
+
+            <a href="edit-profile.html"
+               class="sidebar-link">
+
+                <i class="bi bi-gear"></i>
+                <span>Edit Profile</span>
+
+            </a>
+
+
+            <a href="#"
+               id="logoutLink"
+               class="sidebar-link">
+
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Logout</span>
+
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+    <main class="main-content">
+
+        <div class="container-fluid">
+
+
+            <!-- HEADER -->
+            <div class="page-header mb-4">
+
+                <div>
+
+                    <h1 class="page-title">
+                        My Individual Development Plan
+                    </h1>
+
+                    <p class="page-subtitle">
+                        Plan and track your professional development together
+                        with your supervisor.
+                    </p>
+
+                </div>
+
+                <div>
+
+                    <span
+                        id="idpStatus"
+                        class="badge bg-secondary status-badge">
+                        Loading...
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- INFORMATION -->
+            <div class="card shadow-sm mb-4">
+
+                <div class="card-header">
+
+                    <h5 class="mb-0">
+                        <i class="bi bi-person-badge me-2"></i>
+                        Employee Information
+                    </h5>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+
+                            <label class="form-label fw-semibold">
+                                Employee Name
+                            </label>
+
+                            <div
+                                id="employeeName"
+                                class="form-control idp-readonly">
+                                Loading...
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <label class="form-label fw-semibold">
+                                Employee ID
+                            </label>
+
+                            <div
+                                id="employeeID"
+                                class="form-control idp-readonly">
+                                Loading...
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <label class="form-label fw-semibold">
+                                Current Position
+                            </label>
+
+                            <div
+                                id="employeePosition"
+                                class="form-control idp-readonly">
+                                Loading...
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <label class="form-label fw-semibold">
+                                Division / Section / Unit
+                            </label>
+
+                            <div
+                                id="employeeAssignment"
+                                class="form-control idp-readonly">
+                                Loading...
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <label class="form-label fw-semibold">
+                                Supervisor
+                            </label>
+
+                            <div
+                                id="supervisorName"
+                                class="form-control idp-readonly">
+                                Loading...
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- LNA REFERENCE -->
+            <div
+                id="lnaReferenceCard"
+                class="card shadow-sm mb-4">
+
+                <div class="card-header">
+
+                    <h5 class="mb-0">
+
+                        <i class="bi bi-link-45deg me-2"></i>
+
+                        LNA Development Needs
+
+                    </h5>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <div
+                        id="lnaLoading"
+                        class="text-muted">
+
+                        <span class="spinner-border spinner-border-sm me-2"></span>
+
+                        Loading your validated LNA...
+
+                    </div>
+
+
+                    <div
+                        id="lnaNotAvailable"
+                        class="alert alert-warning d-none mb-0">
+
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+
+                        Your LNA must be validated by your supervisor before
+                        it can be used as the basis for your IDP.
+
+                    </div>
+
+
+                    <div
+                        id="lnaReference"
+                        class="idp-lna-box p-3 rounded d-none">
+
+                        <div class="row g-3">
+
+                            <div class="col-md-6">
+
+                                <label class="fw-semibold">
+                                    Current Development Needs
+                                </label>
+
+                                <div
+                                    id="lnaCurrentNeeds"
+                                    class="mt-1">
+                                    —
+                                </div>
+
+                            </div>
+
+
+                            <div class="col-md-6">
+
+                                <label class="fw-semibold">
+                                    Future Development Needs
+                                </label>
+
+                                <div
+                                    id="lnaFutureNeeds"
+                                    class="mt-1">
+                                    —
+                                </div>
+
+                            </div>
+
+
+                            <div class="col-md-6">
+
+                                <label class="fw-semibold">
+                                    Emerging Skills
+                                </label>
+
+                                <div
+                                    id="lnaEmergingSkills"
+                                    class="mt-1">
+                                    —
+                                </div>
+
+                            </div>
+
+
+                            <div class="col-md-6">
+
+                                <label class="fw-semibold">
+                                    Proposed Learning
+                                </label>
+
+                                <div
+                                    id="lnaProposedLearning"
+                                    class="mt-1">
+                                    —
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <hr>
+
+                        <small class="text-muted">
+                            These items are taken from your validated LNA
+                            and may be refined during your employee-supervisor
+                            IDP discussion.
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- IDP FORM -->
+            <form id="idpForm">
+
+
+                <!-- KNOWLEDGE AND SKILLS -->
+                <div class="card shadow-sm mb-4">
+
+                    <div class="card-header">
+
+                        <h5 class="mb-0 idp-section-title">
+                            A. Knowledge and Skills
+                        </h5>
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="mb-3">
+
+                            <label
+                                for="strengths"
+                                class="form-label fw-semibold">
+
+                                Employee Strengths
+
+                            </label>
+
+                            <textarea
+                                id="strengths"
+                                class="form-control"
+                                rows="4"
+                                placeholder="Describe your current strengths, knowledge, skills, and capabilities."></textarea>
+
+                        </div>
+
+
+                        <div>
+
+                            <label
+                                for="improvementAreas"
+                                class="form-label fw-semibold">
+
+                                Opportunities for Improvement
+
+                            </label>
+
+                            <textarea
+                                id="improvementAreas"
+                                class="form-control"
+                                rows="4"
+                                placeholder="Describe the knowledge, skills, or capabilities you would like to improve."></textarea>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- DEVELOPMENT GOALS -->
+                <div class="card shadow-sm mb-4">
+
+                    <div class="card-header">
+
+                        <h5 class="mb-0 idp-section-title">
+                            B. Job-Related Development
+                        </h5>
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="mb-4">
+
+                            <label
+                                for="shortTermGoals"
+                                class="form-label fw-semibold">
+
+                                Short-Term Development Goals
+                                <span class="text-muted">
+                                    (6–12 months)
+                                </span>
+
+                            </label>
+
+                            <textarea
+                                id="shortTermGoals"
+                                class="form-control"
+                                rows="4"
+                                placeholder="What knowledge, skills, or experience do you want to develop within the next 6–12 months?"></textarea>
+
+                        </div>
+
+
+                        <div>
+
+                            <label
+                                for="longTermGoals"
+                                class="form-label fw-semibold">
+
+                                Long-Term Development Goals
+                                <span class="text-muted">
+                                    (1–3 years)
+                                </span>
+
+                            </label>
+
+                            <textarea
+                                id="longTermGoals"
+                                class="form-control"
+                                rows="4"
+                                placeholder="What professional capabilities, career goals, or developmental outcomes do you want to achieve within 1–3 years?"></textarea>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ACTION PLAN -->
+                <div class="card shadow-sm mb-4">
+
+                    <div class="card-header d-flex justify-content-between align-items-center">
+
+                        <h5 class="mb-0 idp-section-title">
+                            C. Development Action Plan
+                        </h5>
+
+                        <button
+                            type="button"
+                            id="addActionPlan"
+                            class="btn btn-sm btn-primary">
+
+                            <i class="bi bi-plus-lg me-1"></i>
+                            Add Activity
+
+                        </button>
+
+                    </div>
+
+
+                    <div class="card-body">
+
+                        <div class="table-responsive">
+
+                            <table
+                                class="table table-bordered action-plan-table">
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>
+                                            Specific Knowledge / Skill
+                                        </th>
+
+                                        <th>
+                                            Activity Description
+                                        </th>
+
+                                        <th>
+                                            Supervisor's Role
+                                        </th>
+
+                                        <th>
+                                            Time Frame
+                                        </th>
+
+                                        <th>
+                                            Expected Outcome / Result
+                                        </th>
+
+                                        <th style="width:60px;">
+                                        </th>
+
+                                    </tr>
+
+                                </thead>
+
+                                <tbody id="actionPlanBody">
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- QUARTERLY REVIEW -->
+                <div class="card shadow-sm mb-4">
+
+                    <div class="card-header">
+
+                        <h5 class="mb-0 idp-section-title">
+                            Quarterly Review
+                        </h5>
+
+                    </div>
+
+
+                    <div class="card-body">
+
+                        <div class="row g-3">
+
+                            <div class="col-md-3">
+
+                                <div class="quarter-box">
+
+                                    <strong>Q1</strong>
+
+                                    <input
+                                        type="text"
+                                        id="q1Employee"
+                                        class="form-control form-control-sm mt-2"
+                                        placeholder="Employee initials">
+
+                                    <input
+                                        type="date"
+                                        id="q1EmployeeDate"
+                                        class="form-control form-control-sm mt-2">
+
+                                    <input
+                                        type="text"
+                                        id="q1Supervisor"
+                                        class="form-control form-control-sm mt-2"
+                                        placeholder="Supervisor initials">
+
+                                    <input
+                                        type="date"
+                                        id="q1SupervisorDate"
+                                        class="form-control form-control-sm mt-2">
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="col-md-3">
+
+                                <div class="quarter-box">
+
+                                    <strong>Q2</strong>
+
+                                    <input
+                                        type="text"
+                                        id="q2Employee"
+                                        class="form-control form-control-sm mt-2"
+                                        placeholder="Employee initials">
+
+                                    <input
+                                        type="date"
+                                        id="q2EmployeeDate"
+                                        class="form-control form-control-sm mt-2">
+
+                                    <input
+                                        type="text"
+                                        id="q2Supervisor"
+                                        class="form-control form-control-sm mt-2"
+                                        placeholder="Supervisor initials">
+
+                                    <input
+                                        type="date"
+                                        id="q2SupervisorDate"
+                                        class="form-control form-control-sm mt-2">
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="col-md-3">
+
+                                <div class="quarter-box">
+
+                                    <strong>Q3</strong>
+
+                                    <input
+                                        type="text"
+                                        id="q3Employee"
+                                        class="form-control form-control-sm mt-2"
+                                        placeholder="Employee initials">
+
+                                    <input
+                                        type="date"
+                                        id="q3EmployeeDate"
+                                        class="form-control form-control-sm mt-2">
+
+                                    <input
+                                        type="text"
+                                        id="q3Supervisor"
+                                        class="form-control form-control-sm mt-2"
+                                        placeholder="Supervisor initials">
+
+                                    <input
+                                        type="date"
+                                        id="q3SupervisorDate"
+                                        class="form-control form-control-sm mt-2">
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="col-md-3">
+
+                                <div class="quarter-box">
+
+                                    <strong>Q4</strong>
+
+                                    <input
+                                        type="text"
+                                        id="q4Employee"
+                                        class="form-control form-control-sm mt-2"
+                                        placeholder="Employee initials">
+
+                                    <input
+                                        type="date"
+                                        id="q4EmployeeDate"
+                                        class="form-control form-control-sm mt-2">
+
+                                    <input
+                                        type="text"
+                                        id="q4Supervisor"
+                                        class="form-control form-control-sm mt-2"
+                                        placeholder="Supervisor initials">
+
+                                    <input
+                                        type="date"
+                                        id="q4SupervisorDate"
+                                        class="form-control form-control-sm mt-2">
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- COMMENTS -->
+                <div class="card shadow-sm mb-4">
+
+                    <div class="card-header">
+
+                        <h5 class="mb-0 idp-section-title">
+                            D. Supplemental Information and Additional Comments
+                        </h5>
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <textarea
+                            id="additionalComments"
+                            class="form-control"
+                            rows="5"
+                            placeholder="Enter additional information, development considerations, support needed, or other comments."></textarea>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ACTIONS -->
+                <div class="card shadow-sm mb-5">
+
+                    <div class="card-body d-flex justify-content-between">
+
+                        <button
+                            type="button"
+                            id="saveDraftButton"
+                            class="btn btn-outline-primary">
+
+                            <i class="bi bi-save me-2"></i>
+                            Save Draft
+
+                        </button>
+
+
+                        <button
+                            type="submit"
+                            id="submitIDPButton"
+                            class="btn btn-primary">
+
+                            <i class="bi bi-send me-2"></i>
+                            Submit IDP
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </main>
+
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js">
+    </script>
+
+    <script src="../assets/js/config.js"></script>
+    <script src="../assets/js/api.js"></script>
+    <script src="../assets/js/session.js"></script>
+    <script src="../assets/js/utils.js"></script>
+
+    <script src="../assets/js/pages/idp.js"></script>
+
+</body>
+
+</html>
