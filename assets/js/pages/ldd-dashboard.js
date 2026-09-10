@@ -32,15 +32,104 @@ function canApproveNewUsers(user) {
         allowedRole =>
             role === allowedRole.toLowerCase()
     );
-
 }
 
 
 /* ==========================================================
-   PENDING NEW USER REGISTRATIONS
+   STATE
 ========================================================== */
 
 let pendingNewUsers = [];
+
+
+/* ==========================================================
+   INITIALIZE
+========================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    async function () {
+
+        try {
+
+            if (
+                typeof Session !== "undefined" &&
+                typeof Session.requireLogin === "function"
+            ) {
+                Session.requireLogin();
+            }
+
+
+            const user =
+                typeof Session !== "undefined" &&
+                typeof Session.get === "function"
+                    ? Session.get()
+                    : null;
+
+
+            if (!user) {
+                return;
+            }
+
+
+            /* --------------------------------------------------
+               HEADER ROLE
+            -------------------------------------------------- */
+
+            const headerRole =
+                document.getElementById(
+                    "headerRole"
+                );
+
+            if (headerRole) {
+                headerRole.textContent =
+                    user.role ||
+                    "LDD Personnel";
+            }
+
+
+            /* --------------------------------------------------
+               NEW USER APPROVAL VISIBILITY
+            -------------------------------------------------- */
+
+            const approvalSection =
+                document.getElementById(
+                    "newUserApprovalSection"
+                );
+
+            if (approvalSection) {
+
+                approvalSection.hidden =
+                    !canApproveNewUsers(user);
+
+            }
+
+
+            /* --------------------------------------------------
+               LOAD DASHBOARD
+            -------------------------------------------------- */
+
+            await loadLDDDashboard();
+
+
+            /* --------------------------------------------------
+               LOGOUT
+            -------------------------------------------------- */
+
+            initializeLogout();
+
+
+        } catch (error) {
+
+            console.error(
+                "LDD Dashboard initialization failed:",
+                error
+            );
+
+        }
+
+    }
+);
 
 
 /* ==========================================================
@@ -60,9 +149,7 @@ async function loadPendingRegistrations() {
         !currentUser ||
         !canApproveNewUsers(currentUser)
     ) {
-
         return;
-
     }
 
 
@@ -81,16 +168,19 @@ async function loadPendingRegistrations() {
     try {
 
         if (countElement) {
-
-            countElement.textContent =
-                "…";
-
+            countElement.textContent = "…";
         }
+
+
+        const approverID =
+            currentUser.employeeID ||
+            currentUser.EmployeeID ||
+            "";
 
 
         const response =
             await API.getPendingRegistrations(
-                currentUser.employeeID
+                approverID
             );
 
 
@@ -124,9 +214,7 @@ async function loadPendingRegistrations() {
                 pendingNewUsers
             )
         ) {
-
             pendingNewUsers = [];
-
         }
 
 
@@ -153,29 +241,20 @@ async function loadPendingRegistrations() {
 
 
         if (countElement) {
-
-            countElement.textContent =
-                "0";
-
+            countElement.textContent = "0";
         }
 
 
         if (tableBody) {
 
             tableBody.innerHTML = `
-
                 <tr>
-
                     <td
-                        colspan="7"
+                        colspan="6"
                         class="text-center text-danger py-4">
-
                         Unable to load pending registrations.
-
                     </td>
-
                 </tr>
-
             `;
 
         }
@@ -263,24 +342,24 @@ function renderPendingNewUsers() {
                         "";
 
 
-                    const fullName =
-                        [
-                            lastName,
-                            firstName,
-                            middleName
-                        ]
-                            .filter(Boolean)
-                            .join(", ");
+                    const nameParts = [
+                        lastName,
+                        firstName,
+                        middleName
+                    ].filter(Boolean);
 
 
-                    const displayName =
-                        fullName +
-                        (
-                            nameExtension
-                                ? " " +
-                                  nameExtension
-                                : ""
-                        );
+                    let displayName =
+                        nameParts.join(", ");
+
+
+                    if (nameExtension) {
+
+                        displayName +=
+                            " " +
+                            nameExtension;
+
+                    }
 
 
                     const position =
@@ -302,7 +381,6 @@ function renderPendingNewUsers() {
 
 
                     return `
-
                         <tr>
 
                             <!-- EMPLOYEE -->
@@ -310,15 +388,12 @@ function renderPendingNewUsers() {
                             <td>
 
                                 <div class="fw-semibold">
-                                    ${escapeHTML(
-                                        employeeID
-                                    )}
+                                    ${escapeHTML(employeeID)}
                                 </div>
 
                                 <div class="text-muted small">
                                     ${escapeHTML(
-                                        displayName ||
-                                        "—"
+                                        displayName || "—"
                                     )}
                                 </div>
 
@@ -328,27 +403,21 @@ function renderPendingNewUsers() {
                             <!-- POSITION -->
 
                             <td>
-                                ${escapeHTML(
-                                    position
-                                )}
+                                ${escapeHTML(position)}
                             </td>
 
 
                             <!-- PLACE OF ASSIGNMENT -->
 
                             <td>
-                                ${escapeHTML(
-                                    assignment
-                                )}
+                                ${escapeHTML(assignment)}
                             </td>
 
 
                             <!-- EMAIL -->
 
                             <td>
-                                ${escapeHTML(
-                                    email
-                                )}
+                                ${escapeHTML(email)}
                             </td>
 
 
@@ -356,7 +425,8 @@ function renderPendingNewUsers() {
 
                             <td>
 
-                                <span class="badge bg-warning text-dark">
+                                <span
+                                    class="badge bg-warning text-dark">
                                     Pending
                                 </span>
 
@@ -370,17 +440,16 @@ function renderPendingNewUsers() {
                                 <button
                                     type="button"
                                     class="btn btn-sm btn-primary"
-                                    onclick="reviewPendingRegistration('${escapeAttribute(employeeID)}')">
+                                    onclick="approvePendingRegistration('${escapeAttribute(employeeID)}')">
 
-                                    <i class="bi bi-eye"></i>
-                                    Review
+                                    <i class="bi bi-check-circle"></i>
+                                    Approve & Activate
 
                                 </button>
 
                             </td>
 
                         </tr>
-
                     `;
 
                 }
@@ -388,6 +457,7 @@ function renderPendingNewUsers() {
             .join("");
 
 }
+
 
 /* ==========================================================
    APPROVE & ACTIVATE REGISTRATION
@@ -418,9 +488,26 @@ async function approvePendingRegistration(
     }
 
 
+    const cleanEmployeeID =
+        String(employeeID || "").trim();
+
+
+    if (!cleanEmployeeID) {
+
+        alert(
+            "Employee ID is missing."
+        );
+
+        return;
+
+    }
+
+
     const confirmed =
         window.confirm(
-            "Approve and activate this employee account?"
+            "Approve and activate this employee account?\n\n" +
+            "Employee ID: " +
+            cleanEmployeeID
         );
 
 
@@ -431,10 +518,16 @@ async function approvePendingRegistration(
 
     try {
 
+        const approverID =
+            currentUser.employeeID ||
+            currentUser.EmployeeID ||
+            "";
+
+
         const response =
             await API.approveRegistration(
-                employeeID,
-                currentUser.employeeID
+                cleanEmployeeID,
+                approverID
             );
 
 
@@ -463,28 +556,28 @@ async function approvePendingRegistration(
         );
 
 
-        const modalElement =
-            document.getElementById(
-                "pendingRegistrationModal"
+        /*
+         * Remove the approved registration
+         * immediately from the current list.
+         */
+
+        pendingNewUsers =
+            pendingNewUsers.filter(
+                registration => {
+
+                    const id =
+                        registration.employeeID ||
+                        registration.EmployeeID ||
+                        "";
+
+                    return String(id).trim() !==
+                        cleanEmployeeID;
+
+                }
             );
 
 
-        if (modalElement) {
-
-            const modal =
-                bootstrap.Modal.getInstance(
-                    modalElement
-                );
-
-
-            if (modal) {
-                modal.hide();
-            }
-
-        }
-
-
-        await loadPendingRegistrations();
+        renderPendingNewUsers();
 
 
     } catch (error) {
@@ -560,121 +653,14 @@ function escapeAttribute(value) {
 
 
 /* ==========================================================
-   INITIALIZE
-========================================================== */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    async function () {
-
-        try {
-
-            if (
-                typeof Session !== "undefined" &&
-                typeof Session.requireLogin === "function"
-            ) {
-
-                Session.requireLogin();
-
-            }
-
-
-            const user =
-                typeof Session !== "undefined" &&
-                typeof Session.get === "function"
-                    ? Session.get()
-                    : null;
-
-
-            if (!user) {
-                return;
-            }
-
-
-            /* --------------------------------------------------
-               HEADER ROLE
-            -------------------------------------------------- */
-
-            const headerRole =
-                document.getElementById(
-                    "headerRole"
-                );
-
-
-            if (headerRole) {
-
-                headerRole.textContent =
-                    user.role ||
-                    "LDD Personnel";
-
-            }
-
-
-            /* --------------------------------------------------
-               NEW USER APPROVAL VISIBILITY
-            -------------------------------------------------- */
-
-            const approvalSection =
-                document.getElementById(
-                    "newUserApprovalSection"
-                );
-
-
-            if (approvalSection) {
-
-                if (
-                    canApproveNewUsers(user)
-                ) {
-
-                    approvalSection.hidden =
-                        false;
-
-                } else {
-
-                    approvalSection.hidden =
-                        true;
-
-                }
-
-            }
-
-
-            /* --------------------------------------------------
-               LOAD DASHBOARD
-            -------------------------------------------------- */
-
-            await loadLDDDashboard();
-
-
-            /* --------------------------------------------------
-               LOGOUT
-            -------------------------------------------------- */
-
-            initializeLogout();
-
-
-        } catch (error) {
-
-            console.error(
-                "LDD Dashboard initialization failed:",
-                error
-            );
-
-        }
-
-    }
-);
-
-
-/* ==========================================================
    LOAD DASHBOARD
 ========================================================== */
 
 async function loadLDDDashboard() {
 
+
     /* ======================================================
        TOTAL EMPLOYEES
-       Failure here must NOT stop the rest of dashboard.
     ====================================================== */
 
     try {
@@ -727,7 +713,6 @@ async function loadLDDDashboard() {
 
     /* ======================================================
        TRAINING RECORDS
-       Failure here must NOT stop New User Approval.
     ====================================================== */
 
     try {
@@ -797,12 +782,9 @@ async function loadLDDDashboard() {
                         );
 
 
-                    if (
-                        !isNaN(hours)
-                    ) {
+                    if (!isNaN(hours)) {
 
-                        totalHours +=
-                            hours;
+                        totalHours += hours;
 
                     }
 
@@ -856,7 +838,7 @@ async function loadLDDDashboard() {
     /* ======================================================
        NEW USER APPROVAL
 
-       This MUST run independently from Employees
+       Runs independently from Employees
        and Training APIs.
     ====================================================== */
 
@@ -867,12 +849,6 @@ async function loadLDDDashboard() {
             typeof Session.get === "function"
                 ? Session.get()
                 : null;
-
-
-        console.log(
-            "LDD CURRENT USER:",
-            currentUser
-        );
 
 
         if (
@@ -956,9 +932,11 @@ function renderNoPendingRegistrations() {
 
                     </div>
 
+
                     <strong>
                         No pending registrations.
                     </strong>
+
 
                     <span>
                         All employee registrations have been processed.
@@ -1002,9 +980,11 @@ function renderNoRecentActivity() {
 
             </div>
 
+
             <strong>
                 No recent activity.
             </strong>
+
 
             <span>
                 Activity records will appear here once available.
