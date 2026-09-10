@@ -270,13 +270,11 @@ function renderPendingNewUsers() {
                             middleName
                         ]
                             .filter(Boolean)
-                            .join(", ")
-                            .replace(
-                                ", " +
-                                middleName,
-                                " " +
-                                middleName
-                            ) +
+                            .join(", ");
+
+
+                    const displayName =
+                        fullName +
                         (
                             nameExtension
                                 ? " " +
@@ -303,44 +301,69 @@ function renderPendingNewUsers() {
                         "—";
 
 
-                    const registrationDate =
-                        registration.registrationDate ||
-                        registration.RegistrationDate ||
-                        "—";
-
-
                     return `
 
                         <tr>
 
+                            <!-- EMPLOYEE -->
+
                             <td>
-                                ${escapeHTML(employeeID)}
+
+                                <div class="fw-semibold">
+                                    ${escapeHTML(
+                                        employeeID
+                                    )}
+                                </div>
+
+                                <div class="text-muted small">
+                                    ${escapeHTML(
+                                        displayName ||
+                                        "—"
+                                    )}
+                                </div>
+
                             </td>
+
+
+                            <!-- POSITION -->
 
                             <td>
                                 ${escapeHTML(
-                                    fullName ||
-                                    "—"
+                                    position
                                 )}
                             </td>
 
-                            <td>
-                                ${escapeHTML(position)}
-                            </td>
 
-                            <td>
-                                ${escapeHTML(assignment)}
-                            </td>
-
-                            <td>
-                                ${escapeHTML(email)}
-                            </td>
+                            <!-- PLACE OF ASSIGNMENT -->
 
                             <td>
                                 ${escapeHTML(
-                                    registrationDate
+                                    assignment
                                 )}
                             </td>
+
+
+                            <!-- EMAIL -->
+
+                            <td>
+                                ${escapeHTML(
+                                    email
+                                )}
+                            </td>
+
+
+                            <!-- STATUS -->
+
+                            <td>
+
+                                <span class="badge bg-warning text-dark">
+                                    Pending
+                                </span>
+
+                            </td>
+
+
+                            <!-- ACTION -->
 
                             <td>
 
@@ -365,329 +388,6 @@ function renderPendingNewUsers() {
             .join("");
 
 }
-
-
-/* ==========================================================
-   REVIEW PENDING REGISTRATION
-========================================================== */
-
-function reviewPendingRegistration(
-    employeeID
-) {
-
-    const registration =
-        pendingNewUsers.find(
-            item =>
-                String(
-                    item.employeeID ||
-                    item.EmployeeID ||
-                    ""
-                ) ===
-                String(employeeID)
-        );
-
-
-    if (!registration) {
-
-        alert(
-            "Registration record not found."
-        );
-
-        return;
-
-    }
-
-
-    const fullName =
-        [
-            registration.lastName ||
-                registration.LastName ||
-                "",
-            registration.firstName ||
-                registration.FirstName ||
-                "",
-            registration.middleName ||
-                registration.MiddleName ||
-                ""
-        ]
-            .filter(Boolean)
-            .join(", ");
-
-
-    const designation =
-        registration.designation ||
-        registration.Designation ||
-        "—";
-
-
-    const position =
-        registration.position ||
-        registration.Position ||
-        "—";
-
-
-    const assignment =
-        registration.placeOfAssignment ||
-        registration.PlaceOfAssignment ||
-        "—";
-
-
-    const email =
-        registration.email ||
-        registration.Email ||
-        "—";
-
-
-    const contactNumber =
-        registration.contactNumber ||
-        registration.ContactNumber ||
-        "—";
-
-
-    const employmentStatus =
-        registration.employmentStatus ||
-        registration.EmploymentStatus ||
-        "Not provided";
-
-
-    const registrationDate =
-        registration.registrationDate ||
-        registration.RegistrationDate ||
-        "—";
-
-
-    const modalElement =
-        document.getElementById(
-            "pendingRegistrationModal"
-        );
-
-
-    if (modalElement) {
-
-        const modalBody =
-            modalElement.querySelector(
-                ".modal-body"
-            );
-
-
-        if (modalBody) {
-
-            modalBody.innerHTML = `
-
-                <div class="row g-3">
-
-                    <div class="col-md-6">
-
-                        <label class="form-label fw-semibold">
-                            Employee ID
-                        </label>
-
-                        <div class="form-control bg-light">
-                            ${escapeHTML(
-                                registration.employeeID ||
-                                registration.EmployeeID ||
-                                "—"
-                            )}
-                        </div>
-
-                    </div>
-
-
-                    <div class="col-md-6">
-
-                        <label class="form-label fw-semibold">
-                            Full Name
-                        </label>
-
-                        <div class="form-control bg-light">
-                            ${escapeHTML(
-                                fullName ||
-                                "—"
-                            )}
-                        </div>
-
-                    </div>
-
-
-                    <div class="col-md-6">
-
-                        <label class="form-label fw-semibold">
-                            Position
-                        </label>
-
-                        <div class="form-control bg-light">
-                            ${escapeHTML(position)}
-                        </div>
-
-                    </div>
-
-
-                    <div class="col-md-6">
-
-                        <label class="form-label fw-semibold">
-                            Designation
-                        </label>
-
-                        <div class="form-control bg-light">
-                            ${escapeHTML(designation)}
-                        </div>
-
-                    </div>
-
-
-                    <div class="col-md-6">
-
-                        <label class="form-label fw-semibold">
-                            Place of Assignment
-                        </label>
-
-                        <div class="form-control bg-light">
-                            ${escapeHTML(assignment)}
-                        </div>
-
-                    </div>
-
-
-                    <div class="col-md-6">
-
-                        <label class="form-label fw-semibold">
-                            Email
-                        </label>
-
-                        <div class="form-control bg-light">
-                            ${escapeHTML(email)}
-                        </div>
-
-                    </div>
-
-
-                    <div class="col-md-6">
-
-                        <label class="form-label fw-semibold">
-                            Contact Number
-                        </label>
-
-                        <div class="form-control bg-light">
-                            ${escapeHTML(contactNumber)}
-                        </div>
-
-                    </div>
-
-
-                    <div class="col-md-6">
-
-                        <label class="form-label fw-semibold">
-                            Employment Status
-                        </label>
-
-                        <div class="form-control bg-light">
-                            ${escapeHTML(
-                                employmentStatus
-                            )}
-                        </div>
-
-                    </div>
-
-
-                    <div class="col-12">
-
-                        <label class="form-label fw-semibold">
-                            Registration Date
-                        </label>
-
-                        <div class="form-control bg-light">
-                            ${escapeHTML(
-                                registrationDate
-                            )}
-                        </div>
-
-                    </div>
-
-                </div>
-
-            `;
-
-        }
-
-
-        const approveButton =
-            modalElement.querySelector(
-                "#approveRegistrationButton"
-            );
-
-
-        if (approveButton) {
-
-            approveButton.onclick =
-                function () {
-
-                    approvePendingRegistration(
-                        employeeID
-                    );
-
-                };
-
-        }
-
-
-        const modal =
-            bootstrap.Modal.getOrCreateInstance(
-                modalElement
-            );
-
-
-        modal.show();
-
-        return;
-
-    }
-
-
-    /*
-     * Fallback for dashboards that do not yet
-     * contain the Bootstrap modal markup.
-     */
-
-    const message =
-        [
-            "Employee ID: " +
-                (
-                    registration.employeeID ||
-                    registration.EmployeeID ||
-                    "—"
-                ),
-
-            "Full Name: " +
-                (fullName || "—"),
-
-            "Position: " +
-                position,
-
-            "Designation: " +
-                designation,
-
-            "Place of Assignment: " +
-                assignment,
-
-            "Email: " +
-                email,
-
-            "Contact Number: " +
-                contactNumber,
-
-            "Employment Status: " +
-                employmentStatus,
-
-            "Registration Date: " +
-                registrationDate
-        ]
-            .join("\n");
-
-
-    alert(message);
-
-}
-
 
 /* ==========================================================
    APPROVE & ACTIVATE REGISTRATION
@@ -1246,7 +946,7 @@ function renderNoPendingRegistrations() {
 
         <tr class="ldd-empty-row">
 
-            <td colspan="7">
+            <td colspan="6">
 
                 <div class="ldd-empty-state">
 
