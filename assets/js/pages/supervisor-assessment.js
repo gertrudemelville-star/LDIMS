@@ -877,10 +877,12 @@ async function loadSupervisorAssessmentCompetencies() {
         }
 
 
-        const competencies =
-            response.applicableCompetencies ||
-            response.competencies ||
-            [];
+            const competencies =
+                Array.isArray(response.competencies)
+                    ? response.competencies
+                    : Array.isArray(response.applicableCompetencies)
+                        ? response.applicableCompetencies
+            : [];
 
 
         if (
@@ -935,18 +937,20 @@ async function loadSupervisorAssessmentCompetencies() {
                             function(item) {
 
                                 const code =
+                                    item.lnaCompetencyCode ||
+                                    item.masterCompetencyCode ||
                                     item.code ||
                                     item.competencyCode ||
-                                    item.masterCompetencyCode ||
                                     "";
-
 
                                 const name =
                                     item.competencyName ||
                                     item.name ||
                                     item.competency ||
+                                    item.functionalRole ||
+                                    item.functionalArea ||
+                                    item.masterCompetencyCode ||
                                     "Competency";
-
 
                                 const required =
                                     item.requiredLevel ||
