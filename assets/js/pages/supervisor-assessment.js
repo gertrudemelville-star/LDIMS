@@ -1,28 +1,47 @@
 "use strict";
 
 /* ==========================================================
-   LDIMS - SUPERVISOR ASSESSMENT FRONTEND
+   LDIMS - SUPERVISOR ASSESSMENT
+   ----------------------------------------------------------
+   Supervisor Assessment linked by Employee ID.
+
+   S1 - Development Priorities
+   S2 - Observed Development Need
+   S3 - Recommended Learning Intervention
+   S4 - Broader / Complex Responsibilities
+   S5 - Expertise / Knowledge Sharing
+   S6 - Knowledge Sharing Role
+   S7 - Supervisor Comments
+
+   Competency Rating:
+   1 - Awareness
+   2 - Developing
+   3 - Proficient
+   4 - Advanced
+   5 - Expert
+   N/A
 ========================================================== */
 
-let SUPERVISOR_ASSESSMENT = {
+
+/* ==========================================================
+   STATE
+========================================================== */
+
+window.SUPERVISOR_ASSESSMENT = {
 
     employeeID: "",
-
-    employeeName: "",
-
     supervisorID: "",
-
     supervisorName: "",
 
-    competencyRatings: {},
+    assessment: null,
 
-    loaded: false
+    competencyRatings: {}
 
 };
 
 
 /* ==========================================================
-   OPEN ASSESSMENT
+   OPEN SUPERVISOR ASSESSMENT
 ========================================================== */
 
 async function openSupervisorAssessment(
@@ -40,31 +59,92 @@ async function openSupervisorAssessment(
     }
 
 
-    const employee =
-        findPersonnel(
-            employeeID
+    const sessionUser =
+        typeof Session !== "undefined" &&
+        typeof Session.get === "function"
+            ? Session.get()
+            : null;
+
+
+    let supervisorID = "";
+
+    let supervisorName = "";
+
+
+    /*
+     * Prefer existing Supervisor module state.
+     */
+
+    if (
+        typeof SUPERVISOR !== "undefined" &&
+        SUPERVISOR
+    ) {
+
+        supervisorID =
+            SUPERVISOR.employeeID ||
+            "";
+
+        supervisorName =
+            SUPERVISOR.name ||
+            SUPERVISOR.fullname ||
+            SUPERVISOR.fullName ||
+            "";
+
+    }
+
+
+    /*
+     * Session fallback.
+     */
+
+    if (!supervisorID && sessionUser) {
+
+        supervisorID =
+            sessionUser.employeeID ||
+            sessionUser.EmployeeID ||
+            "";
+
+    }
+
+
+    if (!supervisorName && sessionUser) {
+
+        supervisorName =
+            sessionUser.fullname ||
+            sessionUser.fullName ||
+            sessionUser.name ||
+            "";
+
+    }
+
+
+    if (!supervisorID) {
+
+        alert(
+            "Supervisor Employee ID could not be determined."
         );
 
+        return;
 
-    SUPERVISOR_ASSESSMENT.employeeID =
-        employeeID;
-
-
-    SUPERVISOR_ASSESSMENT.employeeName =
-        employee
-            ? employee.name
-            : "";
+    }
 
 
-    SUPERVISOR_ASSESSMENT.supervisorID =
-        SUPERVISOR.employeeID;
+    window.SUPERVISOR_ASSESSMENT = {
 
+        employeeID:
+            String(employeeID).trim(),
 
-    SUPERVISOR_ASSESSMENT.supervisorName =
-        SUPERVISOR.user.fullname ||
-        SUPERVISOR.user.Fullname ||
-        SUPERVISOR.user.name ||
-        "";
+        supervisorID:
+            String(supervisorID).trim(),
+
+        supervisorName:
+            String(supervisorName).trim(),
+
+        assessment: null,
+
+        competencyRatings: {}
+
+    };
 
 
     createSupervisorAssessmentModal();
@@ -73,9 +153,7 @@ async function openSupervisorAssessment(
     showSupervisorAssessmentModal();
 
 
-    await loadSupervisorAssessment(
-        employeeID
-    );
+    await loadSupervisorAssessment();
 
 }
 
@@ -86,21 +164,21 @@ async function openSupervisorAssessment(
 
 function createSupervisorAssessmentModal() {
 
-    if (
+    const existing =
         document.getElementById(
             "supervisorAssessmentModal"
-        )
-    ) {
+        );
 
-        return;
+
+    if (existing) {
+
+        existing.remove();
 
     }
 
 
     const modal =
-        document.createElement(
-            "div"
-        );
+        document.createElement("div");
 
 
     modal.id =
@@ -113,29 +191,35 @@ function createSupervisorAssessmentModal() {
 
     modal.innerHTML = `
 
-        <div class="supervisor-assessment-backdrop"
-             onclick="closeSupervisorAssessment()">
-        </div>
+        <div
+            class="supervisor-assessment-backdrop"
+            onclick="closeSupervisorAssessment();"
+        ></div>
 
 
-        <div class="supervisor-assessment-dialog">
+        <div
+            class="supervisor-assessment-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="supervisorAssessmentTitle"
+        >
 
             <div class="supervisor-assessment-header">
 
                 <div>
 
                     <div class="assessment-eyebrow">
-                        SUPERVISOR ASSESSMENT
+                        SUPERVISOR WORKSPACE
                     </div>
 
-                    <h2>
+                    <h2 id="supervisorAssessmentTitle">
                         Supervisor Assessment
                     </h2>
 
                     <p>
-                        Independent assessment of the employee's
-                        demonstrated performance, development needs,
-                        and applicable competencies.
+                        Assess the employee's competency,
+                        development needs, and recommended
+                        learning intervention.
                     </p>
 
                 </div>
@@ -144,7 +228,8 @@ function createSupervisorAssessmentModal() {
                 <button
                     type="button"
                     class="assessment-close"
-                    onclick="closeSupervisorAssessment()"
+                    onclick="closeSupervisorAssessment();"
+                    aria-label="Close"
                 >
                     ×
                 </button>
@@ -152,26 +237,26 @@ function createSupervisorAssessmentModal() {
             </div>
 
 
-            <div class="supervisor-assessment-employee">
+            <div class="supervisor-assessment-meta">
 
                 <div>
-                    <span>Employee</span>
-                    <strong id="assessmentEmployeeName">
-                        —
-                    </strong>
-                </div>
-
-                <div>
-                    <span>Employee ID</span>
+                    <span>EMPLOYEE ID</span>
                     <strong id="assessmentEmployeeID">
                         —
                     </strong>
                 </div>
 
                 <div>
-                    <span>Supervisor</span>
+                    <span>SUPERVISOR</span>
                     <strong id="assessmentSupervisorName">
                         —
+                    </strong>
+                </div>
+
+                <div>
+                    <span>STATUS</span>
+                    <strong id="assessmentStatus">
+                        Loading...
                     </strong>
                 </div>
 
@@ -195,15 +280,16 @@ function createSupervisorAssessmentModal() {
                 <button
                     type="button"
                     class="assessment-btn secondary"
-                    onclick="closeSupervisorAssessment()"
+                    onclick="closeSupervisorAssessment();"
                 >
                     Cancel
                 </button>
 
+
                 <button
                     type="button"
                     class="assessment-btn primary"
-                    onclick="saveSupervisorAssessmentForm()"
+                    onclick="saveSupervisorAssessmentForm();"
                 >
                     Save Supervisor Assessment
                 </button>
@@ -219,16 +305,55 @@ function createSupervisorAssessmentModal() {
         modal
     );
 
+
+    setAssessmentMeta();
+
+
+    injectSupervisorAssessmentStyles();
+
+
+    document.body.classList.add(
+        "modal-open"
+    );
+
+
+    document.addEventListener(
+        "keydown",
+        supervisorAssessmentEscapeHandler
+    );
+
 }
 
 
 /* ==========================================================
-   LOAD
+   META
 ========================================================== */
 
-async function loadSupervisorAssessment(
-    employeeID
-) {
+function setAssessmentMeta() {
+
+    const state =
+        window.SUPERVISOR_ASSESSMENT;
+
+
+    setAssessmentText(
+        "assessmentEmployeeID",
+        state.employeeID || "—"
+    );
+
+
+    setAssessmentText(
+        "assessmentSupervisorName",
+        state.supervisorName || state.supervisorID || "—"
+    );
+
+}
+
+
+/* ==========================================================
+   LOAD EXISTING ASSESSMENT
+========================================================== */
+
+async function loadSupervisorAssessment() {
 
     const body =
         document.getElementById(
@@ -237,11 +362,17 @@ async function loadSupervisorAssessment(
 
 
     if (!body) {
+
         return;
+
     }
 
 
     try {
+
+        const state =
+            window.SUPERVISOR_ASSESSMENT;
+
 
         const response =
             await API.post({
@@ -250,12 +381,18 @@ async function loadSupervisorAssessment(
                     "getSupervisorAssessment",
 
                 employeeID:
-                    employeeID,
+                    state.employeeID,
 
                 supervisorEmployeeID:
-                    SUPERVISOR.employeeID
+                    state.supervisorID
 
             });
+
+
+        console.log(
+            "Supervisor Assessment:",
+            response
+        );
 
 
         if (
@@ -267,7 +404,7 @@ async function loadSupervisorAssessment(
                 response &&
                 response.message
                     ? response.message
-                    : "Unable to load assessment."
+                    : "Unable to load Supervisor Assessment."
             );
 
         }
@@ -275,40 +412,30 @@ async function loadSupervisorAssessment(
 
         const assessment =
             response.assessment ||
-            {};
+            null;
 
 
-        SUPERVISOR_ASSESSMENT.loaded =
-            response.submitted === true;
+        state.assessment =
+            assessment;
 
 
-        SUPERVISOR_ASSESSMENT.competencyRatings =
-            assessment.competencyRatings ||
-            {};
+        state.competencyRatings =
+            assessment &&
+            assessment.competencyRatings
+                ? assessment.competencyRatings
+                : {};
 
 
-        setText(
-            "assessmentEmployeeName",
-            SUPERVISOR_ASSESSMENT.employeeName ||
-            "-"
-        );
-
-
-        setText(
-            "assessmentEmployeeID",
-            employeeID
-        );
-
-
-        setText(
-            "assessmentSupervisorName",
-            SUPERVISOR_ASSESSMENT.supervisorName ||
-            "-"
+        setAssessmentText(
+            "assessmentStatus",
+            response.submitted === true
+                ? "Completed"
+                : "For Completion"
         );
 
 
         renderSupervisorAssessmentForm(
-            assessment
+            assessment || {}
         );
 
 
@@ -324,7 +451,7 @@ async function loadSupervisorAssessment(
 
             <div class="assessment-error">
 
-                ${escapeHTML(
+                ${assessmentEscapeHTML(
                     error.message ||
                     "Unable to load Supervisor Assessment."
                 )}
@@ -353,7 +480,9 @@ function renderSupervisorAssessmentForm(
 
 
     if (!body) {
+
         return;
+
     }
 
 
@@ -363,6 +492,21 @@ function renderSupervisorAssessmentForm(
             id="supervisorAssessmentForm"
             onsubmit="return false;"
         >
+
+            <div class="assessment-intro">
+
+                <strong>
+                    Supervisor Assessment
+                </strong>
+
+                <span>
+                    Complete the assessment based on your
+                    observation of the employee's actual
+                    work performance and development needs.
+                </span>
+
+            </div>
+
 
             <section class="assessment-section">
 
@@ -379,7 +523,7 @@ function renderSupervisorAssessmentForm(
                     id="assessmentS1"
                     rows="3"
                     placeholder="Identify up to three competencies."
-                >${escapeHTML(
+                >${assessmentEscapeHTML(
                     assessment.s1 || ""
                 )}</textarea>
 
@@ -400,7 +544,7 @@ function renderSupervisorAssessmentForm(
                     id="assessmentS2"
                     rows="4"
                     placeholder="Describe the observed development need."
-                >${escapeHTML(
+                >${assessmentEscapeHTML(
                     assessment.s2 || ""
                 )}</textarea>
 
@@ -418,9 +562,12 @@ function renderSupervisorAssessmentForm(
                     the employee?
                 </label>
 
-                <select
-                    id="assessmentS3"
-                >
+                <select id="assessmentS3">
+
+                    ${assessmentOption(
+                        "",
+                        assessment.s3
+                    )}
 
                     ${assessmentOption(
                         "Formal Training",
@@ -571,9 +718,12 @@ function renderSupervisorAssessmentForm(
                     Recommended knowledge-sharing role, if applicable.
                 </label>
 
-                <select
-                    id="assessmentS6"
-                >
+                <select id="assessmentS6">
+
+                    ${assessmentOption(
+                        "",
+                        assessment.s6
+                    )}
 
                     ${assessmentOption(
                         "Mentor",
@@ -624,7 +774,7 @@ function renderSupervisorAssessmentForm(
                     id="assessmentS7"
                     rows="4"
                     placeholder="Optional comments or recommendations."
-                >${escapeHTML(
+                >${assessmentEscapeHTML(
                     assessment.s7 || ""
                 )}</textarea>
 
@@ -641,6 +791,19 @@ function renderSupervisorAssessmentForm(
                     Rate the employee independently using the
                     applicable competency scale.
                 </p>
+
+
+                <div class="rating-legend">
+
+                    <span>1 Awareness</span>
+                    <span>2 Developing</span>
+                    <span>3 Proficient</span>
+                    <span>4 Advanced</span>
+                    <span>5 Expert</span>
+                    <span>N/A</span>
+
+                </div>
+
 
                 <div id="supervisorCompetencyRatings">
 
@@ -663,7 +826,7 @@ function renderSupervisorAssessmentForm(
 
 
 /* ==========================================================
-   COMPETENCIES
+   LOAD COMPETENCIES
 ========================================================== */
 
 async function loadSupervisorAssessmentCompetencies() {
@@ -675,11 +838,17 @@ async function loadSupervisorAssessmentCompetencies() {
 
 
     if (!container) {
+
         return;
+
     }
 
 
     try {
+
+        const state =
+            window.SUPERVISOR_ASSESSMENT;
+
 
         const response =
             await API.post({
@@ -688,7 +857,7 @@ async function loadSupervisorAssessmentCompetencies() {
                     "getEmployeeLNACompetencyContext",
 
                 employeeID:
-                    SUPERVISOR_ASSESSMENT.employeeID
+                    state.employeeID
 
             });
 
@@ -721,7 +890,9 @@ async function loadSupervisorAssessmentCompetencies() {
             container.innerHTML = `
 
                 <div class="assessment-empty">
-                    No applicable technical competencies were returned.
+
+                    No applicable competencies were returned.
+
                 </div>
 
             `;
@@ -735,9 +906,7 @@ async function loadSupervisorAssessmentCompetencies() {
 
             <div class="competency-rating-table-wrap">
 
-                <table
-                    class="competency-rating-table"
-                >
+                <table class="competency-rating-table">
 
                     <thead>
 
@@ -759,10 +928,11 @@ async function loadSupervisorAssessmentCompetencies() {
 
                     </thead>
 
+
                     <tbody>
 
                         ${competencies.map(
-                            function (item) {
+                            function(item) {
 
                                 const code =
                                     item.code ||
@@ -784,7 +954,8 @@ async function loadSupervisorAssessmentCompetencies() {
 
 
                                 const current =
-                                    SUPERVISOR_ASSESSMENT
+                                    window
+                                        .SUPERVISOR_ASSESSMENT
                                         .competencyRatings[
                                             code
                                         ] || "";
@@ -797,7 +968,7 @@ async function loadSupervisorAssessmentCompetencies() {
                                         <td>
 
                                             <strong>
-                                                ${escapeHTML(
+                                                ${assessmentEscapeHTML(
                                                     name
                                                 )}
                                             </strong>
@@ -806,7 +977,7 @@ async function loadSupervisorAssessmentCompetencies() {
                                                 code
                                                     ? `
                                                         <small>
-                                                            ${escapeHTML(
+                                                            ${assessmentEscapeHTML(
                                                                 code
                                                             )}
                                                         </small>
@@ -816,19 +987,19 @@ async function loadSupervisorAssessmentCompetencies() {
 
                                         </td>
 
+
                                         <td>
-                                            ${escapeHTML(
-                                                String(
-                                                    required
-                                                )
+                                            ${assessmentEscapeHTML(
+                                                String(required)
                                             )}
                                         </td>
+
 
                                         <td>
 
                                             <select
                                                 class="supervisor-competency-rating"
-                                                data-code="${escapeAttribute(
+                                                data-code="${assessmentEscapeAttribute(
                                                     code
                                                 )}"
                                             >
@@ -900,7 +1071,7 @@ async function loadSupervisorAssessmentCompetencies() {
 
             <div class="assessment-error">
 
-                ${escapeHTML(
+                ${assessmentEscapeHTML(
                     error.message ||
                     "Unable to load applicable competencies."
                 )}
@@ -928,9 +1099,7 @@ async function saveSupervisorAssessmentForm() {
 
     try {
 
-        if (
-            saveButton
-        ) {
+        if (saveButton) {
 
             saveButton.disabled =
                 true;
@@ -950,7 +1119,7 @@ async function saveSupervisorAssessmentForm() {
                 ".supervisor-competency-rating"
             )
             .forEach(
-                function (select) {
+                function(select) {
 
                     const code =
                         select.dataset.code;
@@ -976,6 +1145,10 @@ async function saveSupervisorAssessmentForm() {
             );
 
 
+        const state =
+            window.SUPERVISOR_ASSESSMENT;
+
+
         const response =
             await API.post({
 
@@ -983,46 +1156,46 @@ async function saveSupervisorAssessmentForm() {
                     "saveSupervisorAssessment",
 
                 employeeID:
-                    SUPERVISOR_ASSESSMENT.employeeID,
+                    state.employeeID,
 
                 supervisorEmployeeID:
-                    SUPERVISOR_ASSESSMENT.supervisorID,
+                    state.supervisorID,
 
                 supervisorName:
-                    SUPERVISOR_ASSESSMENT.supervisorName,
+                    state.supervisorName,
 
                 s1:
-                    getValue(
+                    getAssessmentValue(
                         "assessmentS1"
                     ),
 
                 s2:
-                    getValue(
+                    getAssessmentValue(
                         "assessmentS2"
                     ),
 
                 s3:
-                    getValue(
+                    getAssessmentValue(
                         "assessmentS3"
                     ),
 
                 s4:
-                    getCheckedValue(
+                    getAssessmentCheckedValue(
                         "assessmentS4"
                     ),
 
                 s5:
-                    getCheckedValue(
+                    getAssessmentCheckedValue(
                         "assessmentS5"
                     ),
 
                 s6:
-                    getValue(
+                    getAssessmentValue(
                         "assessmentS6"
                     ),
 
                 s7:
-                    getValue(
+                    getAssessmentValue(
                         "assessmentS7"
                     ),
 
@@ -1049,16 +1222,78 @@ async function saveSupervisorAssessmentForm() {
         }
 
 
+        state.assessment = {
+
+            employeeID:
+                state.employeeID,
+
+            supervisorEmployeeID:
+                state.supervisorID,
+
+            supervisorName:
+                state.supervisorName,
+
+            s1:
+                getAssessmentValue(
+                    "assessmentS1"
+                ),
+
+            s2:
+                getAssessmentValue(
+                    "assessmentS2"
+                ),
+
+            s3:
+                getAssessmentValue(
+                    "assessmentS3"
+                ),
+
+            s4:
+                getAssessmentCheckedValue(
+                    "assessmentS4"
+                ),
+
+            s5:
+                getAssessmentCheckedValue(
+                    "assessmentS5"
+                ),
+
+            s6:
+                getAssessmentValue(
+                    "assessmentS6"
+                ),
+
+            s7:
+                getAssessmentValue(
+                    "assessmentS7"
+                ),
+
+            competencyRatings:
+                competencyRatings,
+
+            status:
+                "Completed"
+
+        };
+
+
+        state.competencyRatings =
+            competencyRatings;
+
+
+        setAssessmentText(
+            "assessmentStatus",
+            "Completed"
+        );
+
+
         alert(
             "Supervisor Assessment saved successfully."
         );
 
 
-        closeSupervisorAssessment();
-
-
         /*
-         * Refresh validation/personnel views.
+         * Refresh supervisor views.
          */
 
         if (
@@ -1067,16 +1302,6 @@ async function saveSupervisorAssessmentForm() {
         ) {
 
             await loadSupervisorPersonnel();
-
-        }
-
-
-        if (
-            typeof renderPersonnelTable ===
-            "function"
-        ) {
-
-            renderPersonnelTable();
 
         }
 
@@ -1107,9 +1332,7 @@ async function saveSupervisorAssessmentForm() {
 
     } finally {
 
-        if (
-            saveButton
-        ) {
+        if (saveButton) {
 
             saveButton.disabled =
                 false;
@@ -1136,13 +1359,22 @@ function closeSupervisorAssessment() {
         );
 
 
-    if (
-        modal
-    ) {
+    if (modal) {
 
         modal.remove();
 
     }
+
+
+    document.body.classList.remove(
+        "modal-open"
+    );
+
+
+    document.removeEventListener(
+        "keydown",
+        supervisorAssessmentEscapeHandler
+    );
 
 }
 
@@ -1159,19 +1391,39 @@ function showSupervisorAssessmentModal() {
         );
 
 
+    if (!modal) {
+
+        return;
+
+    }
+
+
+    requestAnimationFrame(
+        function() {
+
+            modal.classList.add(
+                "is-open"
+            );
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   ESCAPE
+========================================================== */
+
+function supervisorAssessmentEscapeHandler(
+    event
+) {
+
     if (
-        modal
+        event.key === "Escape"
     ) {
 
-        requestAnimationFrame(
-            function () {
-
-                modal.classList.add(
-                    "is-open"
-                );
-
-            }
-        );
+        closeSupervisorAssessment();
 
     }
 
@@ -1179,7 +1431,7 @@ function showSupervisorAssessmentModal() {
 
 
 /* ==========================================================
-   HELPERS
+   OPTIONS
 ========================================================== */
 
 function assessmentOption(
@@ -1187,13 +1439,9 @@ function assessmentOption(
     selected
 ) {
 
-    const isSelected =
-        String(
-            value
-        ) ===
-        String(
-            selected || ""
-        )
+    const selectedAttr =
+        String(value) ===
+        String(selected || "")
             ? "selected"
             : "";
 
@@ -1201,10 +1449,10 @@ function assessmentOption(
     return `
 
         <option
-            value="${escapeAttribute(value)}"
-            ${isSelected}
+            value="${assessmentEscapeAttribute(value)}"
+            ${selectedAttr}
         >
-            ${escapeHTML(value)}
+            ${assessmentEscapeHTML(value || "Select")}
         </option>
 
     `;
@@ -1219,12 +1467,8 @@ function radioOption(
 ) {
 
     const checked =
-        String(
-            value
-        ) ===
-        String(
-            selected || ""
-        )
+        String(value) ===
+        String(selected || "")
             ? "checked"
             : "";
 
@@ -1235,13 +1479,13 @@ function radioOption(
 
             <input
                 type="radio"
-                name="${escapeAttribute(name)}"
-                value="${escapeAttribute(value)}"
+                name="${assessmentEscapeAttribute(name)}"
+                value="${assessmentEscapeAttribute(value)}"
                 ${checked}
             >
 
             <span>
-                ${escapeHTML(value)}
+                ${assessmentEscapeHTML(value)}
             </span>
 
         </label>
@@ -1257,12 +1501,8 @@ function ratingOption(
 ) {
 
     const selectedAttr =
-        String(
-            value
-        ) ===
-        String(
-            selected || ""
-        )
+        String(value) ===
+        String(selected || "")
             ? "selected"
             : "";
 
@@ -1270,10 +1510,10 @@ function ratingOption(
     return `
 
         <option
-            value="${escapeAttribute(value)}"
+            value="${assessmentEscapeAttribute(value)}"
             ${selectedAttr}
         >
-            ${escapeHTML(value)}
+            ${assessmentEscapeHTML(value || "Select rating")}
         </option>
 
     `;
@@ -1281,7 +1521,30 @@ function ratingOption(
 }
 
 
-function getCheckedValue(
+/* ==========================================================
+   VALUE HELPERS
+========================================================== */
+
+function getAssessmentValue(
+    id
+) {
+
+    const element =
+        document.getElementById(
+            id
+        );
+
+
+    return element
+        ? String(
+            element.value || ""
+        ).trim()
+        : "";
+
+}
+
+
+function getAssessmentCheckedValue(
     name
 ) {
 
@@ -1298,8 +1561,9 @@ function getCheckedValue(
 }
 
 
-function getValue(
-    id
+function setAssessmentText(
+    id,
+    value
 ) {
 
     const element =
@@ -1308,8 +1572,770 @@ function getValue(
         );
 
 
-    return element
-        ? element.value.trim()
-        : "";
+    if (element) {
+
+        element.textContent =
+            value || "—";
+
+    }
 
 }
+
+
+/* ==========================================================
+   ESCAPE HELPERS
+========================================================== */
+
+function assessmentEscapeHTML(
+    value
+) {
+
+    return String(
+        value === null ||
+        value === undefined
+            ? ""
+            : value
+    )
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+    .replace(
+        /</g,
+        "&lt;"
+    )
+    .replace(
+        />/g,
+        "&gt;"
+    )
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
+}
+
+
+function assessmentEscapeAttribute(
+    value
+) {
+
+    return assessmentEscapeHTML(
+        value
+    );
+
+}
+
+
+/* ==========================================================
+   STYLES
+========================================================== */
+
+function injectSupervisorAssessmentStyles() {
+
+    if (
+        document.getElementById(
+            "supervisorAssessmentStyles"
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    const style =
+        document.createElement(
+            "style"
+        );
+
+
+    style.id =
+        "supervisorAssessmentStyles";
+
+
+    style.textContent = `
+
+        .supervisor-assessment-modal {
+
+            position:fixed;
+
+            inset:0;
+
+            z-index:99999;
+
+            display:flex;
+
+            align-items:center;
+
+            justify-content:center;
+
+            padding:24px;
+
+            opacity:0;
+
+            visibility:hidden;
+
+            transition:.18s ease;
+
+            font-family:
+                "Bookman Old Style",
+                Bookman,
+                serif;
+
+        }
+
+
+        .supervisor-assessment-modal.is-open {
+
+            opacity:1;
+
+            visibility:visible;
+
+        }
+
+
+        .supervisor-assessment-backdrop {
+
+            position:absolute;
+
+            inset:0;
+
+            background:
+                rgba(35,8,56,.58);
+
+            backdrop-filter:
+                blur(2px);
+
+        }
+
+
+        .supervisor-assessment-dialog {
+
+            position:relative;
+
+            z-index:2;
+
+            width:min(
+                1050px,
+                96vw
+            );
+
+            max-height:92vh;
+
+            display:flex;
+
+            flex-direction:column;
+
+            overflow:hidden;
+
+            background:#fff;
+
+            border-radius:14px;
+
+            box-shadow:
+                0 24px 70px
+                rgba(0,0,0,.25);
+
+        }
+
+
+        .supervisor-assessment-header {
+
+            display:flex;
+
+            justify-content:space-between;
+
+            gap:20px;
+
+            padding:20px 24px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #4b1d72,
+                    #6a1b9a
+                );
+
+            color:#fff;
+
+        }
+
+
+        .assessment-eyebrow {
+
+            font-size:10px;
+
+            font-weight:700;
+
+            letter-spacing:1px;
+
+            opacity:.8;
+
+        }
+
+
+        .supervisor-assessment-header h2 {
+
+            margin:4px 0 4px;
+
+            font-size:21px;
+
+        }
+
+
+        .supervisor-assessment-header p {
+
+            margin:0;
+
+            font-size:12px;
+
+            opacity:.88;
+
+        }
+
+
+        .assessment-close {
+
+            width:34px;
+
+            height:34px;
+
+            border:0;
+
+            border-radius:8px;
+
+            background:
+                rgba(255,255,255,.14);
+
+            color:#fff;
+
+            font-size:25px;
+
+            cursor:pointer;
+
+        }
+
+
+        .supervisor-assessment-meta {
+
+            display:grid;
+
+            grid-template-columns:
+                repeat(3,1fr);
+
+            gap:12px;
+
+            padding:14px 24px;
+
+            background:#f8f5fb;
+
+            border-bottom:
+                1px solid #e7dfec;
+
+        }
+
+
+        .supervisor-assessment-meta div {
+
+            display:flex;
+
+            flex-direction:column;
+
+            gap:3px;
+
+        }
+
+
+        .supervisor-assessment-meta span {
+
+            font-size:9px;
+
+            font-weight:700;
+
+            color:#7b1fa2;
+
+            letter-spacing:.7px;
+
+        }
+
+
+        .supervisor-assessment-meta strong {
+
+            font-size:12px;
+
+            color:#302436;
+
+        }
+
+
+        .supervisor-assessment-body {
+
+            overflow:auto;
+
+            padding:20px 24px;
+
+            font-size:12px;
+
+        }
+
+
+        .assessment-intro {
+
+            display:flex;
+
+            flex-direction:column;
+
+            gap:4px;
+
+            padding:12px 14px;
+
+            margin-bottom:16px;
+
+            background:#faf7fc;
+
+            border-left:
+                4px solid #6a1b9a;
+
+            border-radius:6px;
+
+        }
+
+
+        .assessment-intro strong {
+
+            color:#4b1d72;
+
+            font-size:13px;
+
+        }
+
+
+        .assessment-intro span {
+
+            color:#6f6674;
+
+            line-height:1.5;
+
+        }
+
+
+        .assessment-section {
+
+            margin-bottom:18px;
+
+            padding-bottom:16px;
+
+            border-bottom:
+                1px solid #eee8f1;
+
+        }
+
+
+        .assessment-section-title {
+
+            margin-bottom:8px;
+
+            color:#4b1d72;
+
+            font-weight:700;
+
+            font-size:13px;
+
+        }
+
+
+        .assessment-section label {
+
+            display:block;
+
+            margin-bottom:7px;
+
+            color:#403847;
+
+            font-size:12px;
+
+            font-weight:600;
+
+        }
+
+
+        .assessment-section textarea,
+
+        .assessment-section select {
+
+            width:100%;
+
+            box-sizing:border-box;
+
+            padding:9px 10px;
+
+            border:
+                1px solid #dcd3e2;
+
+            border-radius:6px;
+
+            background:#fff;
+
+            color:#302436;
+
+            font-family:inherit;
+
+            font-size:12px;
+
+        }
+
+
+        .assessment-section textarea {
+
+            resize:vertical;
+
+            line-height:1.45;
+
+        }
+
+
+        .assessment-section textarea:focus,
+
+        .assessment-section select:focus {
+
+            outline:none;
+
+            border-color:#6a1b9a;
+
+            box-shadow:
+                0 0 0 2px
+                rgba(106,27,154,.10);
+
+        }
+
+
+        .assessment-options {
+
+            display:flex;
+
+            flex-wrap:wrap;
+
+            gap:8px;
+
+        }
+
+
+        .assessment-radio {
+
+            display:flex !important;
+
+            align-items:center;
+
+            gap:6px;
+
+            padding:7px 10px;
+
+            margin:0 !important;
+
+            border:
+                1px solid #e1d9e7;
+
+            border-radius:6px;
+
+            background:#faf9fb;
+
+            cursor:pointer;
+
+            font-weight:400 !important;
+
+        }
+
+
+        .assessment-radio input {
+
+            margin:0;
+
+        }
+
+
+        .rating-legend {
+
+            display:flex;
+
+            flex-wrap:wrap;
+
+            gap:6px;
+
+            margin-bottom:10px;
+
+        }
+
+
+        .rating-legend span {
+
+            padding:5px 8px;
+
+            border-radius:5px;
+
+            background:#f3ebfc;
+
+            color:#4b1d72;
+
+            font-size:10px;
+
+            font-weight:700;
+
+        }
+
+
+        .competency-rating-table-wrap {
+
+            overflow:auto;
+
+            border:
+                1px solid #e4dce9;
+
+            border-radius:8px;
+
+        }
+
+
+        .competency-rating-table {
+
+            width:100%;
+
+            border-collapse:collapse;
+
+            min-width:700px;
+
+        }
+
+
+        .competency-rating-table th,
+
+        .competency-rating-table td {
+
+            padding:9px 10px;
+
+            border-bottom:
+                1px solid #eee8f1;
+
+            text-align:left;
+
+            font-size:11px;
+
+        }
+
+
+        .competency-rating-table th {
+
+            background:#f6f1f8;
+
+            color:#4b1d72;
+
+            font-size:10px;
+
+            text-transform:uppercase;
+
+            letter-spacing:.4px;
+
+        }
+
+
+        .competency-rating-table td strong {
+
+            display:block;
+
+            color:#302436;
+
+        }
+
+
+        .competency-rating-table td small {
+
+            display:block;
+
+            margin-top:2px;
+
+            color:#8c8491;
+
+            font-size:9px;
+
+        }
+
+
+        .competency-rating-table select {
+
+            min-width:155px;
+
+            padding:7px;
+
+        }
+
+
+        .assessment-help {
+
+            margin:0 0 10px;
+
+            color:#77707e;
+
+            font-size:11px;
+
+        }
+
+
+        .assessment-loading,
+
+        .assessment-empty,
+
+        .assessment-error {
+
+            padding:20px;
+
+            text-align:center;
+
+            border-radius:8px;
+
+            background:#faf8fc;
+
+            color:#766d7c;
+
+        }
+
+
+        .assessment-error {
+
+            color:#a33a3a;
+
+            background:#fff5f5;
+
+        }
+
+
+        .supervisor-assessment-footer {
+
+            display:flex;
+
+            justify-content:flex-end;
+
+            gap:8px;
+
+            padding:14px 24px;
+
+            border-top:
+                1px solid #e5dfe8;
+
+            background:#fff;
+
+        }
+
+
+        .assessment-btn {
+
+            border:0;
+
+            border-radius:6px;
+
+            padding:9px 15px;
+
+            font-family:inherit;
+
+            font-size:11px;
+
+            font-weight:700;
+
+            cursor:pointer;
+
+        }
+
+
+        .assessment-btn.primary {
+
+            background:#6a1b9a;
+
+            color:#fff;
+
+        }
+
+
+        .assessment-btn.primary:hover {
+
+            background:#4b1d72;
+
+        }
+
+
+        .assessment-btn.secondary {
+
+            background:#eee9f1;
+
+            color:#4b1d72;
+
+        }
+
+
+        .assessment-btn:disabled {
+
+            opacity:.6;
+
+            cursor:not-allowed;
+
+        }
+
+
+        @media(max-width:700px) {
+
+            .supervisor-assessment-modal {
+
+                padding:8px;
+
+            }
+
+            .supervisor-assessment-meta {
+
+                grid-template-columns:1fr;
+
+            }
+
+            .supervisor-assessment-header {
+
+                padding:16px;
+
+            }
+
+            .supervisor-assessment-body {
+
+                padding:16px;
+
+            }
+
+            .supervisor-assessment-footer {
+
+                padding:12px 16px;
+
+            }
+
+        }
+
+    `;
+
+
+    document.head.appendChild(
+        style
+    );
+
+}
+
+
+/* ==========================================================
+   GLOBAL
+========================================================== */
+
+window.openSupervisorAssessment =
+    openSupervisorAssessment;
+
+window.closeSupervisorAssessment =
+    closeSupervisorAssessment;
+
+window.saveSupervisorAssessmentForm =
+    saveSupervisorAssessmentForm;

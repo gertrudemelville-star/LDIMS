@@ -2209,14 +2209,25 @@ function renderSupervisorActions(
             "supervisorLNAActions"
         );
 
+
     if (!container) {
+
         return;
+
     }
 
 
-    if (!showDecisionButtons) {
+    /*
+     * My Personnel
+     * Read-only only.
+     */
+
+    if (
+        showDecisionButtons !== true
+    ) {
 
         container.innerHTML = `
+
             <div class="supervisor-readonly-panel">
 
                 <div class="supervisor-readonly-icon">
@@ -2231,25 +2242,38 @@ function renderSupervisorActions(
 
                     <span>
                         This is the employee's submitted LNA.
-                        No editing is permitted in this view.
+                        Supervisor assessment and validation are
+                        available under For Validation.
                     </span>
 
                 </div>
 
             </div>
+
         `;
 
         return;
+
     }
 
 
     const status =
-        normalizeStatus(record.status);
+        normalizeStatus(
+            record.status
+        );
 
 
-    if (status === "for completion") {
+    /*
+     * For Completion
+     */
+
+    if (
+        status ===
+        "for completion"
+    ) {
 
         container.innerHTML = `
+
             <div class="supervisor-readonly-panel warning">
 
                 <div class="supervisor-readonly-icon">
@@ -2263,18 +2287,24 @@ function renderSupervisorActions(
                     </strong>
 
                     <span>
-                        The employee has not completed the
-                        required LNA information.
+                        The employee has not yet completed
+                        the required LNA information.
                     </span>
 
                 </div>
 
             </div>
+
         `;
 
         return;
+
     }
 
+
+    /*
+     * Already Validated
+     */
 
     if (
         status === "validated" ||
@@ -2282,6 +2312,7 @@ function renderSupervisorActions(
     ) {
 
         container.innerHTML = `
+
             <div class="supervisor-readonly-panel success">
 
                 <div class="supervisor-readonly-icon">
@@ -2296,48 +2327,86 @@ function renderSupervisorActions(
 
                     <span>
                         This LNA has already been validated
-                        by the supervisor.
+                        by the immediate supervisor.
                     </span>
 
                 </div>
 
             </div>
+
         `;
 
         return;
+
     }
 
 
+    /*
+     * For Validation
+     */
+
     container.innerHTML = `
+
         <div class="supervisor-review-panel">
 
             <div class="supervisor-review-heading">
 
                 <strong>
-                    Supervisor Decision
+                    Supervisor Assessment & Validation
                 </strong>
 
                 <span>
-                    Review the competency information and
-                    complete the required Supervisor Assessment.
+                    Complete the Supervisor Assessment and
+                    competency ratings before making the
+                    final LNA validation decision.
                 </span>
 
             </div>
 
-            <div class="supervisor-lna-actions">
+
+            <div
+                class="supervisor-lna-actions"
+                style="
+                    display:flex;
+                    gap:8px;
+                    flex-wrap:wrap;
+                "
+            >
+
+                <button
+                    type="button"
+                    class="btn btn-primary supervisor-action-btn"
+                    onclick="openSupervisorAssessment(
+                        '${escapeAttribute(
+                            record.employeeID
+                        )}'
+                    )"
+                >
+                    ✓ Supervisor Assessment
+                </button>
+
 
                 <button
                     type="button"
                     class="btn btn-success supervisor-action-btn"
-                    onclick="supervisorValidateLNA('${escapeAttribute(record.employeeID)}')"
+                    onclick="supervisorValidateLNA(
+                        '${escapeAttribute(
+                            record.employeeID
+                        )}'
+                    )"
                 >
                     ✓ Validate LNA
                 </button>
 
+
                 <button
                     type="button"
                     class="btn btn-warning supervisor-action-btn"
-                    onclick="supervisorReturnLNA('${escapeAttribute(record.employeeID)}')"
+                    onclick="supervisorReturnLNA(
+                        '${escapeAttribute(
+                            record.employeeID
+                        )}'
+                    )"
                 >
                     ↩ Return for Completion / Revision
                 </button>
@@ -2345,9 +2414,10 @@ function renderSupervisorActions(
             </div>
 
         </div>
-    `;
-}
 
+    `;
+
+}
 
 /* ==========================================================
    VALIDATE LNA
