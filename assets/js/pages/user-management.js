@@ -130,6 +130,7 @@ function setupUserManagementEvents() {
 
 }
 
+
 /* ==========================================================
    ADD USER BUTTON
 ========================================================== */
@@ -195,6 +196,7 @@ function openAddUserModal() {
     modal.show();
 
 }
+
 
 /* ==========================================================
    LOAD USERS
@@ -378,20 +380,11 @@ function updateUserSummary() {
     );
 
 
-    /*
-     * Pending users is kept for compatibility
-     * if the element exists in the page.
-     */
-
     setUserText(
         "pendingUsers",
         pending
     );
 
-
-    /*
-     * Administrator count.
-     */
 
     setUserText(
         "administratorUsers",
@@ -405,9 +398,7 @@ function updateUserSummary() {
    RENDER USERS
 ========================================================== */
 
-function renderUsers(
-    users
-) {
+function renderUsers(users) {
 
     const loadingState =
         document.getElementById(
@@ -506,7 +497,8 @@ function renderUsers(
 
             const employeeID =
                 escapeUserHTML(
-                    user.employeeID
+                    user.employeeID ||
+                    ""
                 );
 
 
@@ -531,9 +523,25 @@ function renderUsers(
                 );
 
 
-            const role =
-                getRoleBadge(
-                    user.role
+            const access =
+                escapeUserHTML(
+                    user.ldimAccess ||
+                    user.ldimsAccess ||
+                    "Employee"
+                );
+
+
+            const systemAssignment =
+                escapeUserHTML(
+                    user.systemAssignment ||
+                    "—"
+                );
+
+
+            const lddMonitoringRole =
+                escapeUserHTML(
+                    user.lddMonitoringRole ||
+                    "—"
                 );
 
 
@@ -578,7 +586,15 @@ function renderUsers(
                 </td>
 
                 <td>
-                    ${role}
+                    ${access}
+                </td>
+
+                <td>
+                    ${systemAssignment}
+                </td>
+
+                <td>
+                    ${lddMonitoringRole}
                 </td>
 
                 <td>
@@ -693,6 +709,12 @@ function handleUserSearch(
 
                     user.role,
 
+                    user.ldimAccess,
+
+                    user.systemAssignment,
+
+                    user.lddMonitoringRole,
+
                     user.status,
 
                     user.email
@@ -715,8 +737,6 @@ function handleUserSearch(
     );
 
 }
-
-
 /* ==========================================================
    MANAGE USER
 ========================================================== */
@@ -821,10 +841,73 @@ function populateManageUserModal(
     );
 
 
+    /*
+     * Legacy Role is displayed for
+     * backward compatibility.
+     *
+     * It is no longer the basis for
+     * LDIMS module access.
+     */
+
     setInputValue(
         "manageRole",
         normalizeRoleValue(
             user.role
+        )
+    );
+
+
+    /*
+     * Employee access is mandatory.
+     */
+
+    setCheckboxChecked(
+        "manageAccessEmployee",
+        true
+    );
+
+
+    setCheckboxChecked(
+        "manageAccessSupervisor",
+        hasLdimsAccess(
+            user.ldimAccess ||
+            user.ldimsAccess,
+            "Supervisor"
+        )
+    );
+
+
+    setCheckboxChecked(
+        "manageAccessLddMonitoring",
+        hasLdimsAccess(
+            user.ldimAccess ||
+            user.ldimsAccess,
+            "LDD Monitoring"
+        )
+    );
+
+
+    setCheckboxChecked(
+        "manageAccessAdministrator",
+        hasLdimsAccess(
+            user.ldimAccess ||
+            user.ldimsAccess,
+            "Administrator"
+        )
+    );
+
+
+    setInputValue(
+        "manageSystemAssignment",
+        user.systemAssignment ||
+        ""
+    );
+
+
+    setInputValue(
+        "manageLddMonitoringRole",
+        normalizeLddMonitoringRoleValue(
+            user.lddMonitoringRole
         )
     );
 
@@ -835,6 +918,27 @@ function populateManageUserModal(
             user.status
         )
     );
+
+
+    /*
+     * Employee access cannot be removed.
+     */
+
+    const employeeAccess =
+        document.getElementById(
+            "manageAccessEmployee"
+        );
+
+
+    if (employeeAccess) {
+
+        employeeAccess.checked =
+            true;
+
+        employeeAccess.disabled =
+            true;
+
+    }
 
 }
 
@@ -860,34 +964,16 @@ async function saveUserChanges() {
         selectedUser.employeeID;
 
 
-    const roleElement =
-        document.getElementById(
-            "manageRole"
-        );
-
-
     const statusElement =
         document.getElementById(
             "manageStatus"
         );
 
 
-    const newRole =
-        roleElement
-            ? roleElement.value
-            : selectedUser.role;
-
-
     const newStatus =
         statusElement
             ? statusElement.value
             : selectedUser.status;
-
-
-    const oldRole =
-        normalizeRoleValue(
-            selectedUser.role
-        );
 
 
     const oldStatus =
@@ -897,12 +983,153 @@ async function saveUserChanges() {
 
 
     /*
+     * Build explicit LDIMS access.
+     *
+     * Employee is ALWAYS included.
+     */
+
+    const accessValues = [
+        "Employee"
+    ];
+
+
+    if (
+        document.getElementById(
+            "manageAccessSupervisor"
+        )?.checked
+    ) {
+
+        accessValues.push(
+            "Supervisor"
+        );
+
+    }
+
+
+    if (
+        document.getElementById(
+            "manageAccessLddMonitoring"
+        )?.checked
+    ) {
+
+        accessValues.push(
+            "LDD Monitoring"
+        );
+
+    }
+
+
+    if (
+        document.getElementById(
+            "manageAccessAdministrator"
+        )?.checked
+    ) {
+
+        accessValues.push(
+            "Administrator"
+        );
+
+    }
+
+
+    const newLdimAccess =
+        normalizeLdimsAccessValue(
+            accessValues.join(",")
+        );
+
+
+    const oldLdimAccess =
+        normalizeLdimsAccessValue(
+            selectedUser.ldimAccess ||
+            selectedUser.ldimsAccess ||
+            "Employee"
+        );
+
+
+    /*
+     * System Assignment is separate from
+     * organizational Place of Assignment.
+     */
+
+    const systemAssignmentElement =
+        document.getElementById(
+            "manageSystemAssignment"
+        );
+
+
+    const newSystemAssignment =
+        systemAssignmentElement
+            ? systemAssignmentElement.value.trim()
+            : String(
+                selectedUser.systemAssignment ||
+                ""
+            ).trim();
+
+
+    const oldSystemAssignment =
+        String(
+            selectedUser.systemAssignment ||
+            ""
+        ).trim();
+
+
+    /*
+     * LDD Monitoring Role is explicit.
+     */
+
+    const lddRoleElement =
+        document.getElementById(
+            "manageLddMonitoringRole"
+        );
+
+
+    const newLddMonitoringRole =
+        lddRoleElement
+            ? normalizeLddMonitoringRoleValue(
+                lddRoleElement.value
+            )
+            : "";
+
+
+    const oldLddMonitoringRole =
+        normalizeLddMonitoringRoleValue(
+            selectedUser.lddMonitoringRole
+        );
+
+
+    /*
+     * Determine exactly what changed.
+     */
+
+    const accessChanged =
+        newLdimAccess !==
+        oldLdimAccess;
+
+
+    const systemAssignmentChanged =
+        newSystemAssignment !==
+        oldSystemAssignment;
+
+
+    const lddMonitoringRoleChanged =
+        newLddMonitoringRole !==
+        oldLddMonitoringRole;
+
+
+    const statusChanged =
+        newStatus !==
+        oldStatus;
+
+
+    /*
      * Nothing changed.
      */
 
     if (
-        newRole === oldRole &&
-        newStatus === oldStatus
+        !accessChanged &&
+        !systemAssignmentChanged &&
+        !lddMonitoringRoleChanged &&
+        !statusChanged
     ) {
 
         closeManageUserModal();
@@ -918,42 +1145,50 @@ async function saveUserChanges() {
     try {
 
         /*
-         * Update role first when changed.
+         * Update access-related fields.
          */
 
         if (
-            newRole !== oldRole
+            accessChanged ||
+            systemAssignmentChanged ||
+            lddMonitoringRoleChanged
         ) {
 
-            const roleResult =
+            const accessResult =
                 await API.post({
 
                     action:
-                        "updateUserRole",
+                        "updateUserAccess",
 
                     employeeID:
                         employeeID,
 
-                    role:
-                        newRole
+                    ldimAccess:
+                        newLdimAccess,
+
+                    systemAssignment:
+                        newSystemAssignment,
+
+                    lddMonitoringRole:
+                        newLddMonitoringRole
 
                 });
 
 
             console.log(
-                "UPDATE ROLE RESPONSE:",
-                roleResult
+                "UPDATE USER ACCESS RESPONSE:",
+                accessResult
             );
 
 
             if (
-                !roleResult ||
-                !roleResult.success
+                !accessResult ||
+                !accessResult.success
             ) {
 
                 throw new Error(
-                    roleResult?.message ||
-                    "Unable to update user role."
+                    accessResult?.message ||
+                    "Unable to update user access."
                 );
 
             }
@@ -962,12 +1197,13 @@ async function saveUserChanges() {
 
 
         /*
-         * Update status when changed.
+         * Update account status.
+         *
+         * Existing status functionality
+         * remains intact.
          */
 
-        if (
-            newStatus !== oldStatus
-        ) {
+        if (statusChanged) {
 
             const statusResult =
                 await API.post({
@@ -1006,20 +1242,23 @@ async function saveUserChanges() {
 
 
         /*
-         * Close modal.
+         * Close modal only after all
+         * requested updates succeed.
          */
 
         closeManageUserModal();
 
 
         /*
-         * Reload from Google Sheets.
+         * Reload from Google Sheets so
+         * the displayed data is authoritative.
          */
 
         await loadUsers();
 
 
-    } catch (error) {
+    }
+    catch (error) {
 
         console.error(
             "USER MANAGEMENT SAVE ERROR:",
@@ -1032,7 +1271,8 @@ async function saveUserChanges() {
             "Unable to save user changes."
         );
 
-    } finally {
+    }
+    finally {
 
         hideManageUserSaving();
 
@@ -1159,6 +1399,176 @@ function normalizeStatusValue(
 
 
 /* ==========================================================
+   NORMALIZE LDIMS ACCESS
+========================================================== */
+
+function normalizeLdimsAccessValue(
+    access
+) {
+
+    const DEFAULT_ACCESS =
+        "Employee";
+
+
+    if (!access) {
+
+        return DEFAULT_ACCESS;
+
+    }
+
+
+    const allowedAccess = {
+
+        employee:
+            "Employee",
+
+        supervisor:
+            "Supervisor",
+
+        "ldd monitoring":
+            "LDD Monitoring",
+
+        administrator:
+            "Administrator"
+
+    };
+
+
+    const values =
+        String(
+            access
+        )
+        .split(",")
+        .map(
+            value =>
+                value
+                    .trim()
+                    .toLowerCase()
+        )
+        .filter(Boolean);
+
+
+    const normalized = [];
+
+
+    values.forEach(
+        value => {
+
+            const canonical =
+                allowedAccess[value];
+
+
+            if (
+                canonical &&
+                !normalized.includes(
+                    canonical
+                )
+            ) {
+
+                normalized.push(
+                    canonical
+                );
+
+            }
+
+        }
+    );
+
+
+    /*
+     * Employee access is mandatory.
+     */
+
+    if (
+        !normalized.includes(
+            "Employee"
+        )
+    ) {
+
+        normalized.unshift(
+            "Employee"
+        );
+
+    }
+
+
+    return normalized.join(
+        ","
+    );
+
+}
+
+
+/* ==========================================================
+   CHECK LDIMS ACCESS
+========================================================== */
+
+function hasLdimsAccess(
+    access,
+    requestedAccess
+) {
+
+    const normalized =
+        normalizeLdimsAccessValue(
+            access
+        );
+
+
+    return normalized
+        .split(",")
+        .map(
+            value =>
+                value.trim()
+        )
+        .includes(
+            requestedAccess
+        );
+
+}
+
+
+/* ==========================================================
+   NORMALIZE LDD MONITORING ROLE
+========================================================== */
+
+function normalizeLddMonitoringRoleValue(
+    role
+) {
+
+    const value =
+        String(
+            role || ""
+        )
+        .trim()
+        .toLowerCase();
+
+
+    const allowedRoles = {
+
+        "ldd personnel":
+            "LDD Personnel",
+
+        "ldd supervisor":
+            "LDD Supervisor",
+
+        "ldd assistant chief":
+            "LDD Assistant Chief",
+
+        "ldd chief":
+            "LDD Chief"
+
+    };
+
+
+    return (
+        allowedRoles[value] ||
+        ""
+    );
+
+}
+
+
+/* ==========================================================
    SET INPUT VALUE
 ========================================================== */
 
@@ -1177,6 +1587,33 @@ function setInputValue(
 
         element.value =
             value ?? "";
+
+    }
+
+}
+
+
+/* ==========================================================
+   SET CHECKBOX
+========================================================== */
+
+function setCheckboxChecked(
+    elementID,
+    checked
+) {
+
+    const element =
+        document.getElementById(
+            elementID
+        );
+
+
+    if (element) {
+
+        element.checked =
+            Boolean(
+                checked
+            );
 
     }
 
@@ -1451,8 +1888,6 @@ function getRoleBadge(
     `;
 
 }
-
-
 /* ==========================================================
    LOADING STATE
 ========================================================== */
@@ -1507,7 +1942,7 @@ function showUserLoading() {
 
 
 /* ==========================================================
-   ERROR
+   USER ERROR
 ========================================================== */
 
 function hideUserError() {
@@ -1653,6 +2088,7 @@ function escapeUserHTML(
 
 }
 
+
 /* ==========================================================
    ADD USER
    EMPLOYEE SELECTION
@@ -1675,7 +2111,7 @@ if (addUserEmployeeSelect) {
 
 
 /* ==========================================================
-   OPEN MODAL - LOAD EMPLOYEES
+   OPEN ADD USER MODAL
 ========================================================== */
 
 const addUserModalElement =
@@ -1722,7 +2158,8 @@ async function loadEmployeesForAddUser() {
     `;
 
 
-    select.disabled = true;
+    select.disabled =
+        true;
 
 
     try {
@@ -1747,14 +2184,7 @@ async function loadEmployeesForAddUser() {
         );
 
 
-        /*
-         * Accept the different response
-         * structures used by LDIMS.
-         */
-
-        if (
-            !result
-        ) {
+        if (!result) {
 
             throw new Error(
                 "No response received from LDIMS API."
@@ -1839,8 +2269,8 @@ async function loadEmployeesForAddUser() {
 
 
         /*
-         * Remove employees who already
-         * have an LDIMS account.
+         * Only employees without
+         * an existing account.
          */
 
         const availableEmployees =
@@ -1880,10 +2310,6 @@ async function loadEmployeesForAddUser() {
         );
 
 
-        /*
-         * Reset dropdown.
-         */
-
         select.innerHTML = `
 
             <option value="">
@@ -1892,10 +2318,6 @@ async function loadEmployeesForAddUser() {
 
         `;
 
-
-        /*
-         * Populate dropdown.
-         */
 
         availableEmployees.forEach(
             employee => {
@@ -1999,7 +2421,10 @@ async function loadEmployeesForAddUser() {
 
 
                 option.textContent =
-                    `${employeeID} — ${fullName || "Unnamed Employee"}`;
+                    `${employeeID} — ${
+                        fullName ||
+                        "Unnamed Employee"
+                    }`;
 
 
                 option.dataset.fullname =
@@ -2026,15 +2451,13 @@ async function loadEmployeesForAddUser() {
         );
 
 
-        select.disabled = false;
+        select.disabled =
+            false;
 
-
-        /*
-         * No employees available.
-         */
 
         if (
-            availableEmployees.length === 0
+            availableEmployees.length ===
+            0
         ) {
 
             select.innerHTML = `
@@ -2046,7 +2469,8 @@ async function loadEmployeesForAddUser() {
             `;
 
 
-            select.disabled = true;
+            select.disabled =
+                true;
 
         }
 
@@ -2068,7 +2492,8 @@ async function loadEmployeesForAddUser() {
         `;
 
 
-        select.disabled = true;
+        select.disabled =
+            true;
 
     }
 
@@ -2159,34 +2584,74 @@ function handleAddUserEmployeeChange(
         "";
 
 
-    document.getElementById(
-        "addUserEmployeeID"
-    ).value =
-        employeeID;
+    const employeeIDField =
+        document.getElementById(
+            "addUserEmployeeID"
+        );
 
 
-    document.getElementById(
-        "addUserFullName"
-    ).value =
-        fullName;
+    const fullNameField =
+        document.getElementById(
+            "addUserFullName"
+        );
 
 
-    document.getElementById(
-        "addUserPosition"
-    ).value =
-        position;
+    const positionField =
+        document.getElementById(
+            "addUserPosition"
+        );
 
 
-    document.getElementById(
-        "addUserAssignment"
-    ).value =
-        assignment;
+    const assignmentField =
+        document.getElementById(
+            "addUserAssignment"
+        );
 
 
-    document.getElementById(
-        "addUserEmail"
-    ).value =
-        email;
+    const emailField =
+        document.getElementById(
+            "addUserEmail"
+        );
+
+
+    if (employeeIDField) {
+
+        employeeIDField.value =
+            employeeID;
+
+    }
+
+
+    if (fullNameField) {
+
+        fullNameField.value =
+            fullName;
+
+    }
+
+
+    if (positionField) {
+
+        positionField.value =
+            position;
+
+    }
+
+
+    if (assignmentField) {
+
+        assignmentField.value =
+            assignment;
+
+    }
+
+
+    if (emailField) {
+
+        emailField.value =
+            email;
+
+    }
 
 
     if (details) {
@@ -2240,7 +2705,8 @@ function clearAddUserEmployeeDetails() {
 
             if (field) {
 
-                field.value = "";
+                field.value =
+                    "";
 
             }
 
@@ -2248,6 +2714,7 @@ function clearAddUserEmployeeDetails() {
     );
 
 }
+
 
 /* ==========================================================
    ADD USER TYPE
@@ -2303,10 +2770,6 @@ function handleAddUserTypeChange() {
 
     if (isManual) {
 
-        /*
-         * Hide existing employee selection.
-         */
-
         if (addUserExistingSection) {
 
             addUserExistingSection.classList.add(
@@ -2316,10 +2779,6 @@ function handleAddUserTypeChange() {
         }
 
 
-        /*
-         * Show authorized management account notice.
-         */
-
         if (addUserManualSection) {
 
             addUserManualSection.classList.remove(
@@ -2328,10 +2787,6 @@ function handleAddUserTypeChange() {
 
         }
 
-
-        /*
-         * No manual employee fields.
-         */
 
         if (details) {
 
@@ -2352,10 +2807,6 @@ function handleAddUserTypeChange() {
     }
     else {
 
-        /*
-         * Show existing employee selection.
-         */
-
         if (addUserExistingSection) {
 
             addUserExistingSection.classList.remove(
@@ -2365,10 +2816,6 @@ function handleAddUserTypeChange() {
         }
 
 
-        /*
-         * Hide management account notice.
-         */
-
         if (addUserManualSection) {
 
             addUserManualSection.classList.add(
@@ -2377,11 +2824,6 @@ function handleAddUserTypeChange() {
 
         }
 
-
-        /*
-         * Hide employee details
-         * until an employee is selected.
-         */
 
         if (details) {
 
@@ -2452,6 +2894,607 @@ if (addUserModalElement) {
             clearAddUserEmployeeDetails();
 
         }
+    );
+
+}
+/* ==========================================================
+   FINAL ADD USER MODAL RESET
+========================================================== */
+
+if (addUserModalElement) {
+
+    addUserModalElement.addEventListener(
+        "hidden.bs.modal",
+        () => {
+
+            /*
+             * Always return to
+             * Existing Employee mode.
+             */
+
+            if (addUserExistingRadio) {
+
+                addUserExistingRadio.checked =
+                    true;
+
+            }
+
+
+            if (addUserManualRadio) {
+
+                addUserManualRadio.checked =
+                    false;
+
+            }
+
+
+            handleAddUserTypeChange();
+
+
+            /*
+             * Clear selected employee.
+             */
+
+            const employeeSelect =
+                document.getElementById(
+                    "addUserEmployee"
+                );
+
+
+            if (employeeSelect) {
+
+                employeeSelect.value =
+                    "";
+
+            }
+
+
+            clearAddUserEmployeeDetails();
+
+
+            /*
+             * Hide employee details.
+             */
+
+            const details =
+                document.getElementById(
+                    "addUserEmployeeDetails"
+                );
+
+
+            if (details) {
+
+                details.classList.add(
+                    "d-none"
+                );
+
+            }
+
+
+            /*
+             * Reset authorization fields.
+             *
+             * Employee access is always enabled.
+             */
+
+            const employeeAccess =
+                document.getElementById(
+                    "addAccessEmployee"
+                );
+
+
+            const supervisorAccess =
+                document.getElementById(
+                    "addAccessSupervisor"
+                );
+
+
+            const lddAccess =
+                document.getElementById(
+                    "addAccessLddMonitoring"
+                );
+
+
+            const administratorAccess =
+                document.getElementById(
+                    "addAccessAdministrator"
+                );
+
+
+            if (employeeAccess) {
+
+                employeeAccess.checked =
+                    true;
+
+            }
+
+
+            if (supervisorAccess) {
+
+                supervisorAccess.checked =
+                    false;
+
+            }
+
+
+            if (lddAccess) {
+
+                lddAccess.checked =
+                    false;
+
+            }
+
+
+            if (administratorAccess) {
+
+                administratorAccess.checked =
+                    false;
+
+            }
+
+
+            /*
+             * Reset System Assignment.
+             */
+
+            const systemAssignment =
+                document.getElementById(
+                    "addSystemAssignment"
+                );
+
+
+            if (systemAssignment) {
+
+                systemAssignment.value =
+                    "";
+
+            }
+
+
+            /*
+             * Reset LDD Monitoring Role.
+             */
+
+            const lddRole =
+                document.getElementById(
+                    "addLddMonitoringRole"
+                );
+
+
+            if (lddRole) {
+
+                lddRole.value =
+                    "";
+
+            }
+
+
+            /*
+             * Reset account status.
+             */
+
+            const status =
+                document.getElementById(
+                    "addUserStatus"
+                );
+
+
+            if (status) {
+
+                status.value =
+                    "Active";
+
+            }
+
+
+            /*
+             * Disable Create button
+             * until an employee is selected.
+             */
+
+            if (addUserCreateButton) {
+
+                addUserCreateButton.disabled =
+                    true;
+
+            }
+
+        }
+    );
+
+}
+
+/* ==========================================================
+   CREATE USER ACCOUNT
+   ----------------------------------------------------------
+   Uses existing backend createUser(employeeID, role, status)
+   Then applies the explicit LDIMS authorization fields.
+========================================================== */
+
+async function createUserAccount() {
+
+    const employeeIDElement =
+        document.getElementById(
+            "addUserEmployee"
+        );
+
+    const statusElement =
+        document.getElementById(
+            "addUserStatus"
+        );
+
+    const employeeID =
+        employeeIDElement
+            ? String(
+                employeeIDElement.value || ""
+            ).trim()
+            : "";
+
+    const status =
+        statusElement
+            ? statusElement.value
+            : "Active";
+
+
+    if (!employeeID) {
+
+        alert(
+            "Please select an employee."
+        );
+
+        return;
+
+    }
+
+
+    /*
+     * Build explicit LDIMS Access.
+     *
+     * Employee is always included.
+     */
+
+    const accessValues = [
+        "Employee"
+    ];
+
+
+    if (
+        document.getElementById(
+            "addAccessSupervisor"
+        )?.checked
+    ) {
+
+        accessValues.push(
+            "Supervisor"
+        );
+
+    }
+
+
+    if (
+        document.getElementById(
+            "addAccessLddMonitoring"
+        )?.checked
+    ) {
+
+        accessValues.push(
+            "LDD Monitoring"
+        );
+
+    }
+
+
+    if (
+        document.getElementById(
+            "addAccessAdministrator"
+        )?.checked
+    ) {
+
+        accessValues.push(
+            "Administrator"
+        );
+
+    }
+
+
+    /*
+     * Legacy Role is retained only for
+     * backward compatibility.
+     *
+     * Authorization is controlled by
+     * LDIMS Access.
+     */
+
+    let legacyRole =
+        "Employee";
+
+
+    if (
+        document.getElementById(
+            "addAccessAdministrator"
+        )?.checked
+    ) {
+
+        legacyRole =
+            "Administrator";
+
+    }
+    else if (
+        document.getElementById(
+            "addAccessSupervisor"
+        )?.checked
+    ) {
+
+        legacyRole =
+            "Supervisor";
+
+    }
+
+
+    const ldimAccess =
+        accessValues.join(",");
+
+
+    /*
+     * System Assignment is separate from
+     * organizational Place of Assignment.
+     */
+
+    const systemAssignmentElement =
+        document.getElementById(
+            "addSystemAssignment"
+        );
+
+    const systemAssignment =
+        systemAssignmentElement
+            ? String(
+                systemAssignmentElement.value || ""
+            ).trim()
+            : "";
+
+
+    /*
+     * LDD Monitoring Role is explicit.
+     */
+
+    const lddRoleElement =
+        document.getElementById(
+            "addLddMonitoringRole"
+        );
+
+    const lddMonitoringRole =
+        lddRoleElement
+            ? normalizeLddMonitoringRoleValue(
+                lddRoleElement.value
+            )
+            : "";
+
+
+    /*
+     * Prevent double submission.
+     */
+
+    const createButton =
+        document.getElementById(
+            "createUserButton"
+        );
+
+
+    if (createButton) {
+
+        createButton.disabled =
+            true;
+
+    }
+
+
+    try {
+
+        /*
+         * STEP 1
+         * Create the actual LDIMS account.
+         *
+         * Existing backend signature is preserved:
+         * createUser(employeeID, role, status)
+         */
+
+        console.log(
+            "CREATE USER REQUEST:",
+            {
+                employeeID:
+                    employeeID,
+
+                role:
+                    legacyRole,
+
+                status:
+                    status
+            }
+        );
+
+
+        const createResult =
+            await API.post({
+
+                action:
+                    "createUser",
+
+                employeeID:
+                    employeeID,
+
+                role:
+                    legacyRole,
+
+                status:
+                    status
+
+            });
+
+
+        console.log(
+            "CREATE USER RESPONSE:",
+            createResult
+        );
+
+
+        if (
+            !createResult ||
+            !createResult.success
+        ) {
+
+            throw new Error(
+                createResult?.message ||
+                "Unable to create user account."
+            );
+
+        }
+
+
+        /*
+         * STEP 2
+         * Apply explicit authorization fields.
+         */
+
+        const accessResult =
+            await API.post({
+
+                action:
+                    "updateUserAccess",
+
+                employeeID:
+                    employeeID,
+
+                ldimAccess:
+                    ldimAccess,
+
+                systemAssignment:
+                    systemAssignment,
+
+                lddMonitoringRole:
+                    lddMonitoringRole
+
+            });
+
+
+        console.log(
+            "CREATE USER ACCESS RESPONSE:",
+            accessResult
+        );
+
+
+        if (
+            !accessResult ||
+            !accessResult.success
+        ) {
+
+            throw new Error(
+                accessResult?.message ||
+                "Account was created, but authorization settings could not be saved."
+            );
+
+        }
+
+
+        /*
+         * Account successfully created
+         * and authorization successfully applied.
+         */
+
+        let successMessage =
+            "LDIMS account created successfully.";
+
+
+        if (
+            createResult.temporaryPassword
+        ) {
+
+            successMessage +=
+                "\n\nTemporary Password:\n" +
+                createResult.temporaryPassword;
+
+        }
+
+
+        alert(
+            successMessage
+        );
+
+
+        /*
+         * Close modal.
+         */
+
+        const modalElement =
+            document.getElementById(
+                "addUserModal"
+            );
+
+
+        if (
+            modalElement &&
+            typeof bootstrap !== "undefined"
+        ) {
+
+            const modal =
+                bootstrap.Modal.getInstance(
+                    modalElement
+                ) ||
+                bootstrap.Modal.getOrCreateInstance(
+                    modalElement
+                );
+
+            modal.hide();
+
+        }
+
+
+        /*
+         * Reload authoritative USERS data.
+         */
+
+        await loadUsers();
+
+
+    }
+    catch (error) {
+
+        console.error(
+            "CREATE USER ERROR:",
+            error
+        );
+
+
+        alert(
+            error.message ||
+            "Unable to create user account."
+        );
+
+    }
+    finally {
+
+        if (createButton) {
+
+            createButton.disabled =
+                false;
+
+        }
+
+    }
+
+}
+
+
+/* ==========================================================
+   CREATE USER BUTTON EVENT
+========================================================== */
+
+if (
+    addUserCreateButton
+) {
+
+    addUserCreateButton.addEventListener(
+        "click",
+        createUserAccount
     );
 
 }

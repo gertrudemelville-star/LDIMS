@@ -1,33 +1,60 @@
 /* ==========================================================
-   LDIMS - Login Page
+   LDIMS - LOGIN PAGE
    Module: User Authentication
+
+   AUTHORIZATION MODEL
+   ----------------------------------------------------------
+   LDIMS Access          = Module access
+   System Assignment     = Functional assignment
+   LDD Monitoring Role   = LDD authority
+
+   IMPORTANT:
+   - Employee access is default.
+   - Supervisor access is explicit.
+   - LDD access is explicit.
+   - Administrator access is explicit.
+   - Legacy Role is retained for compatibility only.
 ========================================================== */
 
 "use strict";
 
 
 /* ==========================================================
-   ELEMENTS
+   DOM ELEMENTS
 ========================================================== */
 
 const loginForm =
-    document.getElementById("loginForm");
+    document.getElementById(
+        "loginForm"
+    );
+
 
 const loginButton =
-    document.getElementById("loginButton");
+    document.getElementById(
+        "loginButton"
+    );
+
 
 const buttonText =
-    document.getElementById("buttonText");
+    document.getElementById(
+        "buttonText"
+    );
+
 
 const loadingSpinner =
-    document.getElementById("loadingSpinner");
+    document.getElementById(
+        "loadingSpinner"
+    );
+
 
 const alertMessage =
-    document.getElementById("alertMessage");
+    document.getElementById(
+        "alertMessage"
+    );
 
 
 /* ==========================================================
-   SHOW ALERT
+   ALERT
 ========================================================== */
 
 function showAlert(
@@ -39,18 +66,26 @@ function showAlert(
         return;
     }
 
-    alertMessage.innerHTML = "";
+
+    alertMessage.innerHTML =
+        "";
+
 
     const alert =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
+
 
     alert.className =
         `alert alert-${type} alert-dismissible fade show`;
+
 
     alert.setAttribute(
         "role",
         "alert"
     );
+
 
     alert.appendChild(
         document.createTextNode(
@@ -59,28 +94,37 @@ function showAlert(
         )
     );
 
+
     const closeButton =
-        document.createElement("button");
+        document.createElement(
+            "button"
+        );
+
 
     closeButton.type =
         "button";
 
+
     closeButton.className =
         "btn-close";
+
 
     closeButton.setAttribute(
         "data-bs-dismiss",
         "alert"
     );
 
+
     closeButton.setAttribute(
         "aria-label",
         "Close"
     );
 
+
     alert.appendChild(
         closeButton
     );
+
 
     alertMessage.appendChild(
         alert
@@ -90,43 +134,203 @@ function showAlert(
 
 
 /* ==========================================================
-   GET DASHBOARD BY ROLE
+   GET LDIMS ACCESS VALUES
 ========================================================== */
 
-function getDashboardByRole(
+function getLDIMSAccessValues(
+    user
+) {
+
+    if (!user) {
+        return [];
+    }
+
+
+    const access =
+        user.ldimAccess ||
+        user.ldimsAccess ||
+        user.LDIMSAccess ||
+        user["LDIMS Access"] ||
+        "";
+
+
+    return String(
+        access
+    )
+        .split(",")
+        .map(
+            value =>
+                value
+                    .trim()
+                    .toLowerCase()
+        )
+        .filter(Boolean);
+
+}
+
+
+/* ==========================================================
+   CHECK LDIMS ACCESS
+========================================================== */
+
+function hasLDIMSAccess(
+    user,
+    accessName
+) {
+
+    const accessValues =
+        getLDIMSAccessValues(
+            user
+        );
+
+
+    return accessValues.includes(
+        String(
+            accessName || ""
+        )
+            .trim()
+            .toLowerCase()
+    );
+
+}
+
+
+/* ==========================================================
+   GET LDD MONITORING ROLE
+========================================================== */
+
+function getLDDMonitoringRole(
+    user
+) {
+
+    if (!user) {
+        return "";
+    }
+
+
+    return String(
+        user.lddMonitoringRole ||
+        user.LDDMonitoringRole ||
+        user["LDD Monitoring Role"] ||
+        ""
+    )
+        .trim();
+
+}
+
+
+/* ==========================================================
+   NORMALIZE LDD MONITORING ROLE
+========================================================== */
+
+function normalizeLDDMonitoringRole(
     role
 ) {
 
-    const normalizedRole =
+    const value =
         String(
             role || ""
         )
-        .trim()
-        .toUpperCase();
+            .trim()
+            .toLowerCase();
+
+
+    const roles = {
+
+        "ldd personnel":
+            "LDD Personnel",
+
+        "ldd supervisor":
+            "LDD Supervisor",
+
+        "ldd assistant chief":
+            "LDD Assistant Chief",
+
+        "ldd chief":
+            "LDD Chief"
+
+    };
+
+
+    return (
+        roles[value] ||
+        ""
+    );
+
+}
+
+
+/* ==========================================================
+   DETERMINE DASHBOARD BY LDIMS ACCESS
+========================================================== */
+
+function getDashboardByAccess(
+    user
+) {
+
+    if (!user) {
+
+        return "dashboard.html";
+
+    }
 
 
     console.log(
-        "LOGIN ROLE:",
-        role
+        "LOGIN USER:",
+        user
     );
 
 
+    const accessValues =
+        getLDIMSAccessValues(
+            user
+        );
+
+
     console.log(
-        "NORMALIZED ROLE:",
-        normalizedRole
+        "LDIMS ACCESS:",
+        accessValues
     );
 
 
     /* ======================================================
-       IMMEDIATE SUPERVISOR
+       LDD MONITORING
+       Highest functional priority for landing page.
     ====================================================== */
 
     if (
-        normalizedRole ===
-            "IMMEDIATE SUPERVISOR" ||
+        accessValues.includes(
+            "ldd monitoring"
+        )
+    ) {
 
-        normalizedRole ===
-            "SUPERVISOR"
+        const lddRole =
+            normalizeLDDMonitoringRole(
+                getLDDMonitoringRole(
+                    user
+                )
+            );
+
+
+        console.log(
+            "LDD MONITORING ROLE:",
+            lddRole
+        );
+
+
+        return "ldd/dashboard.html";
+
+    }
+
+
+    /* ======================================================
+       SUPERVISOR
+    ====================================================== */
+
+    if (
+        accessValues.includes(
+            "supervisor"
+        )
     ) {
 
         return "supervisor/dashboard.html";
@@ -139,11 +343,9 @@ function getDashboardByRole(
     ====================================================== */
 
     if (
-        normalizedRole ===
-            "ADMIN" ||
-
-        normalizedRole ===
-            "ADMINISTRATOR"
+        accessValues.includes(
+            "administrator"
+        )
     ) {
 
         return "dashboard.html";
@@ -152,32 +354,13 @@ function getDashboardByRole(
 
 
     /* ======================================================
-       LDD PERSONNEL
-    ====================================================== */
-
-    if (
-    normalizedRole === "LDD PERSONNEL" ||
-    normalizedRole === "LDD" ||
-    normalizedRole === "L&D OFFICER" ||
-    normalizedRole === "L&D PERSONNEL" ||
-    normalizedRole === "LDD ASST CHIEF" ||
-    normalizedRole === "LDD ASSISTANT CHIEF" ||
-    normalizedRole === "LDD CHIEF" ||
-    normalizedRole === "LDD SUPERVISOR"
-) {
-
-    return "ldd/dashboard.html";
-
-}
-
-
-    /* ======================================================
        EMPLOYEE
     ====================================================== */
 
     if (
-        normalizedRole ===
-            "EMPLOYEE"
+        accessValues.includes(
+            "employee"
+        )
     ) {
 
         return "employee/dashboard.html";
@@ -186,13 +369,14 @@ function getDashboardByRole(
 
 
     /* ======================================================
-       DEFAULT
+       FALLBACK
     ====================================================== */
 
     console.warn(
-        "Unknown role. Using default dashboard:",
-        role
+        "No recognized LDIMS Access found.",
+        user
     );
+
 
     return "dashboard.html";
 
@@ -236,9 +420,9 @@ if (loginForm) {
                     : "";
 
 
-            /* ==================================================
-               VALIDATION
-            ================================================== */
+            /* ------------------------------------------------
+               VALIDATE EMPLOYEE ID
+            ------------------------------------------------ */
 
             if (!employeeID) {
 
@@ -251,6 +435,10 @@ if (loginForm) {
             }
 
 
+            /* ------------------------------------------------
+               VALIDATE PASSWORD
+            ------------------------------------------------ */
+
             if (!password) {
 
                 showAlert(
@@ -262,13 +450,14 @@ if (loginForm) {
             }
 
 
-            /* ==================================================
-               LOADING
-            ================================================== */
+            /* ------------------------------------------------
+               LOADING STATE
+            ------------------------------------------------ */
 
             if (loginButton) {
 
-                loginButton.disabled = true;
+                loginButton.disabled =
+                    true;
 
             }
 
@@ -293,9 +482,9 @@ if (loginForm) {
 
             try {
 
-                /* =================================================
-                   AUTHENTICATE
-                ================================================= */
+                /* --------------------------------------------
+                   API LOGIN
+                -------------------------------------------- */
 
                 const result =
                     await API.login(
@@ -310,54 +499,44 @@ if (loginForm) {
                 );
 
 
-                /* =================================================
-                   LOGIN SUCCESS
-                ================================================= */
+                /* --------------------------------------------
+                   SUCCESS
+                -------------------------------------------- */
 
                 if (
                     result &&
                     result.success
                 ) {
 
-                    /* ---------------------------------------------
-                       SAVE SESSION
-                    --------------------------------------------- */
+                    /*
+                       Save complete authenticated
+                       user/session response first.
+                    */
 
                     Session.save(
                         result
                     );
 
 
-                    /* ---------------------------------------------
-                       GET ROLE
-                    --------------------------------------------- */
-
-                    const role =
-                        result.role ||
-                        result.Role ||
-                        (
-                            result.user
-                                ? (
-                                    result.user.role ||
-                                    result.user.Role
-                                )
-                                : ""
-                        );
+                    const user =
+                        result.user ||
+                        result;
 
 
                     console.log(
-                        "USER ROLE:",
-                        role
+                        "LOGGED-IN USER:",
+                        user
                     );
 
 
-                    /* ---------------------------------------------
-                       GET DESTINATION
-                    --------------------------------------------- */
+                    /*
+                       Determine destination strictly
+                       from LDIMS Access.
+                    */
 
                     const destination =
-                        getDashboardByRole(
-                            role
+                        getDashboardByAccess(
+                            user
                         );
 
 
@@ -366,10 +545,6 @@ if (loginForm) {
                         destination
                     );
 
-
-                    /* ---------------------------------------------
-                       REDIRECT
-                    --------------------------------------------- */
 
                     window.location.href =
                         destination;
@@ -380,9 +555,9 @@ if (loginForm) {
                 }
 
 
-                /* =================================================
+                /* --------------------------------------------
                    LOGIN FAILED
-                ================================================== */
+                -------------------------------------------- */
 
                 showAlert(
                     result?.message ||
@@ -439,7 +614,7 @@ if (loginForm) {
 
 
 /* ==========================================================
-   TOGGLE PASSWORD
+   TOGGLE PASSWORD VISIBILITY
 ========================================================== */
 
 const togglePassword =
@@ -461,13 +636,13 @@ if (togglePassword) {
 
 
             const icon =
-                this.querySelector("i");
+                this.querySelector(
+                    "i"
+                );
 
 
             if (!password) {
-
                 return;
-
             }
 
 

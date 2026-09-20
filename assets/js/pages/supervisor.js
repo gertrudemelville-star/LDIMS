@@ -2195,10 +2195,6 @@ function renderCompetencyGapAnalysis(record) {
 }
 
 
-/* ==========================================================
-   SUPERVISOR ACTIONS
-========================================================== */
-
 function renderSupervisorActions(
     record,
     showDecisionButtons
@@ -2209,18 +2205,15 @@ function renderSupervisorActions(
             "supervisorLNAActions"
         );
 
-
     if (!container) {
-
         return;
-
     }
 
 
-    /*
-     * My Personnel
-     * Read-only only.
-     */
+    /* ======================================================
+       MY PERSONNEL
+       READ ONLY
+    ====================================================== */
 
     if (
         showDecisionButtons !== true
@@ -2241,9 +2234,10 @@ function renderSupervisorActions(
                     </strong>
 
                     <span>
-                        This is the employee's submitted LNA.
-                        Supervisor assessment and validation are
-                        available under For Validation.
+                        This Learning Needs Assessment is displayed
+                        for review only. Supervisor validation or
+                        revision decisions are made under
+                        <strong>For Validation</strong>.
                     </span>
 
                 </div>
@@ -2253,7 +2247,6 @@ function renderSupervisorActions(
         `;
 
         return;
-
     }
 
 
@@ -2263,9 +2256,9 @@ function renderSupervisorActions(
         );
 
 
-    /*
-     * For Completion
-     */
+    /* ======================================================
+       FOR COMPLETION
+    ====================================================== */
 
     if (
         status ===
@@ -2298,13 +2291,55 @@ function renderSupervisorActions(
         `;
 
         return;
-
     }
 
 
-    /*
-     * Already Validated
-     */
+    /* ======================================================
+       FOR REVISION
+       ------------------------------------------------------
+       Employee must resubmit before supervisor can
+       assess or validate again.
+    ====================================================== */
+
+    if (
+        status ===
+        "for revision"
+    ) {
+
+        container.innerHTML = `
+
+            <div class="supervisor-readonly-panel warning">
+
+                <div class="supervisor-readonly-icon">
+                    ↩
+                </div>
+
+                <div class="supervisor-readonly-content">
+
+                    <strong>
+                        LNA Returned for Revision
+                    </strong>
+
+                    <span>
+                        The employee must complete the requested
+                        revisions and resubmit the LNA before
+                        Supervisor Assessment and validation
+                        can continue.
+                    </span>
+
+                </div>
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+
+    /* ======================================================
+       ALREADY VALIDATED
+    ====================================================== */
 
     if (
         status === "validated" ||
@@ -2327,7 +2362,7 @@ function renderSupervisorActions(
 
                     <span>
                         This LNA has already been validated
-                        by the immediate supervisor.
+                        by the supervisor.
                     </span>
 
                 </div>
@@ -2337,13 +2372,12 @@ function renderSupervisorActions(
         `;
 
         return;
-
     }
 
 
-    /*
-     * For Validation
-     */
+    /* ======================================================
+       FOR VALIDATION
+    ====================================================== */
 
     container.innerHTML = `
 

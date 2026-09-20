@@ -455,6 +455,167 @@ const API = {
 
     },
 
+        /* ======================================================
+       IDP
+       GET EMPLOYEE IDP
+    ====================================================== */
+
+    async getIDPByEmployeeID(
+        employeeID
+    ) {
+
+        return await this.post({
+
+            action:
+                "getIDPByEmployeeID",
+
+            employeeID:
+                employeeID
+
+        });
+
+    },
+
+
+    /* ======================================================
+       IDP
+       SAVE IDP
+    ====================================================== */
+
+    async saveIDP(
+        employeeID,
+        data
+    ) {
+
+        return await this.post({
+
+            action:
+                "saveIDP",
+
+            employeeID:
+                employeeID,
+
+            data:
+                JSON.stringify(data)
+
+        });
+
+    },
+
+
+    /* ======================================================
+       IDP
+       SUBMIT IDP
+    ====================================================== */
+
+    async submitIDP(
+        employeeID
+    ) {
+
+        return await this.post({
+
+            action:
+                "submitIDP",
+
+            employeeID:
+                employeeID
+
+        });
+
+    },
+
+
+    /* ======================================================
+       IDP
+       GET ALL SUBMISSIONS
+    ====================================================== */
+
+    async getAllIDPSubmissions() {
+
+        return await this.post({
+
+            action:
+                "getAllIDPSubmissions"
+
+        });
+
+    },
+
+
+    /* ======================================================
+       IDP
+       SUPERVISOR VALIDATE
+    ====================================================== */
+
+    async supervisorValidateIDP(
+        employeeID,
+        supervisorEmployeeID
+    ) {
+
+        return await this.post({
+
+            action:
+                "supervisorValidateIDP",
+
+            employeeID:
+                employeeID,
+
+            supervisorEmployeeID:
+                supervisorEmployeeID
+
+        });
+
+    },
+
+
+    /* ======================================================
+       IDP
+       SUPERVISOR RETURN FOR REVISION
+    ====================================================== */
+
+    async supervisorReturnIDP(
+        employeeID,
+        supervisorEmployeeID,
+        reason
+    ) {
+
+        return await this.post({
+
+            action:
+                "supervisorReturnIDP",
+
+            employeeID:
+                employeeID,
+
+            supervisorEmployeeID:
+                supervisorEmployeeID,
+
+            reason:
+                reason
+
+        });
+
+    },
+
+/* ======================================================
+   LDD ORGANIZATIONAL HIERARCHY
+====================================================== */
+
+async getLDDPersonnelHierarchy(
+    employeeID
+) {
+
+    return await this.post({
+
+        action:
+            "getLDDPersonnelHierarchy",
+
+        employeeID:
+            employeeID
+
+    });
+
+},
 
     /* ======================================================
        CHANGE PASSWORD
