@@ -9,7 +9,7 @@
    LDD Monitoring Role   = LDD authority
 
    IMPORTANT:
-   - Employee access is default.
+   - Employee access is default when LDIMS Access is blank.
    - Supervisor access is explicit.
    - LDD access is explicit.
    - Administrator access is explicit.
@@ -24,33 +24,19 @@
 ========================================================== */
 
 const loginForm =
-    document.getElementById(
-        "loginForm"
-    );
-
+    document.getElementById("loginForm");
 
 const loginButton =
-    document.getElementById(
-        "loginButton"
-    );
-
+    document.getElementById("loginButton");
 
 const buttonText =
-    document.getElementById(
-        "buttonText"
-    );
-
+    document.getElementById("buttonText");
 
 const loadingSpinner =
-    document.getElementById(
-        "loadingSpinner"
-    );
-
+    document.getElementById("loadingSpinner");
 
 const alertMessage =
-    document.getElementById(
-        "alertMessage"
-    );
+    document.getElementById("alertMessage");
 
 
 /* ==========================================================
@@ -66,26 +52,18 @@ function showAlert(
         return;
     }
 
-
-    alertMessage.innerHTML =
-        "";
-
+    alertMessage.innerHTML = "";
 
     const alert =
-        document.createElement(
-            "div"
-        );
-
+        document.createElement("div");
 
     alert.className =
         `alert alert-${type} alert-dismissible fade show`;
-
 
     alert.setAttribute(
         "role",
         "alert"
     );
-
 
     alert.appendChild(
         document.createTextNode(
@@ -94,42 +72,31 @@ function showAlert(
         )
     );
 
-
     const closeButton =
-        document.createElement(
-            "button"
-        );
+        document.createElement("button");
 
-
-    closeButton.type =
-        "button";
-
+    closeButton.type = "button";
 
     closeButton.className =
         "btn-close";
-
 
     closeButton.setAttribute(
         "data-bs-dismiss",
         "alert"
     );
 
-
     closeButton.setAttribute(
         "aria-label",
         "Close"
     );
 
-
     alert.appendChild(
         closeButton
     );
 
-
     alertMessage.appendChild(
         alert
     );
-
 }
 
 
@@ -137,14 +104,11 @@ function showAlert(
    GET LDIMS ACCESS VALUES
 ========================================================== */
 
-function getLDIMSAccessValues(
-    user
-) {
+function getLDIMSAccessValues(user) {
 
     if (!user) {
-        return [];
+        return ["employee"];
     }
-
 
     const access =
         user.ldimAccess ||
@@ -153,19 +117,39 @@ function getLDIMSAccessValues(
         user["LDIMS Access"] ||
         "";
 
+    /*
+       IMPORTANT:
+       Blank LDIMS Access means Employee.
 
-    return String(
-        access
-    )
-        .split(",")
-        .map(
-            value =>
+       This prevents normal employee accounts
+       from falling through to the Administrator
+       dashboard.
+    */
+
+    if (!String(access).trim()) {
+        return ["employee"];
+    }
+
+    const values =
+        String(access)
+            .split(",")
+            .map(value =>
                 value
                     .trim()
                     .toLowerCase()
-        )
-        .filter(Boolean);
+            )
+            .filter(Boolean);
 
+    /*
+       Employee access is always retained as the
+       default functional access.
+    */
+
+    if (!values.includes("employee")) {
+        values.unshift("employee");
+    }
+
+    return values;
 }
 
 
@@ -179,19 +163,13 @@ function hasLDIMSAccess(
 ) {
 
     const accessValues =
-        getLDIMSAccessValues(
-            user
-        );
-
+        getLDIMSAccessValues(user);
 
     return accessValues.includes(
-        String(
-            accessName || ""
-        )
+        String(accessName || "")
             .trim()
             .toLowerCase()
     );
-
 }
 
 
@@ -199,23 +177,18 @@ function hasLDIMSAccess(
    GET LDD MONITORING ROLE
 ========================================================== */
 
-function getLDDMonitoringRole(
-    user
-) {
+function getLDDMonitoringRole(user) {
 
     if (!user) {
         return "";
     }
-
 
     return String(
         user.lddMonitoringRole ||
         user.LDDMonitoringRole ||
         user["LDD Monitoring Role"] ||
         ""
-    )
-        .trim();
-
+    ).trim();
 }
 
 
@@ -223,17 +196,12 @@ function getLDDMonitoringRole(
    NORMALIZE LDD MONITORING ROLE
 ========================================================== */
 
-function normalizeLDDMonitoringRole(
-    role
-) {
+function normalizeLDDMonitoringRole(role) {
 
     const value =
-        String(
-            role || ""
-        )
+        String(role || "")
             .trim()
             .toLowerCase();
-
 
     const roles = {
 
@@ -248,15 +216,9 @@ function normalizeLDDMonitoringRole(
 
         "ldd chief":
             "LDD Chief"
-
     };
 
-
-    return (
-        roles[value] ||
-        ""
-    );
-
+    return roles[value] || "";
 }
 
 
@@ -264,28 +226,21 @@ function normalizeLDDMonitoringRole(
    DETERMINE DASHBOARD BY LDIMS ACCESS
 ========================================================== */
 
-function getDashboardByAccess(
-    user
-) {
+function getDashboardByAccess(user) {
 
     if (!user) {
 
-        return "dashboard.html";
+        return "employee/dashboard.html";
 
     }
-
 
     console.log(
         "LOGIN USER:",
         user
     );
 
-
     const accessValues =
-        getLDIMSAccessValues(
-            user
-        );
-
+        getLDIMSAccessValues(user);
 
     console.log(
         "LDIMS ACCESS:",
@@ -295,7 +250,6 @@ function getDashboardByAccess(
 
     /* ======================================================
        LDD MONITORING
-       Highest functional priority for landing page.
     ====================================================== */
 
     if (
@@ -306,20 +260,15 @@ function getDashboardByAccess(
 
         const lddRole =
             normalizeLDDMonitoringRole(
-                getLDDMonitoringRole(
-                    user
-                )
+                getLDDMonitoringRole(user)
             );
-
 
         console.log(
             "LDD MONITORING ROLE:",
             lddRole
         );
 
-
         return "ldd/dashboard.html";
-
     }
 
 
@@ -334,7 +283,6 @@ function getDashboardByAccess(
     ) {
 
         return "supervisor/dashboard.html";
-
     }
 
 
@@ -349,7 +297,6 @@ function getDashboardByAccess(
     ) {
 
         return "dashboard.html";
-
     }
 
 
@@ -364,22 +311,20 @@ function getDashboardByAccess(
     ) {
 
         return "employee/dashboard.html";
-
     }
 
 
     /* ======================================================
-       FALLBACK
+       FINAL SAFETY FALLBACK
+       NEVER FALL BACK TO ADMINISTRATOR
     ====================================================== */
 
     console.warn(
-        "No recognized LDIMS Access found.",
+        "No recognized LDIMS Access found. Defaulting to Employee Dashboard.",
         user
     );
 
-
-    return "dashboard.html";
-
+    return "employee/dashboard.html";
 }
 
 
@@ -401,7 +346,6 @@ if (loginForm) {
                     "employeeID"
                 );
 
-
             const passwordElement =
                 document.getElementById(
                     "password"
@@ -412,7 +356,6 @@ if (loginForm) {
                 employeeIDElement
                     ? employeeIDElement.value.trim()
                     : "";
-
 
             const password =
                 passwordElement
@@ -431,7 +374,6 @@ if (loginForm) {
                 );
 
                 return;
-
             }
 
 
@@ -446,7 +388,6 @@ if (loginForm) {
                 );
 
                 return;
-
             }
 
 
@@ -456,11 +397,9 @@ if (loginForm) {
 
             if (loginButton) {
 
-                loginButton.disabled =
-                    true;
+                loginButton.disabled = true;
 
             }
-
 
             if (buttonText) {
 
@@ -469,7 +408,6 @@ if (loginForm) {
                 );
 
             }
-
 
             if (loadingSpinner) {
 
@@ -492,7 +430,6 @@ if (loginForm) {
                         password
                     );
 
-
                 console.log(
                     "LOGIN RESPONSE:",
                     result
@@ -508,20 +445,13 @@ if (loginForm) {
                     result.success
                 ) {
 
-                    /*
-                       Save complete authenticated
-                       user/session response first.
-                    */
-
                     Session.save(
                         result
                     );
 
-
                     const user =
                         result.user ||
                         result;
-
 
                     console.log(
                         "LOGGED-IN USER:",
@@ -529,16 +459,10 @@ if (loginForm) {
                     );
 
 
-                    /*
-                       Determine destination strictly
-                       from LDIMS Access.
-                    */
-
                     const destination =
                         getDashboardByAccess(
                             user
                         );
-
 
                     console.log(
                         "LOGIN DESTINATION:",
@@ -549,9 +473,7 @@ if (loginForm) {
                     window.location.href =
                         destination;
 
-
                     return;
-
                 }
 
 
@@ -572,7 +494,6 @@ if (loginForm) {
                     error
                 );
 
-
                 showAlert(
                     "Unable to connect to the server."
                 );
@@ -587,7 +508,6 @@ if (loginForm) {
 
                 }
 
-
                 if (buttonText) {
 
                     buttonText.classList.remove(
@@ -596,7 +516,6 @@ if (loginForm) {
 
                 }
 
-
                 if (loadingSpinner) {
 
                     loadingSpinner.classList.add(
@@ -604,12 +523,9 @@ if (loginForm) {
                     );
 
                 }
-
             }
-
         }
     );
-
 }
 
 
@@ -622,7 +538,6 @@ const togglePassword =
         "togglePassword"
     );
 
-
 if (togglePassword) {
 
     togglePassword.addEventListener(
@@ -634,12 +549,8 @@ if (togglePassword) {
                     "password"
                 );
 
-
             const icon =
-                this.querySelector(
-                    "i"
-                );
-
+                this.querySelector("i");
 
             if (!password) {
                 return;
@@ -654,7 +565,6 @@ if (togglePassword) {
                 password.type =
                     "text";
 
-
                 if (icon) {
 
                     icon.className =
@@ -667,17 +577,13 @@ if (togglePassword) {
                 password.type =
                     "password";
 
-
                 if (icon) {
 
                     icon.className =
                         "bi bi-eye";
 
                 }
-
             }
-
         }
     );
-
 }

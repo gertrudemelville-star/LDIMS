@@ -3,9 +3,22 @@
 /* ==========================================================
    LDIMS - LDD DASHBOARD
    Learning & Development Division
+
+   NOTE
+   ----------------------------------------------------------
+   This page is retained for the LDD workspace.
+
+   Main login routing is handled by login.js.
+   Do not place authorization logic in the HTML.
 ========================================================== */
 
-const LDD_ACCESS_NAME = "LDD Monitoring";
+
+/* ==========================================================
+   CONSTANTS
+========================================================== */
+
+const LDD_ACCESS_NAME =
+    "LDD Monitoring";
 
 const LDD_MONITORING_ROLES = [
     "LDD Personnel",
@@ -19,6 +32,11 @@ const NEW_USER_APPROVAL_ROLES = [
     "LDD Assistant Chief",
     "LDD Chief"
 ];
+
+
+/* ==========================================================
+   STATE
+========================================================== */
 
 let pendingNewUsers = [];
 
@@ -48,13 +66,12 @@ function normalizeLDDAccess(access) {
 
     return String(access || "")
         .split(",")
-        .map(value =>
-            String(value)
+        .map(function (value) {
+            return value
                 .trim()
-                .toLowerCase()
-        )
+                .toLowerCase();
+        })
         .filter(Boolean);
-
 }
 
 
@@ -64,20 +81,23 @@ function hasLDDMonitoringAccess(user) {
         return false;
     }
 
-    const accessValues =
-        normalizeLDDAccess(
-            user.ldimAccess ||
-            user.ldimsAccess ||
-            user.LDIMSAccess ||
-            user["LDIMS Access"] ||
-            ""
-        );
+    const access =
+        user.ldimAccess ||
+        user.ldimsAccess ||
+        user.LDIMSAccess ||
+        user["LDIMS Access"] ||
+        "";
 
-    return accessValues.includes(
-        "ldd monitoring"
-    );
+    return normalizeLDDAccess(access)
+        .includes(
+            LDD_ACCESS_NAME.toLowerCase()
+        );
 }
 
+
+/* ==========================================================
+   LDD ROLE
+========================================================== */
 
 function getLDDMonitoringRole(user) {
 
@@ -91,7 +111,6 @@ function getLDDMonitoringRole(user) {
         user["LDD Monitoring Role"] ||
         ""
     ).trim();
-
 }
 
 
@@ -122,13 +141,19 @@ function normalizeLDDMonitoringRole(role) {
 }
 
 
+/* ==========================================================
+   NEW USER APPROVAL AUTHORIZATION
+========================================================== */
+
 function canApproveNewUsers(user) {
 
     if (!user) {
         return false;
     }
 
-    if (!hasLDDMonitoringAccess(user)) {
+    if (
+        !hasLDDMonitoringAccess(user)
+    ) {
         return false;
     }
 
@@ -160,57 +185,62 @@ document.addEventListener(
                 Session.requireLogin();
             }
 
+
             const user =
                 getCurrentLDDUser();
 
+
             if (!user) {
-                console.warn(
-                    "LDD Dashboard: No active session."
-                );
                 return;
             }
+
 
             console.log(
                 "LDD CURRENT USER:",
                 user
             );
 
-            if (!hasLDDMonitoringAccess(user)) {
-                console.warn(
-                    "User does not have LDD Monitoring access."
-                );
-                return;
-            }
 
             const headerRole =
                 document.getElementById(
                     "headerRole"
                 );
 
+
             const monitoringRole =
                 normalizeLDDMonitoringRole(
                     getLDDMonitoringRole(user)
                 );
 
+
             if (headerRole) {
+
                 headerRole.textContent =
                     monitoringRole ||
                     "LDD Monitoring";
+
             }
+
 
             const approvalSection =
                 document.getElementById(
                     "newUserApprovalSection"
                 );
 
+
             if (approvalSection) {
+
                 approvalSection.hidden =
                     !canApproveNewUsers(user);
+
             }
+
 
             await loadLDDDashboard();
 
+
             initializeLogout();
+
 
         } catch (error) {
 
@@ -231,23 +261,199 @@ document.addEventListener(
 
 async function loadLDDDashboard() {
 
-    await loadLDDEmployeeCount();
 
-    await loadLDDTrainingRecords();
-
-    loadLNAPlaceholder();
-
-    await loadLDDHierarchy();
+    /* ======================================================
+       EMPLOYEES
+    ====================================================== */
 
     try {
 
-        const currentUser =
-            getCurrentLDDUser();
+        const response =
+            await API.getEmployees();
+
+
+        console.log(
+            "LDD Employees:",
+            response
+        );
+
 
         if (
-            canApproveNewUsers(
-                currentUser
-            )
+            response &&
+            response.success === true
+        ) {
+
+            const employees =
+                response.data ||
+                response.employees ||
+                [];
+
+
+            const element =
+                document.getElementById(
+                    "totalEmployees"
+                );
+
+
+            if (element) {
+
+                element.textContent =
+                    employees.length;
+
+            }
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Unable to load employees:",
+            error
+        );
+
+    }
+
+
+    /* ======================================================
+       TRAINING
+    ====================================================== */
+
+    try {
+
+        let response;
+
+
+        if (
+            typeof API.getAllTrainingRecordsForLDD ===
+            "function"
+        ) {
+
+            response =
+                await API.getAllTrainingRecordsForLDD();
+
+        } else if (
+            typeof API.getTrainingRecords ===
+            "function"
+        ) {
+
+            response =
+                await API.getTrainingRecords();
+
+        }
+
+
+        console.log(
+            "LDD Training Records:",
+            response
+        );
+
+
+        if (
+            response &&
+            response.success === true
+        ) {
+
+            const records =
+                response.data ||
+                response.records ||
+                [];
+
+
+            const totalTrainings =
+                document.getElementById(
+                    "totalTrainings"
+                );
+
+
+            if (totalTrainings) {
+
+                totalTrainings.textContent =
+                    records.length;
+
+            }
+
+
+            let totalHours = 0;
+
+
+            records.forEach(
+                function (record) {
+
+                    const hours =
+                        parseFloat(
+                            record.totalHours ||
+                            record.TotalHours ||
+                            record["TOTAL HOURS"] ||
+                            0
+                        );
+
+
+                    if (!isNaN(hours)) {
+
+                        totalHours +=
+                            hours;
+
+                    }
+
+                }
+            );
+
+
+            const learningHours =
+                document.getElementById(
+                    "totalLearningHours"
+                );
+
+
+            if (learningHours) {
+
+                learningHours.textContent =
+                    totalHours;
+
+            }
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Unable to load training records:",
+            error
+        );
+
+    }
+
+
+    /* ======================================================
+       LNA
+    ====================================================== */
+
+    const lnaCompleted =
+        document.getElementById(
+            "lnaCompleted"
+        );
+
+
+    if (lnaCompleted) {
+
+        lnaCompleted.textContent =
+            "—";
+
+    }
+
+
+    /* ======================================================
+       NEW USER APPROVAL
+    ====================================================== */
+
+    try {
+
+        const user =
+            getCurrentLDDUser();
+
+
+        if (
+            canApproveNewUsers(user)
         ) {
 
             await loadPendingRegistrations();
@@ -269,545 +475,25 @@ async function loadLDDDashboard() {
 
     }
 
+
     renderNoRecentActivity();
-}
-
-
-/* ==========================================================
-   TOTAL EMPLOYEES
-========================================================== */
-
-async function loadLDDEmployeeCount() {
-
-    try {
-
-        const response =
-            await API.getEmployees();
-
-        console.log(
-            "LDD Employees:",
-            response
-        );
-
-        if (
-            response &&
-            response.success === true
-        ) {
-
-            const employees =
-                response.data ||
-                response.employees ||
-                [];
-
-            const totalEmployees =
-                document.getElementById(
-                    "totalEmployees"
-                );
-
-            if (totalEmployees) {
-
-                totalEmployees.textContent =
-                    employees.length;
-
-            }
-
-        }
-
-    } catch (error) {
-
-        console.error(
-            "Unable to load LDD employees:",
-            error
-        );
-
-    }
 
 }
 
 
 /* ==========================================================
-   TRAINING RECORDS
-========================================================== */
-
-async function loadLDDTrainingRecords() {
-
-    try {
-
-        let response;
-
-        if (
-            typeof API.getAllTrainingRecordsForLDD ===
-            "function"
-        ) {
-
-            response =
-                await API.getAllTrainingRecordsForLDD();
-
-        } else {
-
-            response =
-                await API.getTrainingRecords();
-
-        }
-
-        console.log(
-            "LDD Training Records:",
-            response
-        );
-
-        if (
-            response &&
-            response.success === true
-        ) {
-
-            const records =
-                response.data ||
-                response.records ||
-                [];
-
-            const totalTrainings =
-                document.getElementById(
-                    "totalTrainings"
-                );
-
-            if (totalTrainings) {
-
-                totalTrainings.textContent =
-                    records.length;
-
-            }
-
-            let totalHours = 0;
-
-            records.forEach(
-                record => {
-
-                    const hours =
-                        parseFloat(
-                            record.totalHours ||
-                            record.TotalHours ||
-                            record["TOTAL HOURS"] ||
-                            0
-                        );
-
-                    if (!isNaN(hours)) {
-                        totalHours += hours;
-                    }
-
-                }
-            );
-
-            const learningHours =
-                document.getElementById(
-                    "totalLearningHours"
-                );
-
-            if (learningHours) {
-
-                learningHours.textContent =
-                    totalHours;
-
-            }
-
-        }
-
-    } catch (error) {
-
-        console.error(
-            "Unable to load LDD training records:",
-            error
-        );
-
-    }
-
-}
-
-
-/* ==========================================================
-   LNA PLACEHOLDER
-========================================================== */
-
-function loadLNAPlaceholder() {
-
-    const lnaCompleted =
-        document.getElementById(
-            "lnaCompleted"
-        );
-
-    if (lnaCompleted) {
-
-        lnaCompleted.textContent =
-            "—";
-
-    }
-
-}
-
-
-/* ==========================================================
-   LDD ORGANIZATIONAL HIERARCHY
-========================================================== */
-
-async function loadLDDHierarchy() {
-
-    const currentUser =
-        getCurrentLDDUser();
-
-    if (!currentUser) {
-        return;
-    }
-
-    const employeeID =
-        currentUser.employeeID ||
-        currentUser.EmployeeID ||
-        "";
-
-    if (!employeeID) {
-
-        console.error(
-            "LDD hierarchy: Employee ID not found."
-        );
-
-        return;
-    }
-
-    try {
-
-        console.log(
-            "Loading LDD hierarchy for:",
-            employeeID
-        );
-
-        const response =
-            await API.getLDDPersonnelHierarchy(
-                employeeID
-            );
-
-        console.log(
-            "LDD hierarchy response:",
-            response
-        );
-
-        if (
-            !response ||
-            response.success !== true
-        ) {
-
-            console.error(
-                "Unable to load LDD hierarchy:",
-                response?.message
-            );
-
-            renderLDDHierarchyEmpty(
-                response?.message ||
-                "Unable to load LDD hierarchy."
-            );
-
-            return;
-        }
-
-        renderLDDHierarchy(
-            response.hierarchy
-        );
-
-    } catch (error) {
-
-        console.error(
-            "LDD hierarchy loading failed:",
-            error
-        );
-
-        renderLDDHierarchyEmpty(
-            error.message ||
-            "Unable to load LDD hierarchy."
-        );
-
-    }
-
-}
-
-
-/* ==========================================================
-   FIND HIERARCHY CONTAINER
-========================================================== */
-
-function getLDDHierarchyContainer() {
-
-    const possibleIDs = [
-
-        "lddPersonnelHierarchy",
-
-        "lddHierarchy",
-
-        "organizationalHierarchy",
-
-        "lddPersonnelContainer",
-
-        "hierarchyContainer"
-
-    ];
-
-    for (
-        const id of possibleIDs
-    ) {
-
-        const element =
-            document.getElementById(id);
-
-        if (element) {
-            return element;
-        }
-
-    }
-
-    return null;
-}
-
-
-/* ==========================================================
-   RENDER HIERARCHY
-========================================================== */
-
-function renderLDDHierarchy(
-    hierarchy
-) {
-
-    const container =
-        getLDDHierarchyContainer();
-
-    if (!container) {
-
-        console.warn(
-            "LDD hierarchy container not found in HTML."
-        );
-
-        return;
-
-    }
-
-    if (!hierarchy) {
-
-        renderLDDHierarchyEmpty(
-            "No hierarchy data available."
-        );
-
-        return;
-
-    }
-
-    container.innerHTML =
-        renderLDDHierarchyNode(
-            hierarchy,
-            true
-        );
-
-}
-
-
-/* ==========================================================
-   RENDER HIERARCHY NODE
-========================================================== */
-
-function renderLDDHierarchyNode(
-    node,
-    isRoot = false
-) {
-
-    if (!node) {
-        return "";
-    }
-
-    const name =
-        node.name ||
-        "Unnamed Employee";
-
-    const position =
-        node.position ||
-        "";
-
-    const role =
-        node.lddMonitoringRole ||
-        "";
-
-    const assignment =
-        node.assignment ||
-        "";
-
-    const children =
-        Array.isArray(node.children)
-            ? node.children
-            : [];
-
-    let roleLabel =
-        role;
-
-    if (!roleLabel) {
-
-        if (
-            position
-                .toLowerCase()
-                .includes("chief")
-        ) {
-            roleLabel = "LDD Chief";
-        }
-
-    }
-
-    const rootClass =
-        isRoot
-            ? " ldd-hierarchy-root"
-            : "";
-
-    let html = `
-
-        <div class="ldd-hierarchy-node${rootClass}">
-
-            <div class="ldd-hierarchy-person">
-
-                <div class="ldd-hierarchy-icon">
-
-                    <i class="bi bi-person-badge"></i>
-
-                </div>
-
-                <div class="ldd-hierarchy-info">
-
-                    <div class="ldd-hierarchy-name">
-
-                        ${escapeHTML(name)}
-
-                    </div>
-
-                    <div class="ldd-hierarchy-position">
-
-                        ${escapeHTML(position)}
-
-                    </div>
-
-                    ${
-                        roleLabel
-                            ? `
-                                <span class="badge bg-primary mt-1">
-                                    ${escapeHTML(roleLabel)}
-                                </span>
-                              `
-                            : ""
-                    }
-
-                    ${
-                        assignment
-                            ? `
-                                <div class="ldd-hierarchy-assignment">
-
-                                    ${escapeHTML(assignment)}
-
-                                </div>
-                              `
-                            : ""
-                    }
-
-                </div>
-
-            </div>
-    `;
-
-
-    if (
-        children.length > 0
-    ) {
-
-        html += `
-
-            <div class="ldd-hierarchy-children">
-
-        `;
-
-        children.forEach(
-            child => {
-
-                html +=
-                    renderLDDHierarchyNode(
-                        child,
-                        false
-                    );
-
-            }
-        );
-
-        html += `
-
-            </div>
-
-        `;
-
-    }
-
-
-    html += `
-
-        </div>
-
-    `;
-
-    return html;
-}
-
-
-/* ==========================================================
-   EMPTY HIERARCHY
-========================================================== */
-
-function renderLDDHierarchyEmpty(
-    message
-) {
-
-    const container =
-        getLDDHierarchyContainer();
-
-    if (!container) {
-        return;
-    }
-
-    container.innerHTML = `
-
-        <div class="ldd-empty-state">
-
-            <div class="ldd-empty-icon">
-
-                <i class="bi bi-diagram-3"></i>
-
-            </div>
-
-            <strong>
-                No hierarchy data
-            </strong>
-
-            <span>
-                ${escapeHTML(
-                    message ||
-                    "No personnel found."
-                )}
-            </span>
-
-        </div>
-
-    `;
-
-}
-
-
-/* ==========================================================
-   NEW USER APPROVAL
+   LOAD PENDING REGISTRATIONS
 ========================================================== */
 
 async function loadPendingRegistrations() {
 
-    const currentUser =
+    const user =
         getCurrentLDDUser();
 
+
     if (
-        !currentUser ||
-        !canApproveNewUsers(currentUser)
+        !user ||
+        !canApproveNewUsers(user)
     ) {
 
         renderNoPendingRegistrations();
@@ -816,46 +502,34 @@ async function loadPendingRegistrations() {
 
     }
 
+
     const countElement =
         document.getElementById(
             "pendingNewUsers"
         );
+
 
     const tableBody =
         document.getElementById(
             "pendingNewUsersTableBody"
         );
 
+
     try {
 
         if (countElement) {
-            countElement.textContent = "…";
-        }
 
-        if (tableBody) {
-
-            tableBody.innerHTML = `
-
-                <tr>
-
-                    <td
-                        colspan="7"
-                        class="text-center py-4">
-
-                        Loading registrations...
-
-                    </td>
-
-                </tr>
-
-            `;
+            countElement.textContent =
+                "…";
 
         }
+
 
         const approverID =
-            currentUser.employeeID ||
-            currentUser.EmployeeID ||
+            user.employeeID ||
+            user.EmployeeID ||
             "";
+
 
         if (!approverID) {
 
@@ -865,15 +539,18 @@ async function loadPendingRegistrations() {
 
         }
 
+
         const response =
             await API.getPendingRegistrations(
                 approverID
             );
 
+
         console.log(
             "LDD New User Registrations:",
             response
         );
+
 
         if (
             !response ||
@@ -887,10 +564,12 @@ async function loadPendingRegistrations() {
 
         }
 
+
         pendingNewUsers =
             response.registrations ||
             response.data ||
             [];
+
 
         if (
             !Array.isArray(
@@ -902,6 +581,7 @@ async function loadPendingRegistrations() {
 
         }
 
+
         if (countElement) {
 
             countElement.textContent =
@@ -909,7 +589,9 @@ async function loadPendingRegistrations() {
 
         }
 
+
         renderPendingNewUsers();
+
 
     } catch (error) {
 
@@ -918,11 +600,17 @@ async function loadPendingRegistrations() {
             error
         );
 
+
         pendingNewUsers = [];
 
+
         if (countElement) {
-            countElement.textContent = "0";
+
+            countElement.textContent =
+                "0";
+
         }
+
 
         if (tableBody) {
 
@@ -960,10 +648,12 @@ function renderPendingNewUsers() {
             "pendingNewUsersTableBody"
         );
 
+
     const countElement =
         document.getElementById(
             "pendingNewUsers"
         );
+
 
     if (countElement) {
 
@@ -972,9 +662,11 @@ function renderPendingNewUsers() {
 
     }
 
+
     if (!tableBody) {
         return;
     }
+
 
     if (
         !pendingNewUsers ||
@@ -987,15 +679,18 @@ function renderPendingNewUsers() {
 
     }
 
+
     tableBody.innerHTML = "";
 
+
     pendingNewUsers.forEach(
-        registration => {
+        function (registration) {
 
             const row =
                 document.createElement(
                     "tr"
                 );
+
 
             const employeeID =
                 getRegistrationValue(
@@ -1007,10 +702,12 @@ function renderPendingNewUsers() {
                     ]
                 );
 
+
             const fullName =
                 getRegistrationFullName(
                     registration
                 );
+
 
             const position =
                 getRegistrationValue(
@@ -1021,6 +718,7 @@ function renderPendingNewUsers() {
                         "POSITION"
                     ]
                 ) || "—";
+
 
             const assignment =
                 getRegistrationValue(
@@ -1033,6 +731,7 @@ function renderPendingNewUsers() {
                     ]
                 ) || "—";
 
+
             const email =
                 getRegistrationValue(
                     registration,
@@ -1042,6 +741,7 @@ function renderPendingNewUsers() {
                         "Email Address"
                     ]
                 ) || "—";
+
 
             row.innerHTML = `
 
@@ -1065,17 +765,21 @@ function renderPendingNewUsers() {
 
                 </td>
 
+
                 <td>
                     ${escapeHTML(position)}
                 </td>
+
 
                 <td>
                     ${escapeHTML(assignment)}
                 </td>
 
+
                 <td>
                     ${escapeHTML(email)}
                 </td>
+
 
                 <td>
 
@@ -1086,6 +790,7 @@ function renderPendingNewUsers() {
                     </span>
 
                 </td>
+
 
                 <td>
 
@@ -1104,18 +809,21 @@ function renderPendingNewUsers() {
 
             `;
 
+
             tableBody.appendChild(
                 row
             );
 
-            const reviewButton =
+
+            const button =
                 row.querySelector(
                     "[data-registration-review]"
                 );
 
-            if (reviewButton) {
 
-                reviewButton.addEventListener(
+            if (button) {
+
+                button.addEventListener(
                     "click",
                     function () {
 
@@ -1135,7 +843,7 @@ function renderPendingNewUsers() {
 
 
 /* ==========================================================
-   REGISTRATION HELPERS
+   GET VALUE
 ========================================================== */
 
 function getRegistrationValue(
@@ -1158,8 +866,11 @@ function getRegistrationValue(
                     registration[key]
                 ).trim();
 
+
             if (value !== "") {
+
                 return value;
+
             }
 
         }
@@ -1169,6 +880,10 @@ function getRegistrationValue(
     return "";
 }
 
+
+/* ==========================================================
+   FULL NAME
+========================================================== */
 
 function getRegistrationFullName(
     registration
@@ -1184,6 +899,7 @@ function getRegistrationFullName(
             ]
         );
 
+
     const firstName =
         getRegistrationValue(
             registration,
@@ -1194,6 +910,7 @@ function getRegistrationFullName(
             ]
         );
 
+
     const middleName =
         getRegistrationValue(
             registration,
@@ -1203,6 +920,7 @@ function getRegistrationFullName(
                 "MIDDLE NAME"
             ]
         );
+
 
     const extension =
         getRegistrationValue(
@@ -1215,11 +933,14 @@ function getRegistrationFullName(
             ]
         );
 
+
     let name = "";
+
 
     if (lastName) {
         name += lastName;
     }
+
 
     if (firstName) {
 
@@ -1230,20 +951,29 @@ function getRegistrationFullName(
 
     }
 
+
     if (middleName) {
-        name += " " + middleName;
+
+        name +=
+            " " + middleName;
+
     }
 
+
     if (extension) {
-        name += " " + extension;
+
+        name +=
+            " " + extension;
+
     }
+
 
     return name.trim();
 }
 
 
 /* ==========================================================
-   REGISTRATION REVIEW
+   REGISTRATION REVIEW MODAL
 ========================================================== */
 
 function showRegistrationReview(
@@ -1255,9 +985,11 @@ function showRegistrationReview(
             "lddRegistrationReviewModal"
         );
 
+
     if (existing) {
         existing.remove();
     }
+
 
     const employeeID =
         getRegistrationValue(
@@ -1269,10 +1001,12 @@ function showRegistrationReview(
             ]
         );
 
+
     const fullName =
         getRegistrationFullName(
             registration
         );
+
 
     const position =
         getRegistrationValue(
@@ -1284,6 +1018,7 @@ function showRegistrationReview(
             ]
         );
 
+
     const designation =
         getRegistrationValue(
             registration,
@@ -1293,6 +1028,7 @@ function showRegistrationReview(
                 "DESIGNATION"
             ]
         );
+
 
     const assignment =
         getRegistrationValue(
@@ -1305,6 +1041,7 @@ function showRegistrationReview(
             ]
         );
 
+
     const email =
         getRegistrationValue(
             registration,
@@ -1314,6 +1051,7 @@ function showRegistrationReview(
                 "Email Address"
             ]
         );
+
 
     const contact =
         getRegistrationValue(
@@ -1325,6 +1063,7 @@ function showRegistrationReview(
             ]
         );
 
+
     const employmentStatus =
         getRegistrationValue(
             registration,
@@ -1334,6 +1073,7 @@ function showRegistrationReview(
                 "EMPLOYMENT STATUS"
             ]
         ) || "Not provided";
+
 
     const registrationDate =
         getRegistrationValue(
@@ -1345,13 +1085,16 @@ function showRegistrationReview(
             ]
         );
 
+
     const modal =
         document.createElement(
             "div"
         );
 
+
     modal.id =
         "lddRegistrationReviewModal";
+
 
     modal.innerHTML = `
 
@@ -1398,8 +1141,11 @@ function showRegistrationReview(
                                 font-weight:700;
                             "
                         >
+
                             Review New User Registration
+
                         </div>
+
 
                         <div
                             style="
@@ -1408,11 +1154,14 @@ function showRegistrationReview(
                                 margin-top:3px;
                             "
                         >
+
                             Employee ID:
                             ${escapeHTML(employeeID)}
+
                         </div>
 
                     </div>
+
 
                     <button
                         type="button"
@@ -1425,12 +1174,19 @@ function showRegistrationReview(
                             line-height:1;
                         "
                     >
+
                         &times;
+
                     </button>
 
                 </div>
 
-                <div style="padding:22px;">
+
+                <div
+                    style="
+                        padding:22px;
+                    "
+                >
 
                     <div
                         style="
@@ -1487,6 +1243,7 @@ function showRegistrationReview(
 
                     </div>
 
+
                     <div
                         style="
                             margin-top:24px;
@@ -1503,8 +1260,11 @@ function showRegistrationReview(
                             class="btn btn-secondary"
                             id="closeRegistrationModalButton"
                         >
+
                             Close
+
                         </button>
+
 
                         <button
                             type="button"
@@ -1528,14 +1288,19 @@ function showRegistrationReview(
 
     `;
 
+
     document.body.appendChild(
         modal
     );
 
+
     const closeModal =
         function () {
+
             modal.remove();
+
         };
+
 
     document
         .getElementById(
@@ -1546,6 +1311,7 @@ function showRegistrationReview(
             closeModal
         );
 
+
     document
         .getElementById(
             "closeRegistrationModalButton"
@@ -1554,6 +1320,7 @@ function showRegistrationReview(
             "click",
             closeModal
         );
+
 
     document
         .getElementById(
@@ -1574,6 +1341,10 @@ function showRegistrationReview(
 }
 
 
+/* ==========================================================
+   REGISTRATION FIELD
+========================================================== */
+
 function registrationField(
     label,
     value
@@ -1592,8 +1363,11 @@ function registrationField(
                     text-transform:uppercase;
                 "
             >
+
                 ${escapeHTML(label)}
+
             </div>
+
 
             <div
                 style="
@@ -1603,15 +1377,16 @@ function registrationField(
                     word-break:break-word;
                 "
             >
+
                 ${escapeHTML(
                     value || "Not provided"
                 )}
+
             </div>
 
         </div>
 
     `;
-
 }
 
 
@@ -1627,6 +1402,7 @@ async function approveRegistration(
     const currentUser =
         getCurrentLDDUser();
 
+
     if (
         !currentUser ||
         !canApproveNewUsers(currentUser)
@@ -1637,13 +1413,14 @@ async function approveRegistration(
         );
 
         return;
-
     }
+
 
     const approverID =
         currentUser.employeeID ||
         currentUser.EmployeeID ||
         "";
+
 
     const employeeID =
         getRegistrationValue(
@@ -1655,6 +1432,7 @@ async function approveRegistration(
             ]
         );
 
+
     if (!approverID) {
 
         alert(
@@ -1662,8 +1440,8 @@ async function approveRegistration(
         );
 
         return;
-
     }
+
 
     if (!employeeID) {
 
@@ -1672,8 +1450,8 @@ async function approveRegistration(
         );
 
         return;
-
     }
+
 
     const confirmed =
         window.confirm(
@@ -1684,25 +1462,30 @@ async function approveRegistration(
             "A temporary password will be generated and sent to the registered email address."
         );
 
+
     if (!confirmed) {
         return;
     }
+
 
     try {
 
         if (button) {
 
-            button.disabled =
-                true;
+            button.disabled = true;
 
             button.innerHTML = `
+
                 <span
                     class="spinner-border spinner-border-sm me-2"
                 ></span>
+
                 Processing...
+
             `;
 
         }
+
 
         const response =
             await API.approveRegistration(
@@ -1710,10 +1493,12 @@ async function approveRegistration(
                 approverID
             );
 
+
         console.log(
             "Approve registration response:",
             response
         );
+
 
         if (
             response &&
@@ -1725,34 +1510,25 @@ async function approveRegistration(
                 "Registration approved and activated successfully."
             );
 
+
             document
                 .getElementById(
                     "lddRegistrationReviewModal"
                 )
                 ?.remove();
 
+
             await loadPendingRegistrations();
 
             return;
-
         }
 
-        alert(
+
+        throw new Error(
             response?.message ||
             "Unable to approve registration."
         );
 
-        if (button) {
-
-            button.disabled =
-                false;
-
-            button.innerHTML = `
-                <i class="bi bi-check-circle"></i>
-                Approve & Activate
-            `;
-
-        }
 
     } catch (error) {
 
@@ -1761,10 +1537,12 @@ async function approveRegistration(
             error
         );
 
+
         alert(
             error.message ||
             "Unable to complete the approval."
         );
+
 
         if (button) {
 
@@ -1772,8 +1550,11 @@ async function approveRegistration(
                 false;
 
             button.innerHTML = `
+
                 <i class="bi bi-check-circle"></i>
+
                 Approve & Activate
+
             `;
 
         }
@@ -1784,7 +1565,7 @@ async function approveRegistration(
 
 
 /* ==========================================================
-   EMPTY STATES
+   EMPTY APPROVAL STATE
 ========================================================== */
 
 function renderNoPendingRegistrations() {
@@ -1794,18 +1575,25 @@ function renderNoPendingRegistrations() {
             "pendingNewUsers"
         );
 
+
     if (badge) {
-        badge.textContent = "0";
+
+        badge.textContent =
+            "0";
+
     }
+
 
     const tableBody =
         document.getElementById(
             "pendingNewUsersTableBody"
         );
 
+
     if (!tableBody) {
         return;
     }
+
 
     tableBody.innerHTML = `
 
@@ -1821,9 +1609,11 @@ function renderNoPendingRegistrations() {
 
                     </div>
 
+
                     <strong>
                         No pending registrations.
                     </strong>
+
 
                     <span>
                         All employee registrations have been processed.
@@ -1836,9 +1626,12 @@ function renderNoPendingRegistrations() {
         </tr>
 
     `;
-
 }
 
+
+/* ==========================================================
+   EMPTY ACTIVITY STATE
+========================================================== */
 
 function renderNoRecentActivity() {
 
@@ -1847,9 +1640,11 @@ function renderNoRecentActivity() {
             "recentActivities"
         );
 
+
     if (!container) {
         return;
     }
+
 
     container.innerHTML = `
 
@@ -1861,9 +1656,11 @@ function renderNoRecentActivity() {
 
             </div>
 
+
             <strong>
                 No recent activity.
             </strong>
+
 
             <span>
                 Activity records will appear here once available.
@@ -1872,7 +1669,6 @@ function renderNoRecentActivity() {
         </div>
 
     `;
-
 }
 
 
@@ -1880,9 +1676,7 @@ function renderNoRecentActivity() {
    HTML ESCAPING
 ========================================================== */
 
-function escapeHTML(
-    value
-) {
+function escapeHTML(value) {
 
     return String(
         value ?? ""
@@ -1907,9 +1701,11 @@ function initializeLogout() {
             "logoutLink"
         );
 
+
     if (!logoutLink) {
         return;
     }
+
 
     if (
         logoutLink.dataset.initialized ===
@@ -1918,14 +1714,17 @@ function initializeLogout() {
         return;
     }
 
+
     logoutLink.dataset.initialized =
         "true";
+
 
     logoutLink.addEventListener(
         "click",
         function (event) {
 
             event.preventDefault();
+
 
             if (
                 typeof Session !== "undefined" &&
@@ -1938,7 +1737,9 @@ function initializeLogout() {
 
             }
 
+
             localStorage.clear();
+
 
             window.location.href =
                 "../index.html";

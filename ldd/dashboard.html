@@ -5,7 +5,9 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
     <title>LDD Dashboard | LDIMS</title>
 
@@ -23,6 +25,7 @@
 
 </head>
 
+
 <body class="ldd-dashboard-page">
 
 
@@ -35,6 +38,7 @@
     <div class="header-title">
         LDIMS
     </div>
+
 
     <div class="ldd-header-user">
 
@@ -66,6 +70,7 @@
             alt="NBI Logo">
 
         <div>
+
             <div class="ldd-brand-name">
                 LDIMS
             </div>
@@ -73,6 +78,7 @@
             <div class="ldd-brand-agency">
                 NBI
             </div>
+
         </div>
 
     </div>
@@ -81,52 +87,69 @@
     <ul>
 
         <li>
+
             <a
                 href="dashboard.html"
                 class="active">
 
                 <i class="bi bi-house-door-fill"></i>
 
-                <span>Dashboard</span>
+                <span>
+                    Dashboard
+                </span>
 
             </a>
+
         </li>
 
 
         <li>
+
             <a href="employees.html">
 
                 <i class="bi bi-people-fill"></i>
 
-                <span>Employees</span>
+                <span>
+                    Employees
+                </span>
 
             </a>
+
         </li>
 
 
         <li>
+
             <a href="lna-monitoring.html">
 
                 <i class="bi bi-file-earmark-text-fill"></i>
 
-                <span>LNA Monitoring</span>
+                <span>
+                    LNA Monitoring
+                </span>
 
             </a>
+
         </li>
 
 
         <li>
+
             <a href="training-monitoring.html">
 
                 <i class="bi bi-mortarboard-fill"></i>
 
-                <span>Training Monitoring</span>
+                <span>
+                    Training Monitoring
+                </span>
 
             </a>
+
         </li>
 
 
         <li>
+
             <a href="learning-interventions.html">
 
                 <i class="bi bi-stack"></i>
@@ -137,32 +160,41 @@
                 </span>
 
             </a>
+
         </li>
 
 
         <li>
+
             <a
                 href="reports.html"
                 class="ldd-locked-link">
 
                 <i class="bi bi-bar-chart-fill"></i>
 
-                <span>Reports</span>
+                <span>
+                    Reports
+                </span>
 
             </a>
+
         </li>
 
 
         <li>
+
             <a
                 href="notifications.html"
                 class="ldd-locked-link">
 
                 <i class="bi bi-bell-fill"></i>
 
-                <span>Notifications</span>
+                <span>
+                    Notifications
+                </span>
 
             </a>
+
         </li>
 
     </ul>
@@ -176,9 +208,12 @@
 
             <i class="bi bi-box-arrow-right"></i>
 
-            <span>Logout</span>
+            <span>
+                Logout
+            </span>
 
         </a>
+
 
         <div class="ldd-system-info">
 
@@ -239,8 +274,11 @@
         <div class="ldd-kpi-card">
 
             <div class="ldd-kpi-icon employees">
+
                 <i class="bi bi-people-fill"></i>
+
             </div>
+
 
             <div class="ldd-kpi-data">
 
@@ -260,8 +298,11 @@
         <div class="ldd-kpi-card">
 
             <div class="ldd-kpi-icon lna">
+
                 <i class="bi bi-file-earmark-text-fill"></i>
+
             </div>
+
 
             <div class="ldd-kpi-data">
 
@@ -281,8 +322,11 @@
         <div class="ldd-kpi-card">
 
             <div class="ldd-kpi-icon training">
+
                 <i class="bi bi-mortarboard-fill"></i>
+
             </div>
+
 
             <div class="ldd-kpi-data">
 
@@ -302,8 +346,11 @@
         <div class="ldd-kpi-card">
 
             <div class="ldd-kpi-icon hours">
+
                 <i class="bi bi-clock-fill"></i>
+
             </div>
+
 
             <div class="ldd-kpi-data">
 
@@ -391,1298 +438,132 @@
     </section>
 
 
-    /* ======================================================
-   NEW USER APPROVAL
-====================================================== */
+    <!-- ======================================================
+         NEW USER APPROVAL
+         Visible only to authorized LDD roles.
+    ======================================================= -->
 
-const currentUser =
-    typeof Session !== "undefined" &&
-    typeof Session.get === "function"
-        ? Session.get()
-        : null;
+    <section
+        id="newUserApprovalSection"
+        class="ldd-panel ldd-approval-panel"
+        hidden>
 
 
-if (
-    canApproveNewUsers(currentUser)
-) {
+        <div class="ldd-section-heading">
 
-    await loadPendingRegistrations(
-        currentUser
-    );
+            <div>
 
-}
+                <div class="ldd-panel-title">
 
+                    <i class="bi bi-people-fill"></i>
 
-/* ==========================================================
-   LOAD PENDING REGISTRATIONS
-========================================================== */
-
-async function loadPendingRegistrations(
-    user
-) {
-
-    const badge =
-        document.getElementById(
-            "pendingNewUsers"
-        );
-
-
-    const tableBody =
-        document.getElementById(
-            "pendingNewUsersTableBody"
-        );
-
-
-    if (!tableBody) {
-        return;
-    }
-
-
-    try {
-
-        tableBody.innerHTML = `
-
-            <tr class="ldd-empty-row">
-
-                <td colspan="6">
-
-                    <div class="ldd-empty-state">
-
-                        <div class="ldd-empty-icon">
-
-                            <i class="bi bi-hourglass-split"></i>
-
-                        </div>
-
-                        <strong>
-                            Loading registrations...
-                        </strong>
-
-                    </div>
-
-                </td>
-
-            </tr>
-
-        `;
-
-
-        const approverID =
-            user.employeeID ||
-            user.EmployeeID ||
-            "";
-
-
-        if (!approverID) {
-
-            console.error(
-                "LDD approval: Employee ID not found in session."
-            );
-
-            renderNoPendingRegistrations();
-
-            return;
-
-        }
-
-
-        console.log(
-            "Loading pending registrations for approver:",
-            approverID
-        );
-
-
-        const response =
-            await API.getPendingRegistrations(
-                approverID
-            );
-
-
-        console.log(
-            "Pending registrations response:",
-            response
-        );
-
-
-        if (
-            !response ||
-            response.success !== true
-        ) {
-
-            console.error(
-                "Unable to load pending registrations:",
-                response
-            );
-
-            renderPendingRegistrationError(
-                response?.message ||
-                "Unable to load pending registrations."
-            );
-
-            return;
-
-        }
-
-
-        const registrations =
-            response.registrations ||
-            response.data ||
-            [];
-
-
-        if (
-            badge
-        ) {
-
-            badge.textContent =
-                registrations.length;
-
-        }
-
-
-        if (
-            registrations.length === 0
-        ) {
-
-            renderNoPendingRegistrations();
-
-            return;
-
-        }
-
-
-        renderPendingRegistrations(
-            registrations
-        );
-
-
-    } catch (error) {
-
-        console.error(
-            "New User Approval loading failed:",
-            error
-        );
-
-
-        renderPendingRegistrationError(
-            "Unable to load pending registrations."
-        );
-
-    }
-
-}
-
-
-/* ==========================================================
-   RENDER PENDING REGISTRATIONS
-========================================================== */
-
-function renderPendingRegistrations(
-    registrations
-) {
-
-    const tableBody =
-        document.getElementById(
-            "pendingNewUsersTableBody"
-        );
-
-
-    const badge =
-        document.getElementById(
-            "pendingNewUsers"
-        );
-
-
-    if (!tableBody) {
-        return;
-    }
-
-
-    if (badge) {
-
-        badge.textContent =
-            registrations.length;
-
-    }
-
-
-    tableBody.innerHTML = "";
-
-
-    registrations.forEach(
-        registration => {
-
-            const row =
-                document.createElement(
-                    "tr"
-                );
-
-
-            const employeeID =
-                getRegistrationValue(
-                    registration,
-                    [
-                        "employeeID",
-                        "EmployeeID",
-                        "EMPLOYEE ID"
-                    ]
-                );
-
-
-            const fullName =
-                getRegistrationFullName(
-                    registration
-                );
-
-
-            const position =
-                getRegistrationValue(
-                    registration,
-                    [
-                        "position",
-                        "Position",
-                        "POSITION"
-                    ]
-                );
-
-
-            const assignment =
-                getRegistrationValue(
-                    registration,
-                    [
-                        "placeOfAssignment",
-                        "PlaceOfAssignment",
-                        "Place of Assignment",
-                        "PLACE OF ASSIGNMENT"
-                    ]
-                );
-
-
-            const email =
-                getRegistrationValue(
-                    registration,
-                    [
-                        "email",
-                        "Email",
-                        "Email Address"
-                    ]
-                );
-
-
-            const status =
-                getRegistrationValue(
-                    registration,
-                    [
-                        "accountStatus",
-                        "AccountStatus",
-                        "status",
-                        "Status"
-                    ]
-                ) ||
-                "Pending";
-
-
-            row.innerHTML = `
-
-                <td>
-
-                    <div style="
-                        display:flex;
-                        flex-direction:column;
-                        gap:2px;
-                    ">
-
-                        <strong>
-                            ${escapeHtml(fullName)}
-                        </strong>
-
-                        <small style="
-                            color:#6c757d;
-                        ">
-                            ID: ${escapeHtml(employeeID)}
-                        </small>
-
-                    </div>
-
-                </td>
-
-
-                <td>
-                    ${escapeHtml(position)}
-                </td>
-
-
-                <td>
-                    ${escapeHtml(assignment)}
-                </td>
-
-
-                <td>
-                    ${escapeHtml(email)}
-                </td>
-
-
-                <td>
-
-                    <span class="badge bg-warning text-dark">
-
-                        ${escapeHtml(status)}
-
-                    </span>
-
-                </td>
-
-
-                <td>
-
-                    <button
-                        type="button"
-                        class="btn btn-sm btn-primary"
-                        data-registration-review="${escapeHtml(employeeID)}"
-                    >
-
-                        <i class="bi bi-eye"></i>
-
-                        Review
-
-                    </button>
-
-                </td>
-
-            `;
-
-
-            tableBody.appendChild(
-                row
-            );
-
-
-            const reviewButton =
-                row.querySelector(
-                    "[data-registration-review]"
-                );
-
-
-            if (reviewButton) {
-
-                reviewButton.addEventListener(
-                    "click",
-                    function () {
-
-                        showRegistrationReview(
-                            registration
-                        );
-
-                    }
-                );
-
-            }
-
-        }
-    );
-
-}
-
-
-/* ==========================================================
-   REGISTRATION VALUE HELPER
-========================================================== */
-
-function getRegistrationValue(
-    registration,
-    keys
-) {
-
-    for (
-        const key of keys
-    ) {
-
-        if (
-            registration &&
-            registration[key] !== undefined &&
-            registration[key] !== null
-        ) {
-
-            const value =
-                String(
-                    registration[key]
-                ).trim();
-
-
-            if (value !== "") {
-
-                return value;
-
-            }
-
-        }
-
-    }
-
-
-    return "";
-
-}
-
-
-/* ==========================================================
-   FULL NAME
-========================================================== */
-
-function getRegistrationFullName(
-    registration
-) {
-
-    const lastName =
-        getRegistrationValue(
-            registration,
-            [
-                "lastName",
-                "LastName",
-                "LASTNAME"
-            ]
-        );
-
-
-    const firstName =
-        getRegistrationValue(
-            registration,
-            [
-                "firstName",
-                "FirstName",
-                "FIRST NAME"
-            ]
-        );
-
-
-    const middleName =
-        getRegistrationValue(
-            registration,
-            [
-                "middleName",
-                "MiddleName",
-                "MIDDLE NAME"
-            ]
-        );
-
-
-    const extension =
-        getRegistrationValue(
-            registration,
-            [
-                "nameExtension",
-                "NameExtension",
-                "NAME EXTENTION"
-            ]
-        );
-
-
-    return [
-        lastName,
-        firstName,
-        middleName,
-        extension
-    ]
-        .filter(
-            value =>
-                value &&
-                value.toUpperCase() !== "N/A"
-        )
-        .join(", ")
-        .replace(
-            ", " + firstName + ", ",
-            ", " + firstName + " "
-        );
-
-}
-
-
-/* ==========================================================
-   REVIEW REGISTRATION
-========================================================== */
-
-function showRegistrationReview(
-    registration
-) {
-
-    const existing =
-        document.getElementById(
-            "lddRegistrationReviewModal"
-        );
-
-
-    if (existing) {
-
-        existing.remove();
-
-    }
-
-
-    const employeeID =
-        getRegistrationValue(
-            registration,
-            [
-                "employeeID",
-                "EmployeeID",
-                "EMPLOYEE ID"
-            ]
-        );
-
-
-    const fullName =
-        getRegistrationFullName(
-            registration
-        );
-
-
-    const position =
-        getRegistrationValue(
-            registration,
-            [
-                "position",
-                "Position",
-                "POSITION"
-            ]
-        );
-
-
-    const designation =
-        getRegistrationValue(
-            registration,
-            [
-                "designation",
-                "Designation",
-                "DESIGNATION"
-            ]
-        );
-
-
-    const assignment =
-        getRegistrationValue(
-            registration,
-            [
-                "placeOfAssignment",
-                "PlaceOfAssignment",
-                "Place of Assignment",
-                "PLACE OF ASSIGNMENT"
-            ]
-        );
-
-
-    const email =
-        getRegistrationValue(
-            registration,
-            [
-                "email",
-                "Email",
-                "Email Address"
-            ]
-        );
-
-
-    const contact =
-        getRegistrationValue(
-            registration,
-            [
-                "contactNumber",
-                "ContactNumber",
-                "CONTACT NUMBER"
-            ]
-        );
-
-
-    const employmentStatus =
-        getRegistrationValue(
-            registration,
-            [
-                "employmentStatus",
-                "EmploymentStatus",
-                "EMPLOYMENT STATUS"
-            ]
-        ) ||
-        "Not provided";
-
-
-    const registrationDate =
-        getRegistrationValue(
-            registration,
-            [
-                "registrationDate",
-                "RegistrationDate",
-                "Timestamp"
-            ]
-        );
-
-
-    const modal =
-        document.createElement(
-            "div"
-        );
-
-
-    modal.id =
-        "lddRegistrationReviewModal";
-
-
-    modal.innerHTML = `
-
-        <div style="
-            position:fixed;
-            inset:0;
-            background:rgba(0,0,0,.55);
-            z-index:9999;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            padding:20px;
-        ">
-
-            <div style="
-                background:#fff;
-                width:min(700px, 100%);
-                max-height:90vh;
-                overflow:auto;
-                border-radius:10px;
-                box-shadow:0 15px 40px rgba(0,0,0,.25);
-            ">
-
-                <div style="
-                    background:#6A1B9A;
-                    color:#fff;
-                    padding:18px 22px;
-                    display:flex;
-                    justify-content:space-between;
-                    align-items:center;
-                ">
-
-                    <div>
-
-                        <div style="
-                            font-size:18px;
-                            font-weight:700;
-                        ">
-                            Review New User Registration
-                        </div>
-
-                        <div style="
-                            font-size:12px;
-                            opacity:.9;
-                            margin-top:3px;
-                        ">
-                            Employee ID: ${escapeHtml(employeeID)}
-                        </div>
-
-                    </div>
-
-
-                    <button
-                        type="button"
-                        id="closeRegistrationModal"
-                        style="
-                            border:0;
-                            background:transparent;
-                            color:#fff;
-                            font-size:24px;
-                            line-height:1;
-                        "
-                    >
-                        &times;
-                    </button>
+                    <h2>
+                        New User Approval
+                    </h2>
 
                 </div>
 
 
-                <div style="
-                    padding:22px;
-                ">
-
-                    <div style="
-                        display:grid;
-                        grid-template-columns:1fr 1fr;
-                        gap:14px;
-                    ">
-
-                        ${registrationField(
-                            "Full Name",
-                            fullName
-                        )}
-
-                        ${registrationField(
-                            "Employee ID",
-                            employeeID
-                        )}
-
-                        ${registrationField(
-                            "Position",
-                            position
-                        )}
-
-                        ${registrationField(
-                            "Designation",
-                            designation
-                        )}
-
-                        ${registrationField(
-                            "Place of Assignment",
-                            assignment
-                        )}
-
-                        ${registrationField(
-                            "Email",
-                            email
-                        )}
-
-                        ${registrationField(
-                            "Contact Number",
-                            contact
-                        )}
-
-                        ${registrationField(
-                            "Employment Status",
-                            employmentStatus
-                        )}
-
-                        ${registrationField(
-                            "Registration Date",
-                            registrationDate
-                        )}
-
-                    </div>
-
-
-                    <div style="
-                        margin-top:24px;
-                        padding-top:18px;
-                        border-top:1px solid #dee2e6;
-                        display:flex;
-                        justify-content:flex-end;
-                        gap:10px;
-                    ">
-
-                        <button
-                            type="button"
-                            class="btn btn-secondary"
-                            id="closeRegistrationModalButton"
-                        >
-                            Close
-                        </button>
-
-
-                        <button
-                            type="button"
-                            class="btn btn-success"
-                            id="approveRegistrationButton"
-                        >
-
-                            <i class="bi bi-check-circle"></i>
-
-                            Approve & Activate
-
-                        </button>
-
-                    </div>
-
-                </div>
+                <p>
+                    Review and activate new employee registrations.
+                </p>
 
             </div>
 
-        </div>
 
-    `;
+            <span
+                id="pendingNewUsers"
+                class="ldd-count-badge">
 
+                0
 
-    document.body.appendChild(
-        modal
-    );
-
-
-    const closeModal =
-        function () {
-
-            modal.remove();
-
-        };
-
-
-    document
-        .getElementById(
-            "closeRegistrationModal"
-        )
-        ?.addEventListener(
-            "click",
-            closeModal
-        );
-
-
-    document
-        .getElementById(
-            "closeRegistrationModalButton"
-        )
-        ?.addEventListener(
-            "click",
-            closeModal
-        );
-
-
-    document
-        .getElementById(
-            "approveRegistrationButton"
-        )
-        ?.addEventListener(
-            "click",
-            async function () {
-
-                await approveRegistration(
-                    registration,
-                    this
-                );
-
-            }
-        );
-
-}
-
-
-/* ==========================================================
-   REGISTRATION FIELD
-========================================================== */
-
-function registrationField(
-    label,
-    value
-) {
-
-    return `
-
-        <div>
-
-            <div style="
-                font-size:11px;
-                color:#6c757d;
-                font-weight:600;
-                margin-bottom:3px;
-                text-transform:uppercase;
-            ">
-                ${escapeHtml(label)}
-            </div>
-
-            <div style="
-                font-size:14px;
-                font-weight:600;
-                color:#212529;
-                word-break:break-word;
-            ">
-                ${escapeHtml(value || "Not provided")}
-            </div>
-
-        </div>
-
-    `;
-
-}
-
-
-/* ==========================================================
-   APPROVE REGISTRATION
-========================================================== */
-
-async function approveRegistration(
-    registration,
-    button
-) {
-
-    const currentUser =
-        typeof Session !== "undefined" &&
-        typeof Session.get === "function"
-            ? Session.get()
-            : null;
-
-
-    const approverID =
-        currentUser?.employeeID ||
-        currentUser?.EmployeeID ||
-        "";
-
-
-    const employeeID =
-        getRegistrationValue(
-            registration,
-            [
-                "employeeID",
-                "EmployeeID",
-                "EMPLOYEE ID"
-            ]
-        );
-
-
-    if (!approverID) {
-
-        alert(
-            "Unable to identify the approving LDD user."
-        );
-
-        return;
-
-    }
-
-
-    if (!employeeID) {
-
-        alert(
-            "Employee ID is missing from this registration."
-        );
-
-        return;
-
-    }
-
-
-    const confirmed =
-        window.confirm(
-            "Approve and activate this new user registration?\n\n" +
-            "Employee ID: " +
-            employeeID +
-            "\n\n" +
-            "A temporary password will be generated and sent to the registered email address."
-        );
-
-
-    if (!confirmed) {
-
-        return;
-
-    }
-
-
-    try {
-
-        if (button) {
-
-            button.disabled =
-                true;
-
-            button.innerHTML = `
-
-                <span
-                    class="spinner-border spinner-border-sm"
-                ></span>
-
-                Processing...
-
-            `;
-
-        }
-
-
-        const response =
-            await API.approveRegistration(
-                employeeID,
-                approverID
-            );
-
-
-        console.log(
-            "Approve registration response:",
-            response
-        );
-
-
-        if (
-            response &&
-            response.success === true
-        ) {
-
-            alert(
-                response.message ||
-                "Registration approved and activated successfully."
-            );
-
-
-            document
-                .getElementById(
-                    "lddRegistrationReviewModal"
-                )
-                ?.remove();
-
-
-            await loadPendingRegistrations(
-                currentUser
-            );
-
-
-            return;
-
-        }
-
-
-        alert(
-            response?.message ||
-            "Unable to approve registration."
-        );
-
-
-        if (button) {
-
-            button.disabled =
-                false;
-
-            button.innerHTML = `
-
-                <i class="bi bi-check-circle"></i>
-
-                Approve & Activate
-
-            `;
-
-        }
-
-
-    } catch (error) {
-
-        console.error(
-            "Approve registration error:",
-            error
-        );
-
-
-        alert(
-            "Unable to complete the approval."
-        );
-
-
-        if (button) {
-
-            button.disabled =
-                false;
-
-            button.innerHTML = `
-
-                <i class="bi bi-check-circle"></i>
-
-                Approve & Activate
-
-            `;
-
-        }
-
-    }
-
-}
-
-
-/* ==========================================================
-   EMPTY STATE - NEW USER APPROVAL
-========================================================== */
-
-function renderNoPendingRegistrations() {
-
-    const badge =
-        document.getElementById(
-            "pendingNewUsers"
-        );
-
-
-    if (badge) {
-
-        badge.textContent =
-            "0";
-
-    }
-
-
-    const tableBody =
-        document.getElementById(
-            "pendingNewUsersTableBody"
-        );
-
-
-    if (!tableBody) {
-        return;
-    }
-
-
-    tableBody.innerHTML = `
-
-        <tr class="ldd-empty-row">
-
-            <td colspan="6">
-
-                <div class="ldd-empty-state">
-
-                    <div class="ldd-empty-icon">
-
-                        <i class="bi bi-file-earmark-text"></i>
-
-                    </div>
-
-                    <strong>
-                        No pending registrations.
-                    </strong>
-
-                    <span>
-                        All employee registrations have been processed.
-                    </span>
-
-                </div>
-
-            </td>
-
-        </tr>
-
-    `;
-
-}
-
-
-/* ==========================================================
-   ERROR STATE - NEW USER APPROVAL
-========================================================== */
-
-function renderPendingRegistrationError(
-    message
-) {
-
-    const badge =
-        document.getElementById(
-            "pendingNewUsers"
-        );
-
-
-    if (badge) {
-
-        badge.textContent =
-            "!";
-
-    }
-
-
-    const tableBody =
-        document.getElementById(
-            "pendingNewUsersTableBody"
-        );
-
-
-    if (!tableBody) {
-        return;
-    }
-
-
-    tableBody.innerHTML = `
-
-        <tr class="ldd-empty-row">
-
-            <td colspan="6">
-
-                <div class="ldd-empty-state">
-
-                    <div class="ldd-empty-icon">
-
-                        <i class="bi bi-exclamation-triangle"></i>
-
-                    </div>
-
-                    <strong>
-                        Unable to load registrations.
-                    </strong>
-
-                    <span>
-                        ${escapeHtml(message)}
-                    </span>
-
-                </div>
-
-            </td>
-
-        </tr>
-
-    `;
-
-}
-
-
-/* ==========================================================
-   HTML ESCAPE
-========================================================== */
-
-function escapeHtml(
-    value
-) {
-
-    return String(
-        value ?? ""
-    )
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
-
-}
-
-<!-- ======================================================
-     LDD ORGANIZATIONAL HIERARCHY
-====================================================== -->
-
-<section class="ldd-panel ldd-hierarchy-panel">
-
-    <div class="ldd-panel-title">
-
-        <i class="bi bi-diagram-3-fill"></i>
-
-        <h2>
-            LDD Organizational Hierarchy
-        </h2>
-
-    </div>
-
-
-    <div
-        id="lddPersonnelHierarchy"
-        class="ldd-hierarchy-container"
-    >
-
-        <div class="ldd-empty-state">
-
-            <div class="ldd-empty-icon">
-
-                <i class="bi bi-diagram-3"></i>
-
-            </div>
-
-            <strong>
-                Loading LDD hierarchy...
-            </strong>
-
-            <span>
-                Organizational reporting structure is being loaded.
             </span>
 
         </div>
 
-    </div>
 
-</section>
+        <div class="ldd-table-wrap">
+
+            <table class="ldd-approval-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Employee
+                        </th>
+
+                        <th>
+                            Position
+                        </th>
+
+                        <th>
+                            Place of Assignment
+                        </th>
+
+                        <th>
+                            Email
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                        <th>
+                            Action
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="pendingNewUsersTableBody">
+
+                    <tr class="ldd-empty-row">
+
+                        <td colspan="6">
+
+                            <div class="ldd-empty-state">
+
+                                <div class="ldd-empty-icon">
+
+                                    <i class="bi bi-file-earmark-text"></i>
+
+                                </div>
+
+
+                                <strong>
+                                    No pending registrations.
+                                </strong>
+
+
+                                <span>
+                                    All employee registrations have been processed.
+                                </span>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
 
     <!-- ======================================================
          RECENT ACTIVITY
     ======================================================= -->
 
     <section class="ldd-panel ldd-activity-panel">
+
 
         <div class="ldd-section-heading">
 
@@ -1699,6 +580,7 @@ function escapeHtml(
                 </div>
 
             </div>
+
 
             <button
                 type="button"
@@ -1717,15 +599,20 @@ function escapeHtml(
             id="recentActivities"
             class="ldd-activity-empty">
 
+
             <div class="ldd-empty-state">
 
                 <div class="ldd-empty-icon">
+
                     <i class="bi bi-file-earmark-text"></i>
+
                 </div>
+
 
                 <strong>
                     No recent activity.
                 </strong>
+
 
                 <span>
                     Activity records will appear here once available.
@@ -1737,89 +624,6 @@ function escapeHtml(
 
     </section>
 
-    <!-- ==========================================================
-     NEW USER REGISTRATION REVIEW MODAL
-========================================================== -->
-
-<div
-    class="modal fade"
-    id="pendingRegistrationModal"
-    tabindex="-1"
-    aria-labelledby="pendingRegistrationModalLabel"
-    aria-hidden="true">
-
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-
-        <div class="modal-content">
-
-            <div class="modal-header">
-
-                <div>
-
-                    <h5
-                        class="modal-title"
-                        id="pendingRegistrationModalLabel">
-
-                        <i class="bi bi-person-check-fill me-2"></i>
-
-                        Review New User Registration
-
-                    </h5>
-
-                    <small class="text-muted">
-                        Review the employee information before activation.
-                    </small>
-
-                </div>
-
-
-                <button
-                    type="button"
-                    class="btn-close"
-                    data-bs-dismiss="modal"
-                    aria-label="Close">
-                </button>
-
-            </div>
-
-
-            <div class="modal-body">
-
-                <!-- Registration information is populated by JavaScript -->
-
-            </div>
-
-
-            <div class="modal-footer">
-
-                <button
-                    type="button"
-                    class="btn btn-secondary"
-                    data-bs-dismiss="modal">
-
-                    <i class="bi bi-x-circle me-1"></i>
-                    Close
-
-                </button>
-
-
-                <button
-                    type="button"
-                    class="btn btn-primary"
-                    id="approveRegistrationButton">
-
-                    <i class="bi bi-check-circle me-1"></i>
-                    Approve &amp; Activate
-
-                </button>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
 
 </main>
 
